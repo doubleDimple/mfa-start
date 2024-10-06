@@ -69,7 +69,7 @@
     spring.freemarker.suffix=.ftl
 
     #不需要修改
-    spring.datasource.url=jdbc:h2:file:./mfa-start/otp_keys_db
+    spring.datasource.url=jdbc:h2:file:/root/mfa-start/data/otp_keys_db
 
     #不需要修改
     spring.datasource.driverClassName=org.h2.Driver
