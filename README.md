@@ -20,7 +20,7 @@
   
         3.3.1:下载jar包
     
-          wget https://github.com/doubleDimple/oci-start/releases/download/v-1.0.0/mfa-start-release.jar
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-1.0.0/mfa-start-release.jar
       
         3.3.2:下载运行脚本
     
