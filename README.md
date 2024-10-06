@@ -10,7 +10,11 @@
 
       3.1:登录linux服务器,切换到root用户下.
   
-      3.2:创建文件夹 mkdir -p mfa-start && cd mfa-start
+      3.2:创建文件夹 
+      
+      mkdir -p mfa-start && cd mfa-start
+      
+      mkdir -p data
   
       3.3:下载部署包文件
   
