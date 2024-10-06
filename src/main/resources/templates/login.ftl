@@ -59,7 +59,7 @@
 </head>
 <body>
 <div class="login-container">
-    <h1>Login</h1>
+    <h1>OTP Management</h1>
     <form method="post" action="/perform_login">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <label for="username">Username:</label>

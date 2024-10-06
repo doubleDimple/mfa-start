@@ -52,5 +52,13 @@ public class OTPKey {
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
 

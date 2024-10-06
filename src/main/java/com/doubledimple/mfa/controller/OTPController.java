@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,5 +85,19 @@ public class OTPController {
         public void setOtpCode(String otpCode) {
             this.otpCode = otpCode;
         }
+    }
+
+    @GetMapping("/export")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"otp_keys.csv\"");
+        PrintWriter writer = response.getWriter();
+        writer.println("ID,KeyName,SecretKey");
+
+        List<OTPKey> otpKeys = otpService.getAllKeys();
+        for (OTPKey otpKey : otpKeys) {
+            writer.printf("%d,%s,%s%n", otpKey.getId(), otpKey.getKeyName(), otpKey.getSecretKey());
+        }
+        writer.flush();
     }
 }

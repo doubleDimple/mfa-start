@@ -264,6 +264,34 @@
             }
         }
 
+        async function exportToCSV() {
+            try {
+                const csrfToken = document.querySelector('input[name="${_csrf.parameterName}"]').value;
+                const response = await fetch('/export', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'text/csv',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'otp_keys.csv';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error exporting CSV:', error);
+                alert('Failed to export CSV. Please try again.');
+            }
+        }
+
         window.onload = () => {
             document.querySelectorAll('.masked').forEach(element => {
                 element.addEventListener('click', toggleSecretKeyVisibility);
@@ -326,7 +354,7 @@
             <th>Secret Key</th>
             <th>Qr Code</th>
             <th>OTP Code</th>
-            <th>操作</th>
+            <th>Operation</th>
         </tr>
         </thead>
         <tbody>
@@ -356,7 +384,7 @@
         </tbody>
     </table>
 
-    <a href="/export" class="export-link">Export All OTP Keys as CSV</a>
+    <button class="export-link" onclick="exportToCSV()">Export All OTP Keys as CSV</button>
 </div>
 </body>
 </html>
