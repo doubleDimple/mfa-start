@@ -10,27 +10,28 @@
 
       3.1:登录linux服务器,切换到root用户下.
   
-      3.2:创建文件夹 mkdir -p mfa-start && cd mfa-start
+      3.2:创建文件夹 
+      
+      mkdir -p mfa-start && cd mfa-start
+      
+      mkdir -p data
   
       3.3:下载部署包文件
   
         3.3.1:下载jar包
     
-          wget https://github.com/doubleDimple/oci-start/releases/download/v-1.0.0/oci-start-release.jar
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.1/mfa-start-release.jar
       
         3.3.2:下载运行脚本
     
-          wget https://github.com/doubleDimple/oci-start/releases/download/v-1.0.0/oci-start.sh
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.1/mfa-start.sh
       
         3.3.3:下载配置文件模板
     
-          wget https://github.com/doubleDimple/oci-start/releases/download/v-1.0.0/oci-start.properties
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.1/mfa-start.properties
 
-四:配置说明:oci-start.properties文件里面的配置需要自行去修改,如果需要配置多个api进行通时创建实例,直接将  ###oracle抢机配置下的内容复制一份,将里面的user1全部修改为user2即可
-  以此类推,配置多个api
+四:配置说明:
  
-  ###基本配置
-
     #端口号 自行指定
     server.port=9087
 
@@ -68,7 +69,7 @@
     spring.freemarker.suffix=.ftl
 
     #不需要修改
-    spring.datasource.url=jdbc:h2:file:./mfa-start/otp_keys_db
+    spring.datasource.url=jdbc:h2:file:/root/mfa-start/data/otp_keys_db
 
     #不需要修改
     spring.datasource.driverClassName=org.h2.Driver
