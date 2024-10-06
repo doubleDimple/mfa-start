@@ -92,13 +92,13 @@
 五:启动
 
   5.1:给oci-start.sh 执行权限添加
-    chmod 777 oci-start.sh
+    chmod 777 mfa-start.sh
 
   5.2:启动程序
-    ./oci-start.sh start
+    ./mfa-start.sh start
 
   5.3:查看程序启动状态
-    ./oci-start.sh status
+    ./mfa-start.sh status
 
   5.4:停止程序
-    ./oci-start.sh stop
+    ./mfa-start.sh stop
