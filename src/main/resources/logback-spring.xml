@@ -18,7 +18,7 @@
     </appender>
 
     <!-- 配置日志级别 -->
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </root>

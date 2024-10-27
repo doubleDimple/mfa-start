@@ -206,7 +206,7 @@
         }
 
         function startCountdown(countdownElement) {
-            let countdown = 30;
+            let countdown = 60;
             countdownElement.textContent = countdown + 's';
 
             const interval = setInterval(() => {
@@ -297,7 +297,7 @@
                 element.addEventListener('click', toggleSecretKeyVisibility);
             });
             updateOtpCodes();
-            setInterval(updateOtpCodes, 30000);
+            setInterval(updateOtpCodes, 60000);
         };
 
 
@@ -369,7 +369,7 @@
                     <td class="otp-code" data-secret-key="${otpKey.secretKey!''}" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                         <span class="otp-value">Loading...</span>
                         <#--<div class="clock"></div>-->
-                        <span class="countdown">30s</span>
+                        <span class="countdown">60s</span>
                     </td>
                     <td>
                         <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">Delete</button>

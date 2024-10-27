@@ -6,6 +6,7 @@ import com.doubledimple.mfa.service.OTPKeyRepository;
 import com.doubledimple.mfa.utils.TOTPUtils;
 import com.google.zxing.WriterException;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,17 +57,8 @@ public class OTPService {
     }
 
     public String generateOtpCode(String secretKey) {
-        GoogleAuthenticator gAuth = new GoogleAuthenticator();
+        GoogleAuthenticator gAuth = new GoogleAuthenticator(new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder().setTimeStepSizeInMillis(60000).build());
         return String.valueOf(gAuth.getTotpPassword(secretKey));
-        /*try {
-            Base32 base32 = new Base32();
-            byte[] bytes = base32.decode(secretKey);
-            String hexKey = Hex.encodeHexString(bytes);
-            long timeWindow = System.currentTimeMillis() / 1000 / 30;
-            return TOTPUtils.generateTOTP(hexKey, String.valueOf(timeWindow), "6");
-        } catch (Exception e) {
-            throw new IllegalStateException("Error generating OTP code", e);
-        }*/
     }
 
     @Transactional
