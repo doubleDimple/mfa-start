@@ -19,6 +19,8 @@ public class OTPKey {
     @Column(name = "qrCode", length = 1024, nullable = true)
     private String qrCode;
 
+    private String issuer;
+
 
     public OTPKey() {
     }
@@ -59,6 +61,14 @@ public class OTPKey {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getIssuer() {
+        return issuer;
+    }
+
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
     }
 }
 

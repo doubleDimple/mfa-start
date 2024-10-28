@@ -270,6 +270,7 @@
         <thead>
         <tr>
             <th>Key Name</th>
+            <th>Key Issuer</th>
             <th>Secret Key</th>
             <th>QR Code</th>
             <th>OTP Code</th>
@@ -281,6 +282,7 @@
             <#list otpKeys as otpKey>
                 <tr>
                     <td>${otpKey.keyName}</td>
+                    <td>${otpKey.issuer}</td>
                     <td class="masked" data-secret-key="${otpKey.secretKey}">******</td>
                     <td class="qr-code">
                         <img src="data:image/png;base64,${otpKey.qrCode}"

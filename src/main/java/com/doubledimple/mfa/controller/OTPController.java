@@ -3,6 +3,8 @@ package com.doubledimple.mfa.controller;
 import com.doubledimple.mfa.entity.OTPKey;
 import com.doubledimple.mfa.service.impl.OTPService;
 import com.doubledimple.mfa.service.impl.QRCodeService;
+import com.doubledimple.mfa.utils.GoogleAuthDataParser;
+import com.doubledimple.mfa.utils.GoogleAuthMigration;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.Result;
@@ -10,6 +12,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,12 +25,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.doubledimple.mfa.utils.GoogleAuthDataParser.parseData;
 
 /**
  * @author doubleDimple
@@ -58,9 +62,13 @@ public class OTPController {
 
     // 保存密钥
     @PostMapping("/save-secret")
-    public String saveSecret(@RequestParam("keyName") String keyName, @RequestParam("secretKey") String secretKey,
+    public String saveSecret(@RequestParam("keyName") String keyName,
+                             @RequestParam(value ="secretKey", required = false) String secretKey,
                              @RequestParam(value = "qrCode", required = false) MultipartFile qrCode) {
         AtomicReference<String> finalSecretKey = new AtomicReference<>(secretKey);
+        List<OTPKey> otpKeys = new ArrayList<>();
+        List<Map<String, String>> accounts = new ArrayList<>();
+
         try {
         // 如果上传了二维码文件，则解析二维码
         if (qrCode != null && !qrCode.isEmpty()) {
@@ -77,6 +85,7 @@ public class OTPController {
 
             // 解析 otpauth:// URI
             String qrContent = result.getText();
+            log.info("qrCode text is: {}",qrContent);
             if (qrContent.startsWith("otpauth://")) {
                 URI uri = new URI(qrContent);
                 String query = uri.getQuery();
@@ -87,14 +96,41 @@ public class OTPController {
                         .ifPresent(secret -> {
                             finalSecretKey.set(secret.substring(7));// 去掉 "secret=" 前缀
                         });
+                // 验证 secretKey 不为空
+                if (finalSecretKey.get() == null || finalSecretKey.get().trim().isEmpty()) {
+                    throw new IllegalArgumentException("Secret key is required");
+                }
+
+                otpService.saveKey(new OTPKey(keyName, finalSecretKey.get()));
+
+            } else if (qrContent.startsWith("otpauth-migration://")) {
+
+                List<GoogleAuthDataParser.OtpParameters> otpParameters = parseData(qrContent);
+
+                for (GoogleAuthDataParser.OtpParameters account : otpParameters) {
+                    System.out.println("\nAccount:");
+                    System.out.println("Name: " + account.getName());
+                    System.out.println("Issuer: " + account.getIssuer());
+                    System.out.println("Secret: " + account.getSecretKey());
+                    System.out.println("Type: TOTP");
+                    System.out.println("Algorithm: SHA1");
+                    System.out.println("Digits: 6");
+
+                    OTPKey otpKey = new OTPKey();
+                    otpKey.setKeyName(account.getName());
+                    otpKey.setSecretKey(account.getSecretKey());
+                    if (account.getIssuer() == null){
+                        otpKey.setIssuer("无");
+                    }else {
+                        otpKey.setIssuer(account.getIssuer());
+                    }
+
+                    otpService.saveKey(otpKey);
+                }
+            } else {
             }
         }
-
-        // 验证 secretKey 不为空
-        if (finalSecretKey.get() == null || finalSecretKey.get().trim().isEmpty()) {
-            throw new IllegalArgumentException("Secret key is required");
-        }
-        otpService.saveKey(new OTPKey(keyName, finalSecretKey.get()));
+        log.info("result:{}",accounts);
         return "redirect:/";
     } catch (Exception e) {
         log.error("Error saving OTP key", e);
