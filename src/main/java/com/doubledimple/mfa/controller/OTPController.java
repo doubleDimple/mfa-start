@@ -3,8 +3,7 @@ package com.doubledimple.mfa.controller;
 import com.doubledimple.mfa.entity.OTPKey;
 import com.doubledimple.mfa.service.impl.OTPService;
 import com.doubledimple.mfa.service.impl.QRCodeService;
-import com.doubledimple.mfa.utils.GoogleAuthDataParser;
-import com.doubledimple.mfa.utils.GoogleAuthMigration;
+import com.doubledimple.mfa.utils.GoogleAuthMigrationParser;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.Result;
@@ -12,7 +11,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,13 +23,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.doubledimple.mfa.utils.GoogleAuthDataParser.parseData;
 
 /**
  * @author doubleDimple
@@ -105,20 +100,20 @@ public class OTPController {
 
             } else if (qrContent.startsWith("otpauth-migration://")) {
 
-                List<GoogleAuthDataParser.OtpParameters> otpParameters = parseData(qrContent);
+                List<GoogleAuthMigrationParser.OtpParameters> otpParameters = GoogleAuthMigrationParser.parseUri(qrContent);
 
-                for (GoogleAuthDataParser.OtpParameters account : otpParameters) {
-                    System.out.println("\nAccount:");
-                    System.out.println("Name: " + account.getName());
-                    System.out.println("Issuer: " + account.getIssuer());
-                    System.out.println("Secret: " + account.getSecretKey());
-                    System.out.println("Type: TOTP");
-                    System.out.println("Algorithm: SHA1");
-                    System.out.println("Digits: 6");
+                for (GoogleAuthMigrationParser.OtpParameters account : otpParameters) {
+                    if (log.isDebugEnabled()){
+                        log.info("\nAccount:");
+                        log.info("Name: " + account.getName());
+                        log.info("Issuer: " + account.getIssuer());
+                        log.info("Secret: " + account.getSecretInBase32());
+                        log.info("");
+                    }
 
                     OTPKey otpKey = new OTPKey();
                     otpKey.setKeyName(account.getName());
-                    otpKey.setSecretKey(account.getSecretKey());
+                    otpKey.setSecretKey(account.getSecretInBase32());
                     if (account.getIssuer() == null){
                         otpKey.setIssuer("无");
                     }else {

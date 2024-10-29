@@ -1,0 +1,12 @@
+server:
+  port: 9999
+
+spring:
+  security:
+    user:
+      name: admin
+      password: admin
+  datasource:
+    username: sa
+    password: password
+    url: jdbc:h2:file:./data/otp_keys_db

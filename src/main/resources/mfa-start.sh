@@ -1,7 +1,7 @@
 #!/bin/bash
 
 JAR_PATH="/root/mfa-start/mfa-start-release.jar"
-CONFIG_FILE="/root/mfa-start/mfa-start.properties"
+CONFIG_FILE="/root/mfa-start/mfa-start.yml"
 LOG_FILE="/dev/null"
 PID_FILE="mfa-start.pid"
 
@@ -22,7 +22,7 @@ start() {
   fi
 
   # 启动JAR包，指定外部配置文件，并将输出重定向到日志文件
-  nohup java -jar "$JAR_PATH" --spring.config.location="file:$CONFIG_FILE" > "$LOG_FILE" 2>&1 &
+  nohup java -jar "$JAR_PATH" --spring.config.additional-location="$CONFIG_FILE" > "$LOG_FILE" 2>&1 &
 
   # 获取PID并输出
   PID=$!
