@@ -20,74 +20,26 @@
   
         3.3.1:下载jar包
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.2/mfa-start-release.jar
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start-release.jar
       
         3.3.2:下载运行脚本
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.2/mfa-start.sh
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start.sh
       
         3.3.3:下载配置文件模板
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.2/mfa-start.properties
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start.yml
 
 四:配置说明:
  
-    #端口号 自行指定
-    server.port=9087
+    server:
+      port: 9999(修改为自己的端口号)
 
-    #页面登录用户名 自行指定
-    spring.security.user.name=页面登录用户名
-
-    #页面登录密码 自行指定
-    spring.security.user.password=页面登录密码
-
-    #不需要修改
-    spring.freemarker.template-loader-path=classpath:/templates/
-
-    #不需要修改
-    spring.freemarker.content-type=text/html
-
-    #不需要修改
-    spring.freemarker.cache=false
-
-    #不需要修改
-    spring.freemarker.charset=UTF-8
-
-    #不需要修改
-    spring.freemarker.check-template-location=true
-
-    #不需要修改
-    spring.freemarker.expose-request-attributes=false
-
-    #不需要修改
-    spring.freemarker.expose-session-attributes=false
-
-    #不需要修改
-    spring.freemarker.request-context-attribute=req
-
-    #不需要修改
-    spring.freemarker.suffix=.ftl
-
-    #不需要修改
-    spring.datasource.url=jdbc:h2:file:/root/mfa-start/data/otp_keys_db
-
-    #不需要修改
-    spring.datasource.driverClassName=org.h2.Driver
-
-    #数据库用户名 自行指定
-    spring.datasource.username=sa
-
-    #数据库密码 自行指定
-    spring.datasource.password=password
-
-    #不需要修改
-    spring.jpa.hibernate.ddl-auto=update
-
-    #不需要修改
-    spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-
-    #不需要修改
-    spring.h2.console.enabled=true
+    spring:
+      security:
+        user:
+          name: 面板登录用户名,自行指定
+          password: 面板登录密码,自行指定
 
 
 五:启动
