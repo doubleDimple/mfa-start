@@ -28,7 +28,7 @@
       
         3.3.3:下载配置文件模板
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start.yml
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start-release.yml
 
 四:配置说明:
  
