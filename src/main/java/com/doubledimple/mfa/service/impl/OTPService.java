@@ -43,6 +43,8 @@ public class OTPService {
 
     @Transactional
     public void saveKey(OTPKey otpKey) {
+
+        OTPKey otpKeyDb = otpKeyRepository.queryOTPKeyByKeyName(otpKey.getKeyName());
         String secretKey = otpKey.getSecretKey();
         String otpAuthUri = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s",
                 issuer, accountName, secretKey, issuer);
@@ -53,6 +55,9 @@ public class OTPService {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+        if (null != otpKeyDb){
+            otpKey.setId(otpKeyDb.getId());
         }
         otpKeyRepository.save(otpKey);
     }

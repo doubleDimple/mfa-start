@@ -1,6 +1,7 @@
 package com.doubledimple.mfa.controller;
 
 import com.doubledimple.mfa.entity.OTPKey;
+import com.doubledimple.mfa.service.OTPKeyRepository;
 import com.doubledimple.mfa.service.impl.OTPService;
 import com.doubledimple.mfa.service.impl.QRCodeService;
 import com.doubledimple.mfa.utils.GoogleAuthMigrationParser;
@@ -12,12 +13,15 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.criterion.Example;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
@@ -46,6 +50,9 @@ public class OTPController {
 
     @Autowired
     private QRCodeService qrCodeService;
+
+    @Resource
+    private OTPKeyRepository otpKeyRepository;
 
     // 显示主页
     @GetMapping("/")
@@ -124,8 +131,9 @@ public class OTPController {
                     }
                     otpService.saveKey(otpKey);
                 }
-            } else {
             }
+        }else {
+            otpService.saveKey(new OTPKey(keyName,secretKey));
         }
         log.info("result:{}",accounts);
         return "redirect:/";
