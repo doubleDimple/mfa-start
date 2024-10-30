@@ -11,6 +11,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -57,13 +59,14 @@ public class OTPController {
 
     // 保存密钥
     @PostMapping("/save-secret")
-    public String saveSecret(@RequestParam("keyName") String keyName,
+    public String saveSecret(@RequestParam(value ="keyName", required = false) String keyName,
                              @RequestParam(value ="secretKey", required = false) String secretKey,
                              @RequestParam(value = "qrCode", required = false) MultipartFile qrCode) {
         AtomicReference<String> finalSecretKey = new AtomicReference<>(secretKey);
-        List<OTPKey> otpKeys = new ArrayList<>();
         List<Map<String, String>> accounts = new ArrayList<>();
-
+        if(StringUtils.isEmpty(keyName)){
+            keyName = System.currentTimeMillis()+"";
+        }
         try {
         // 如果上传了二维码文件，则解析二维码
         if (qrCode != null && !qrCode.isEmpty()) {
@@ -115,11 +118,10 @@ public class OTPController {
                     otpKey.setKeyName(account.getName());
                     otpKey.setSecretKey(account.getSecretInBase32());
                     if (account.getIssuer() == null){
-                        otpKey.setIssuer("无");
+                        otpKey.setIssuer("mfa-start");
                     }else {
                         otpKey.setIssuer(account.getIssuer());
                     }
-
                     otpService.saveKey(otpKey);
                 }
             } else {

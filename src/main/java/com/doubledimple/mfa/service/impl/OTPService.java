@@ -41,6 +41,7 @@ public class OTPService {
         return otpKeyRepository.findAll();
     }
 
+    @Transactional
     public void saveKey(OTPKey otpKey) {
         String secretKey = otpKey.getSecretKey();
         String otpAuthUri = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s",
