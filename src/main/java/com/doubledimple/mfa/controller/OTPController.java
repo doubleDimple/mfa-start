@@ -105,22 +105,15 @@ public class OTPController {
                 if (finalSecretKey.get() == null || finalSecretKey.get().trim().isEmpty()) {
                     throw new IllegalArgumentException("Secret key is required");
                 }
-
-                otpService.saveKey(new OTPKey(keyName, finalSecretKey.get()));
+                OTPKey otpKey = new OTPKey(keyName, finalSecretKey.get());
+                otpKey.setIssuer("mfa-start");
+                otpService.saveKey(otpKey);
 
             } else if (qrContent.startsWith("otpauth-migration://")) {
 
                 List<GoogleAuthMigrationParser.OtpParameters> otpParameters = GoogleAuthMigrationParser.parseUri(qrContent);
-
+                List<OTPKey> otpKeys = new ArrayList<>();
                 for (GoogleAuthMigrationParser.OtpParameters account : otpParameters) {
-                    if (log.isDebugEnabled()){
-                        log.info("\nAccount:");
-                        log.info("Name: " + account.getName());
-                        log.info("Issuer: " + account.getIssuer());
-                        log.info("Secret: " + account.getSecretInBase32());
-                        log.info("");
-                    }
-
                     OTPKey otpKey = new OTPKey();
                     otpKey.setKeyName(account.getName());
                     otpKey.setSecretKey(account.getSecretInBase32());
@@ -129,17 +122,25 @@ public class OTPController {
                     }else {
                         otpKey.setIssuer(account.getIssuer());
                     }
-                    otpService.saveKey(otpKey);
+                    String otpAuthUri = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s",
+                            otpKey.getIssuer(), otpKey.getKeyName(), otpKey.getSecretKey(), otpKey.getIssuer());
+
+                    String qrCodeNew = qrCodeService.generateQRCodeImage(otpAuthUri);
+                    otpKey.setQrCode(qrCodeNew);
+                    otpKeys.add(otpKey);
                 }
+                otpService.saveListKey(otpKeys);
             }
         }else {
+            OTPKey otpKey = new OTPKey(keyName, secretKey);
+            otpKey.setIssuer("mfa-start");
             otpService.saveKey(new OTPKey(keyName,secretKey));
         }
         log.info("result:{}",accounts);
         return "redirect:/";
     } catch (Exception e) {
         log.error("Error saving OTP key", e);
-        return "redirect:/?error=" + URLEncoder.encode(e.getMessage());
+        return "redirect:/";
     }
     }
 

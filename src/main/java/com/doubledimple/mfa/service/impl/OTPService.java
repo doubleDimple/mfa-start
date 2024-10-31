@@ -84,4 +84,8 @@ public class OTPService {
         return otpKeyRepository.findAll(spec, pageable);
     }
 
+    @Transactional
+    public void saveListKey(List<OTPKey> otpKey) {
+        otpKeyRepository.saveAll(otpKey);
+    }
 }

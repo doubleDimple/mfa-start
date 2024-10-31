@@ -1,227 +1,57 @@
-2024-10-30 00:08:06 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s614ms).
-2024-10-30 00:17:51 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s326ms).
-2024-10-30 00:28:06 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s230ms).
-2024-10-30 00:37:51 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s717ms).
-2024-10-30 00:48:06 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s945ms).
-2024-10-30 00:58:21 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s720ms).
-2024-10-30 01:08:36 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s50ms).
-2024-10-30 01:18:17 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m40s817ms).
-2024-10-30 01:28:36 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m48s854ms).
-2024-10-30 01:38:20 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s27ms).
-2024-10-30 01:48:35 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s692ms).
-2024-10-30 01:58:50 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s467ms).
-2024-10-30 02:09:05 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s805ms).
-2024-10-30 02:18:50 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s956ms).
-2024-10-30 02:29:05 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s924ms).
-2024-10-30 02:39:19 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s680ms).
-2024-10-30 02:49:02 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s830ms).
-2024-10-30 02:59:19 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s845ms).
-2024-10-30 03:09:34 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s757ms).
-2024-10-30 03:19:16 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s420ms).
-2024-10-30 03:29:33 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m47s266ms).
-2024-10-30 03:39:22 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m48s205ms).
-2024-10-30 03:49:37 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s663ms).
-2024-10-30 03:59:55 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m48s137ms).
-2024-10-30 04:09:42 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s178ms).
-2024-10-30 04:19:56 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s874ms).
-2024-10-30 04:30:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s692ms).
-2024-10-30 04:39:54 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s911ms).
-2024-10-30 04:50:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s12ms).
-2024-10-30 05:00:26 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s938ms).
-2024-10-30 05:10:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s664ms).
-2024-10-30 05:20:26 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s29ms).
-2024-10-30 05:30:41 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s933ms).
-2024-10-30 05:40:25 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s177ms).
-2024-10-30 05:50:40 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s990ms).
-2024-10-30 06:00:52 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s56ms).
-2024-10-30 06:10:42 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m49s353ms).
-2024-10-30 06:20:58 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s649ms).
-2024-10-30 06:31:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m43s36ms).
-2024-10-30 06:40:55 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m43s893ms).
-2024-10-30 06:51:13 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s715ms).
-2024-10-30 07:01:28 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s97ms).
-2024-10-30 07:11:43 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s2ms).
-2024-10-30 07:21:28 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s869ms).
-2024-10-30 07:31:43 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s973ms).
-2024-10-30 07:41:31 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m47s598ms).
-2024-10-30 07:51:46 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s374ms).
-2024-10-30 08:02:01 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s912ms).
-2024-10-30 08:11:47 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s88ms).
-2024-10-30 08:22:02 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s919ms).
-2024-10-30 08:32:17 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s820ms).
-2024-10-30 08:42:02 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s649ms).
-2024-10-30 08:52:17 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s788ms).
-2024-10-30 09:02:32 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s966ms).
-2024-10-30 09:12:47 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s672ms).
-2024-10-30 09:22:31 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s865ms).
-2024-10-30 09:32:45 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m43s175ms).
-2024-10-30 09:42:30 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s939ms).
-2024-10-30 09:52:47 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s811ms).
-2024-10-30 10:03:02 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s878ms).
-2024-10-30 10:13:17 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s900ms).
-2024-10-30 10:23:05 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m48s198ms).
-2024-10-30 10:33:20 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s770ms).
-2024-10-30 10:43:05 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s924ms).
-2024-10-30 10:53:20 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s947ms).
-2024-10-30 11:03:34 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s770ms).
-2024-10-30 11:13:52 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m47s927ms).
-2024-10-30 11:23:35 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s878ms).
-2024-10-30 11:33:50 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s851ms).
-2024-10-30 11:43:35 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s472ms).
-2024-10-30 11:53:52 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s854ms).
-2024-10-30 12:04:06 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s590ms).
-2024-10-30 12:14:21 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s792ms).
-2024-10-30 12:24:06 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s743ms).
-2024-10-30 12:34:21 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s883ms).
-2024-10-30 12:44:08 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s985ms).
-2024-10-30 12:44:37 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Retrograde clock change detected (housekeeper delta=28s813ms), soft-evicting connections from pool.
-2024-10-30 12:54:27 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m50s87ms).
-2024-10-30 13:04:41 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s598ms).
-2024-10-30 13:14:56 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s659ms).
-2024-10-30 13:24:41 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s959ms).
-2024-10-30 13:34:56 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s914ms).
-2024-10-30 13:45:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s879ms).
-2024-10-30 13:54:56 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s930ms).
-2024-10-30 14:05:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s52ms).
-2024-10-30 14:15:26 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s807ms).
-2024-10-30 14:25:10 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s857ms).
-2024-10-30 14:35:23 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s674ms).
-2024-10-30 14:45:40 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s780ms).
-2024-10-30 14:55:25 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s732ms).
-2024-10-30 15:05:39 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s939ms).
-2024-10-30 15:15:58 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m48s125ms).
-2024-10-30 15:25:42 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s680ms).
-2024-10-30 15:35:57 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s12ms).
-2024-10-30 15:46:12 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s946ms).
-2024-10-30 15:55:57 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s87ms).
-2024-10-30 16:06:12 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s986ms).
-2024-10-30 16:16:27 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s987ms).
-2024-10-30 16:26:12 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s801ms).
-2024-10-30 16:36:27 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s492ms).
-2024-10-30 16:46:42 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s938ms).
-2024-10-30 16:56:24 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s736ms).
-2024-10-30 17:06:41 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s939ms).
-2024-10-30 17:16:56 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s825ms).
-2024-10-30 17:26:41 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s949ms).
-2024-10-30 17:36:56 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s904ms).
-2024-10-30 17:47:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s13ms).
-2024-10-30 17:56:56 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s824ms).
-2024-10-30 18:07:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s911ms).
-2024-10-30 18:17:26 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s927ms).
-2024-10-30 18:27:11 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s996ms).
-2024-10-30 18:37:23 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s690ms).
-2024-10-30 18:47:38 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s764ms).
-2024-10-30 18:57:25 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m47s12ms).
-2024-10-30 19:07:36 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m40s772ms).
-2024-10-30 19:17:54 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m48s562ms).
-2024-10-30 19:27:39 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m45s20ms).
-2024-10-30 19:37:54 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s829ms).
-2024-10-30 19:48:07 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s771ms).
-2024-10-30 19:57:52 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s614ms).
-2024-10-30 20:08:09 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s830ms).
-2024-10-30 20:18:23 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s590ms).
-2024-10-30 20:28:08 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s765ms).
-2024-10-30 20:38:21 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m42s861ms).
-2024-10-30 20:48:37 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s649ms).
-2024-10-30 20:58:22 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s877ms).
-2024-10-30 21:07:02 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=8m10s156ms).
-2024-10-30 22:16:20 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m46s379ms).
-2024-10-30 22:26:35 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m44s966ms).
-2024-10-30 22:35:15 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=8m40s342ms).
-2024-10-30 22:36:27 [http-nio-9999-exec-3] INFO  c.d.mfa.controller.OTPController - qrCode text is: otpauth-migration://offline?data=CjcKEP4eovjWG9YYu7W1FiKPyCISETEwMDQ5NDA3MjVAcXEuY29tGgplMDA0OTQwNzI1IAEoATACCjoKEMMomMAYRQdnMK/xhithGbsSE2xvdmVsZS5jbkBnbWFpbC5jb20aC2Zlcm5hbmRvdGJsIAEoATACCi8KFE2ovHvrdx2A3JFVcUxSXoUsBdAKEgZsb3ZlbGUaCVNwYWNlc2hpcCABKAEwAgo2Cgqx5lCaKX6nJvW6EhVtaXNub21tYXNpY0BnbWFpbC5jb20aC0JpbmFuY2UuY29tIAEoATACCkAKEEo/XpH3OwbB9c83ghKAcr4SF3Jlbnl1YW54aW4wMDFAZ21haWwuY29tGg1ld2FyZG9laHJsZWluIAEoATACCiYKFKNEo83H/I73mqAW8UDECjLthT4MEghyZWRvdHBheSABKAEwAgojChQxp5GWbjM1ghEebGcHRgPnpKkn1BIFdGhQYXkgASgBMAIKJAoKE6gixtdRrzFUuhIQc21zLWFjdGl2YXRlLm9yZyABKAEwAgoyChCwSapRadYxa9JSgjStuEuxEg5tb2thbmRlckBiay5ydRoIbW9rYW5kZXIgASgBMAIKNgoQuZYewwSl8gKRNsQ96ZB8gBISb2JqYm95QGhvdG1haWwuY29tGghtb2thbmRlciABKAEwAhACGAcgAA%3D%3D
-2024-10-30 22:36:27 [http-nio-9999-exec-3] INFO  c.d.mfa.controller.OTPController - result:[]
-2024-10-30 22:55:53 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-10-30 22:55:53 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2024-10-30 22:55:53 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2024-10-30 22:57:14 [main] WARN  o.s.boot.StartupInfoLogger - InetAddress.getLocalHost().getHostName() took 5002 milliseconds to respond. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
-2024-10-30 22:57:19 [main] WARN  o.s.boot.system.ApplicationPid - ManagementFactory.getRuntimeMXBean().getName() took 5002 milliseconds to respond. This may be due to slow host name resolution. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
-2024-10-30 22:57:19 [main] INFO  c.d.mfa.MfaStartApplication - Starting MfaStartApplication using Java 1.8.0_131 on MacBook-Pro.local with PID 43969 (/Users/renyuanxin/IdeaProjects/openSource/mfa-start/target/classes started by renyuanxin in /Users/renyuanxin/IdeaProjects/openSource/mfa-start)
-2024-10-30 22:57:19 [main] INFO  c.d.mfa.MfaStartApplication - The following 1 profile is active: "release"
-2024-10-30 22:57:20 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-10-30 22:57:20 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 54 ms. Found 1 JPA repository interfaces.
-2024-10-30 22:57:21 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 9999 (http)
-2024-10-30 22:57:21 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9999"]
-2024-10-30 22:57:21 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2024-10-30 22:57:21 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.69]
-2024-10-30 22:57:21 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2024-10-30 22:57:21 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1498 ms
-2024-10-30 22:57:21 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-10-30 22:57:21 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.14.Final
-2024-10-30 22:57:21 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-2024-10-30 22:57:21 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2024-10-30 22:57:22 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2024-10-30 22:57:22 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2024-10-30 22:57:22 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2024-10-30 22:57:22 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2024-10-30 22:57:23 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5e9f1a4c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4bf89d3d, org.springframework.security.web.context.SecurityContextPersistenceFilter@1f3aa970, org.springframework.security.web.header.HeaderWriterFilter@8e3449e, org.springframework.security.web.csrf.CsrfFilter@3a17acd4, org.springframework.security.web.authentication.logout.LogoutFilter@1f7fcec2, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@35840ecc, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5213b887, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@40c6d1ef, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@457b8fc3, org.springframework.security.web.session.SessionManagementFilter@3023f157, org.springframework.security.web.access.ExceptionTranslationFilter@5cdc8499, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7c68a63c]
-2024-10-30 22:57:23 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2024-10-30 22:57:23 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2024-10-30 22:57:24 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9999"]
-2024-10-30 22:57:24 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 9999 (http) with context path ''
-2024-10-30 22:57:24 [main] INFO  c.d.mfa.MfaStartApplication - Started MfaStartApplication in 25.135 seconds (JVM running for 30.749)
-2024-10-30 22:57:40 [http-nio-9999-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2024-10-30 22:57:40 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2024-10-30 22:57:40 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
-2024-10-30 23:06:22 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Retrograde clock change detected (housekeeper delta=29s865ms), soft-evicting connections from pool.
-2024-10-30 23:13:13 [main] WARN  o.s.boot.StartupInfoLogger - InetAddress.getLocalHost().getHostName() took 5002 milliseconds to respond. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
-2024-10-30 23:13:18 [main] WARN  o.s.boot.system.ApplicationPid - ManagementFactory.getRuntimeMXBean().getName() took 5002 milliseconds to respond. This may be due to slow host name resolution. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
-2024-10-30 23:13:18 [main] INFO  c.d.mfa.MfaStartApplication - Starting MfaStartApplication using Java 1.8.0_131 on MacBook-Pro.local with PID 44281 (/Users/renyuanxin/IdeaProjects/openSource/mfa-start/target/classes started by renyuanxin in /Users/renyuanxin/IdeaProjects/openSource/mfa-start)
-2024-10-30 23:13:18 [main] INFO  c.d.mfa.MfaStartApplication - The following 1 profile is active: "release"
-2024-10-30 23:13:18 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-10-30 23:13:19 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 43 ms. Found 1 JPA repository interfaces.
-2024-10-30 23:13:19 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 9999 (http)
-2024-10-30 23:13:19 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9999"]
-2024-10-30 23:13:19 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2024-10-30 23:13:19 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.69]
-2024-10-30 23:13:19 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2024-10-30 23:13:19 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1220 ms
-2024-10-30 23:13:19 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-10-30 23:13:19 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.14.Final
-2024-10-30 23:13:20 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-2024-10-30 23:13:20 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2024-10-30 23:13:20 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2024-10-30 23:13:20 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2024-10-30 23:13:20 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2024-10-30 23:13:20 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2024-10-30 23:13:21 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@438a2d3, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6fe9c048, org.springframework.security.web.context.SecurityContextPersistenceFilter@188ae8d2, org.springframework.security.web.header.HeaderWriterFilter@11174bf, org.springframework.security.web.csrf.CsrfFilter@446f3a53, org.springframework.security.web.authentication.logout.LogoutFilter@51e0f2eb, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@c7cf8c4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7a522157, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@706c062e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@54d46c8, org.springframework.security.web.session.SessionManagementFilter@4f0c1409, org.springframework.security.web.access.ExceptionTranslationFilter@3e0e0ba7, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@49338f3]
-2024-10-30 23:13:21 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2024-10-30 23:13:21 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2024-10-30 23:13:22 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9999"]
-2024-10-30 23:13:22 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 9999 (http) with context path ''
-2024-10-30 23:13:22 [main] INFO  c.d.mfa.MfaStartApplication - Started MfaStartApplication in 24.318 seconds (JVM running for 29.954)
-2024-10-30 23:13:23 [http-nio-9999-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2024-10-30 23:13:23 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2024-10-30 23:13:23 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2024-10-30 23:14:06 [http-nio-9999-exec-10] INFO  c.d.mfa.controller.OTPController - result:[]
-2024-10-30 23:14:53 [http-nio-9999-exec-2] INFO  c.d.mfa.controller.OTPController - result:[]
-2024-10-30 23:15:51 [main] WARN  o.s.boot.StartupInfoLogger - InetAddress.getLocalHost().getHostName() took 5002 milliseconds to respond. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
-2024-10-30 23:15:56 [main] WARN  o.s.boot.system.ApplicationPid - ManagementFactory.getRuntimeMXBean().getName() took 5003 milliseconds to respond. This may be due to slow host name resolution. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
-2024-10-30 23:15:56 [main] INFO  c.d.mfa.MfaStartApplication - Starting MfaStartApplication using Java 1.8.0_131 on MacBook-Pro.local with PID 44332 (/Users/renyuanxin/IdeaProjects/openSource/mfa-start/target/classes started by renyuanxin in /Users/renyuanxin/IdeaProjects/openSource/mfa-start)
-2024-10-30 23:15:56 [main] INFO  c.d.mfa.MfaStartApplication - The following 1 profile is active: "release"
-2024-10-30 23:15:56 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-10-30 23:15:56 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 41 ms. Found 1 JPA repository interfaces.
-2024-10-30 23:15:57 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 9999 (http)
-2024-10-30 23:15:57 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9999"]
-2024-10-30 23:15:57 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2024-10-30 23:15:57 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.69]
-2024-10-30 23:15:57 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2024-10-30 23:15:57 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1207 ms
-2024-10-30 23:15:57 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-10-30 23:15:57 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.14.Final
-2024-10-30 23:15:57 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-2024-10-30 23:15:58 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2024-10-30 23:15:58 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2024-10-30 23:15:58 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2024-10-30 23:15:58 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2024-10-30 23:15:58 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2024-10-30 23:15:59 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3c9971af, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4abdd5e, org.springframework.security.web.context.SecurityContextPersistenceFilter@52e92f6, org.springframework.security.web.header.HeaderWriterFilter@77ebc9e6, org.springframework.security.web.csrf.CsrfFilter@71f4aeb6, org.springframework.security.web.authentication.logout.LogoutFilter@476a2819, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@39403943, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@17034458, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3e0e0ba7, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@66d61298, org.springframework.security.web.session.SessionManagementFilter@2b82018, org.springframework.security.web.access.ExceptionTranslationFilter@372841d2, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@526fc044]
-2024-10-30 23:15:59 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2024-10-30 23:15:59 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2024-10-30 23:15:59 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9999"]
-2024-10-30 23:15:59 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 9999 (http) with context path ''
-2024-10-30 23:15:59 [main] INFO  c.d.mfa.MfaStartApplication - Started MfaStartApplication in 24.134 seconds (JVM running for 29.718)
-2024-10-30 23:16:07 [http-nio-9999-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2024-10-30 23:16:07 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2024-10-30 23:16:07 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
-2024-10-30 23:17:18 [http-nio-9999-exec-5] INFO  c.d.mfa.controller.OTPController - result:[]
-2024-10-30 23:17:18 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m19s678ms).
+2024-10-31 21:57:52 [main] WARN  o.s.boot.StartupInfoLogger - InetAddress.getLocalHost().getHostName() took 5001 milliseconds to respond. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
+2024-10-31 21:57:57 [main] WARN  o.s.boot.system.ApplicationPid - ManagementFactory.getRuntimeMXBean().getName() took 5002 milliseconds to respond. This may be due to slow host name resolution. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
+2024-10-31 21:57:57 [main] INFO  c.d.mfa.MfaStartApplication - Starting MfaStartApplication using Java 1.8.0_131 on MacBook-Pro.local with PID 6939 (/Users/renyuanxin/IdeaProjects/openSource/mfa-start/target/classes started by renyuanxin in /Users/renyuanxin/IdeaProjects/openSource/mfa-start)
+2024-10-31 21:57:57 [main] INFO  c.d.mfa.MfaStartApplication - The following 1 profile is active: "release"
+2024-10-31 21:57:58 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-31 21:57:58 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 52 ms. Found 1 JPA repository interfaces.
+2024-10-31 21:57:59 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 9999 (http)
+2024-10-31 21:57:59 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9999"]
+2024-10-31 21:57:59 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-10-31 21:57:59 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.69]
+2024-10-31 21:57:59 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-10-31 21:57:59 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1522 ms
+2024-10-31 21:57:59 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-31 21:57:59 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.14.Final
+2024-10-31 21:57:59 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2024-10-31 21:58:00 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-10-31 21:58:00 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-10-31 21:58:00 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2024-10-31 21:58:00 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2024-10-31 21:58:00 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-31 21:58:01 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@67cd84f9, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@52b891de, org.springframework.security.web.context.SecurityContextPersistenceFilter@3ec62141, org.springframework.security.web.header.HeaderWriterFilter@4b9ed99d, org.springframework.security.web.csrf.CsrfFilter@117069f2, org.springframework.security.web.authentication.logout.LogoutFilter@7341baa3, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@12eaa2cd, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@402c9a60, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7d43f1c9, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4ae6451d, org.springframework.security.web.session.SessionManagementFilter@39b95a80, org.springframework.security.web.access.ExceptionTranslationFilter@10ec4721, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@6fe9c048]
+2024-10-31 21:58:01 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-31 21:58:01 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2024-10-31 21:58:02 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9999"]
+2024-10-31 21:58:02 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 9999 (http) with context path ''
+2024-10-31 21:58:02 [main] INFO  c.d.mfa.MfaStartApplication - Started MfaStartApplication in 25.546 seconds (JVM running for 31.815)
+2024-10-31 21:59:45 [main] WARN  o.s.boot.StartupInfoLogger - InetAddress.getLocalHost().getHostName() took 5000 milliseconds to respond. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
+2024-10-31 21:59:50 [main] WARN  o.s.boot.system.ApplicationPid - ManagementFactory.getRuntimeMXBean().getName() took 5002 milliseconds to respond. This may be due to slow host name resolution. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
+2024-10-31 21:59:50 [main] INFO  c.d.mfa.MfaStartApplication - Starting MfaStartApplication using Java 1.8.0_131 on MacBook-Pro.local with PID 6988 (/Users/renyuanxin/IdeaProjects/openSource/mfa-start/target/classes started by renyuanxin in /Users/renyuanxin/IdeaProjects/openSource/mfa-start)
+2024-10-31 21:59:50 [main] INFO  c.d.mfa.MfaStartApplication - The following 1 profile is active: "release"
+2024-10-31 21:59:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-31 21:59:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 59 ms. Found 1 JPA repository interfaces.
+2024-10-31 21:59:51 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 9999 (http)
+2024-10-31 21:59:52 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9999"]
+2024-10-31 21:59:52 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-10-31 21:59:52 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.69]
+2024-10-31 21:59:52 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-10-31 21:59:52 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2346 ms
+2024-10-31 21:59:52 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-31 21:59:52 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.14.Final
+2024-10-31 21:59:53 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2024-10-31 21:59:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-10-31 21:59:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-10-31 21:59:53 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2024-10-31 21:59:53 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2024-10-31 21:59:53 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-31 21:59:54 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@79ee779c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@126a9a77, org.springframework.security.web.context.SecurityContextPersistenceFilter@91a1005, org.springframework.security.web.header.HeaderWriterFilter@10ba9780, org.springframework.security.web.csrf.CsrfFilter@49c13ecd, org.springframework.security.web.authentication.logout.LogoutFilter@63b58ff4, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@33837bd4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4a3bf37c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@48aaaed9, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@27a6384b, org.springframework.security.web.session.SessionManagementFilter@3494a35e, org.springframework.security.web.access.ExceptionTranslationFilter@65b680b4, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@12ebfb2d]
+2024-10-31 21:59:54 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-31 21:59:54 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2024-10-31 21:59:55 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9999"]
+2024-10-31 21:59:55 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 9999 (http) with context path ''
+2024-10-31 21:59:55 [main] INFO  c.d.mfa.MfaStartApplication - Started MfaStartApplication in 25.694 seconds (JVM running for 31.519)
+2024-10-31 22:00:16 [http-nio-9999-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-10-31 22:00:16 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-10-31 22:00:16 [http-nio-9999-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-10-31 22:00:32 [http-nio-9999-exec-8] INFO  c.d.mfa.controller.OTPController - qrCode text is: otpauth-migration://offline?data=CjcKEP4eovjWG9YYu7W1FiKPyCISETEwMDQ5NDA3MjVAcXEuY29tGgplMDA0OTQwNzI1IAEoATACCjoKEMMomMAYRQdnMK/xhithGbsSE2xvdmVsZS5jbkBnbWFpbC5jb20aC2Zlcm5hbmRvdGJsIAEoATACCi8KFE2ovHvrdx2A3JFVcUxSXoUsBdAKEgZsb3ZlbGUaCVNwYWNlc2hpcCABKAEwAgo2Cgqx5lCaKX6nJvW6EhVtaXNub21tYXNpY0BnbWFpbC5jb20aC0JpbmFuY2UuY29tIAEoATACCkAKEEo/XpH3OwbB9c83ghKAcr4SF3Jlbnl1YW54aW4wMDFAZ21haWwuY29tGg1ld2FyZG9laHJsZWluIAEoATACCiYKFKNEo83H/I73mqAW8UDECjLthT4MEghyZWRvdHBheSABKAEwAgojChQxp5GWbjM1ghEebGcHRgPnpKkn1BIFdGhQYXkgASgBMAIKJAoKE6gixtdRrzFUuhIQc21zLWFjdGl2YXRlLm9yZyABKAEwAgoyChCwSapRadYxa9JSgjStuEuxEg5tb2thbmRlckBiay5ydRoIbW9rYW5kZXIgASgBMAIKNgoQuZYewwSl8gKRNsQ96ZB8gBISb2JqYm95QGhvdG1haWwuY29tGghtb2thbmRlciABKAEwAhACGAcgAA%3D%3D
+2024-10-31 22:00:32 [http-nio-9999-exec-8] INFO  c.d.mfa.controller.OTPController - result:[]

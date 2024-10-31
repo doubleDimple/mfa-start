@@ -6,6 +6,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 /**
  * @author doubleDimple
@@ -34,5 +36,17 @@ public class SecurityConfig {
                 .permitAll();
 
         return http.build();
+    }
+
+    @Bean
+    public HttpFirewall allowUrlSemicolonHttpFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        // 允许分号
+        firewall.setAllowSemicolon(true);
+        // 如果需要,还可以允许其他字符
+        firewall.setAllowUrlEncodedSlash(true);  // 允许URL编码的斜杠
+        firewall.setAllowBackSlash(true);        // 允许反斜杠
+        firewall.setAllowUrlEncodedPercent(true);// 允许URL编码的百分号
+        return firewall;
     }
 }
