@@ -107,7 +107,10 @@ public class OTPController {
                 }
                 OTPKey otpKey = new OTPKey(keyName, finalSecretKey.get());
                 otpKey.setIssuer("mfa-start");
-                otpService.saveKey(otpKey);
+                OTPKey byKeyName = otpKeyRepository.findByKeyName(otpKey.getKeyName());
+                if (byKeyName == null){
+                    otpService.saveKey(otpKey);
+                }
 
             } else if (qrContent.startsWith("otpauth-migration://")) {
 
@@ -127,14 +130,23 @@ public class OTPController {
 
                     String qrCodeNew = qrCodeService.generateQRCodeImage(otpAuthUri);
                     otpKey.setQrCode(qrCodeNew);
-                    otpKeys.add(otpKey);
+                    OTPKey byKeyName = otpKeyRepository.findByKeyName(otpKey.getKeyName());
+                    if (byKeyName != null){
+                        otpKeys.add(byKeyName);
+                    }else {
+                        otpKeys.add(otpKey);
+                    }
+
                 }
                 otpService.saveListKey(otpKeys);
             }
         }else {
             OTPKey otpKey = new OTPKey(keyName, secretKey);
             otpKey.setIssuer("mfa-start");
-            otpService.saveKey(new OTPKey(keyName,secretKey));
+            OTPKey byKeyName = otpKeyRepository.findByKeyName(keyName);
+            if (byKeyName == null){
+                otpService.saveKey(new OTPKey(keyName,secretKey));
+            }
         }
         log.info("result:{}",accounts);
         return "redirect:/";

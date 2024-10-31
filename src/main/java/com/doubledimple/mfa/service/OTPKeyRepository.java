@@ -13,4 +13,6 @@ public interface OTPKeyRepository extends JpaRepository<OTPKey, Long>, JpaSpecif
     void deleteByKeyName(String keyName);
 
     OTPKey queryOTPKeyByKeyName(String keyName);
+
+    OTPKey findByKeyName(String keyName);
 }
