@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +44,11 @@ public class OTPService {
     @Autowired
     private QRCodeService qrCodeService;
 
-    private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
+    @Resource
+    private GoogleAuthService googleAuthService;
+
+    @Resource
+    private GoogleAuthenticatorDef googleAuthenticatorDef;
 
 
     public List<OTPKey> getAllKeys() {
@@ -72,8 +77,7 @@ public class OTPService {
     }
 
     public String generateOtpCode(String secretKey) {
-        int code = gAuth.getTotpPassword(secretKey);
-        return String.format("%06d", code);
+        return googleAuthenticatorDef.generateCode(secretKey);
     }
 
     @Transactional
