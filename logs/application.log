@@ -1,0 +1,26 @@
+2024-11-01 22:18:49 [main] WARN  o.s.boot.StartupInfoLogger - InetAddress.getLocalHost().getHostName() took 5003 milliseconds to respond. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
+2024-11-01 22:18:54 [main] WARN  o.s.boot.system.ApplicationPid - ManagementFactory.getRuntimeMXBean().getName() took 5001 milliseconds to respond. This may be due to slow host name resolution. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts).
+2024-11-01 22:18:54 [main] INFO  c.d.mfa.MfaStartApplication - Starting MfaStartApplication using Java 1.8.0_131 on MacBook-Pro.local with PID 13243 (/Users/renyuanxin/IdeaProjects/openSource/mfa-start/target/classes started by renyuanxin in /Users/renyuanxin/IdeaProjects/openSource/mfa-start)
+2024-11-01 22:18:54 [main] INFO  c.d.mfa.MfaStartApplication - The following 1 profile is active: "release"
+2024-11-01 22:18:55 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-01 22:18:55 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 40 ms. Found 1 JPA repository interfaces.
+2024-11-01 22:18:56 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 9999 (http)
+2024-11-01 22:18:56 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9999"]
+2024-11-01 22:18:56 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-01 22:18:56 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.69]
+2024-11-01 22:18:56 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-11-01 22:18:56 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1238 ms
+2024-11-01 22:18:56 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-01 22:18:56 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.14.Final
+2024-11-01 22:18:56 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2024-11-01 22:18:56 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-01 22:18:56 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-01 22:18:56 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2024-11-01 22:18:57 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2024-11-01 22:18:57 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-01 22:18:57 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@71eaef6a, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@e3692ca, org.springframework.security.web.context.SecurityContextPersistenceFilter@62e99458, org.springframework.security.web.header.HeaderWriterFilter@612bb755, org.springframework.security.web.csrf.CsrfFilter@5d75f90e, org.springframework.security.web.authentication.logout.LogoutFilter@20db19ff, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@2ae7c1d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1eddca25, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@22f057b4, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@75adb1c0, org.springframework.security.web.session.SessionManagementFilter@6ba226cd, org.springframework.security.web.access.ExceptionTranslationFilter@1ab21633, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@e4bb10b]
+2024-11-01 22:18:57 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-01 22:18:58 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2024-11-01 22:18:58 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9999"]
+2024-11-01 22:18:58 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 9999 (http) with context path ''
+2024-11-01 22:18:58 [main] INFO  c.d.mfa.MfaStartApplication - Started MfaStartApplication in 24.105 seconds (JVM running for 29.644)
