@@ -1,6 +1,9 @@
 package com.doubledimple.mfa.controller;
 
 import com.doubledimple.mfa.entity.OTPKey;
+import com.doubledimple.mfa.request.OtpBatchRequest;
+import com.doubledimple.mfa.response.OtpResponse;
+import com.doubledimple.mfa.response.OtpResponse2;
 import com.doubledimple.mfa.service.OTPKeyRepository;
 import com.doubledimple.mfa.service.impl.OTPService;
 import com.doubledimple.mfa.service.impl.QRCodeService;
@@ -16,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Example;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +47,10 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class OTPController {
 
-    @Autowired
+    @Resource
     private OTPService otpService;
 
-    @Autowired
+    @Resource
     private QRCodeService qrCodeService;
 
     @Resource
@@ -156,38 +161,34 @@ public class OTPController {
     // 生成 OTP 码
     @GetMapping("/generate-otp")
     @ResponseBody
-    public OtpResponse generateOtp(@RequestParam("secretKey") String secretKey) {
+    public OtpResponse2 generateOtp(@RequestParam("secretKey") String secretKey) {
         String otpCode = otpService.generateOtpCode(secretKey);
-        return new OtpResponse(otpCode);
+        return new OtpResponse2(otpCode);
+    }
+
+    // 生成 OTP 码
+    @PostMapping("/generate-otp-batch")
+    public ResponseEntity<List<OtpResponse>> generateOtpBatch(@RequestBody OtpBatchRequest request) {
+        try {
+            List<OtpResponse> otpResponses = otpService.generateOtpBatch(request.getSecretKeys());
+            return ResponseEntity.ok(otpResponses);
+        } catch (Exception e) {
+            log.error("Error generating OTP batch", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/delete-key")
     @ResponseBody
-    public OtpResponse deleteKey(@RequestBody Map<String, String> payload) {
+    public OtpResponse2 deleteKey(@RequestBody Map<String, String> payload) {
         String keyName = payload.get("keyName");
         if (keyName == null || keyName.isEmpty()) {
-            return new OtpResponse("keyName is null");
+            return new OtpResponse2("keyName is null");
         }
         otpService.deleteKey(keyName);
-        return new OtpResponse("OK");
+        return new OtpResponse2("OK");
     }
 
-    // 响应类
-    public static class OtpResponse {
-        private String otpCode;
-
-        public OtpResponse(String otpCode) {
-            this.otpCode = otpCode;
-        }
-
-        public String getOtpCode() {
-            return otpCode;
-        }
-
-        public void setOtpCode(String otpCode) {
-            this.otpCode = otpCode;
-        }
-    }
 
     @GetMapping("/export")
     public void exportToCSV(HttpServletResponse response) throws IOException {

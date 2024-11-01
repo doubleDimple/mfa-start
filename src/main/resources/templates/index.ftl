@@ -19,13 +19,11 @@
             min-height: 100vh;
         }
 
-        /* 布局容器 */
         .layout-container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* 侧边栏样式 */
         .sidebar {
             width: 280px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -91,7 +89,6 @@
             font-size: 20px;
         }
 
-        /* 主内容区 */
         .main-content {
             flex: 1;
             margin-left: 280px;
@@ -100,31 +97,6 @@
             background: #f4f7fe;
         }
 
-        /* 切换按钮 */
-        .toggle-sidebar {
-            position: fixed;
-            left: 280px;
-            top: 20px;
-            background: #764ba2;
-            color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 0 10px 10px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1001;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .toggle-sidebar:hover {
-            background: #667eea;
-        }
-
-        /* 卡片样式 */
         .card {
             background: white;
             border-radius: 20px;
@@ -145,7 +117,6 @@
             font-weight: 600;
         }
 
-        /* 表单元素样式 */
         .form-group {
             margin-bottom: 20px;
         }
@@ -173,7 +144,6 @@
             outline: none;
         }
 
-        /* 文件上传区域样式 */
         .file-upload {
             border: 2px dashed #e2e8f0;
             border-radius: 10px;
@@ -221,11 +191,6 @@
             border-radius: 8px;
         }
 
-        /* 搜索框样式 */
-        .search-form {
-            margin-bottom: 20px;
-        }
-
         #searchInput {
             width: 100%;
             padding: 12px 20px;
@@ -233,6 +198,7 @@
             border-radius: 10px;
             font-size: 14px;
             transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
 
         #searchInput:focus {
@@ -240,7 +206,6 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
         }
 
-        /* 表格样式 */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -265,7 +230,6 @@
             user-select: none;
         }
 
-        /* QR码样式 */
         .qr-code img {
             width: 50px;
             height: 50px;
@@ -277,7 +241,6 @@
             transform: scale(1.1);
         }
 
-        /* OTP代码样式 */
         .otp-code {
             display: flex;
             flex-direction: column;
@@ -292,124 +255,6 @@
             font-family: monospace;
         }
 
-        .countdown {
-            font-size: 12px;
-            color: #6c757d;
-        }
-
-        /* 按钮样式 */
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        /* 删除按钮样式 */
-        .delete-btn {
-            background-color: #dc3545;
-            padding: 6px 12px;
-            font-size: 14px;
-        }
-
-        .delete-btn:hover {
-            background-color: #c82333;
-        }
-
-        /* 空消息样式 */
-        .empty-message {
-            text-align: center;
-            padding: 20px;
-            color: #6c757d;
-            font-style: italic;
-        }
-
-        /* 遮罩层 */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            backdrop-filter: blur(2px);
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .toggle-sidebar {
-                display: flex;
-                left: 0;
-            }
-
-            .toggle-sidebar.active {
-                left: 280px;
-            }
-
-            .sidebar {
-                transform: translateX(-280px);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            th, td {
-                padding: 8px;
-                font-size: 14px;
-            }
-
-            .qr-code img {
-                width: 40px;
-                height: 40px;
-            }
-
-            table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .toggle-sidebar {
-                display: none;
-            }
-
-            .sidebar {
-                transform: none;
-            }
-
-            .main-content {
-                margin-left: 280px;
-            }
-
-            .overlay {
-                display: none !important;
-            }
-        }
-
-        /* 在原有样式的基础上添加 */
         .countdown-container {
             position: relative;
             width: 50px;
@@ -451,22 +296,62 @@
             stroke: #667eea;
         }
 
-        .paste-tip {
-            color: #718096;
-            margin-top: 10px;
-            font-size: 0.9em;
-            font-style: italic;
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .file-upload.dragover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-280px);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .qr-code img {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="layout-container">
-    <!-- 侧边栏 -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo-container">
@@ -488,53 +373,34 @@
         </nav>
     </aside>
 
-    <!-- 切换按钮 -->
-    <button class="toggle-sidebar">
-        ➡️
-    </button>
-
-    <!-- 遮罩层 -->
-    <div class="overlay"></div>
-
-    <!-- 主内容区 -->
     <main class="main-content">
-        <!-- 添加密钥卡片 -->
         <div class="card">
             <h2>Add New Key</h2>
             <form action="/save-secret" method="post" enctype="multipart/form-data" id="keyForm">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
                 <div class="form-group">
                     <label for="keyName">Key Name:</label>
-                    <input type="text" id="keyName" name="keyName" required
-                           placeholder="Enter a name for this key">
+                    <input type="text" id="keyName" name="keyName" required placeholder="Enter a name for this key">
                 </div>
-
                 <div class="form-group">
                     <label for="secretKey">Secret Key:</label>
-                    <input type="text" id="secretKey" name="secretKey" required
-                           placeholder="Enter secret key or upload QR code">
+                    <input type="text" id="secretKey" name="secretKey" required placeholder="Enter secret key or upload QR code">
                 </div>
-
                 <div class="file-upload" id="pasteZone">
                     <label class="file-upload-btn">
                         Upload QR Code
                         <input type="file" id="qrCode" name="qrCode" accept="image/*">
                     </label>
-                    <div class="paste-tip">Or paste the image directly (Ctrl+V) / drag the image here</div>
                     <div id="fileName">No file chosen</div>
                     <img id="previewImage" class="preview-image" alt="QR Code preview">
                 </div>
-
                 <button type="submit">Save Key</button>
             </form>
         </div>
 
-        <!-- 密钥列表卡片 -->
         <div class="card">
             <h2>Key Management</h2>
             <input type="text" id="searchInput" placeholder="Search keys..." onkeyup="searchKeys()">
-
             <table>
                 <thead>
                 <tr>
@@ -554,10 +420,8 @@
                             <td>${otpKey.issuer!'default'}</td>
                             <td class="masked" data-secret-key="${otpKey.secretKey}">******</td>
                             <td class="qr-code">
-                                <img src="data:image/png;base64,${otpKey.qrCode}"
-                                     alt="QR Code" onclick="enlargeQrCode(this)">
+                                <img src="data:image/png;base64,${otpKey.qrCode}" alt="QR Code" onclick="enlargeQrCode(this)">
                             </td>
-                            <!-- 找到 OTP Code 这一列，将其改为： -->
                             <td class="otp-code" data-secret-key="${otpKey.secretKey!''}">
                                 <span class="otp-value">Loading...</span>
                                 <div class="countdown-container">
@@ -585,23 +449,105 @@
 </div>
 
 <script>
-    // 侧边栏控制
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const toggleBtn = document.querySelector('.toggle-sidebar');
-    const overlay = document.querySelector('.overlay');
+    // 全局变量
+    let globalUpdateTimer = null;
 
-    function toggleSidebar() {
-        if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('active');
-            toggleBtn.classList.toggle('active');
-            overlay.classList.toggle('active');
-            toggleBtn.innerHTML = sidebar.classList.contains('active') ? '⬅️' : '➡️';
+    // OTP代码批量更新函数
+    async function updateOtpCodes() {
+        const otpElements = document.querySelectorAll('.otp-code');
+        if (otpElements.length === 0) return;
+
+        const secretKeys = Array.from(otpElements)
+            .map(element => element.getAttribute('data-secret-key'))
+            .filter(key => key && key.trim() !== '');
+
+        try {
+            const csrfToken = document.querySelector('input[name="${_csrf.parameterName}"]').value;
+            const response = await fetch('/generate-otp-batch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ secretKeys })
+            });
+
+            if (!response.ok) {
+                throw new Error('HTTP error! status: ' + response.status);
+            }
+
+            const otpResponses = await response.json();
+
+            // 使用Map来存储secretKey到otpCode的映射
+            const otpMap = new Map(
+                otpResponses.map(response => [response.secretKey, response.otpCode])
+            );
+
+            // 更新每个OTP显示
+            otpElements.forEach(element => {
+                const secretKey = element.getAttribute('data-secret-key');
+                const otpValueElement = element.querySelector('.otp-value');
+                if (otpValueElement) {
+                    otpValueElement.textContent = otpMap.get(secretKey) || 'Error';
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching OTP codes:', error);
+            otpElements.forEach(element => {
+                const otpValueElement = element.querySelector('.otp-value');
+                if (otpValueElement) {
+                    otpValueElement.textContent = 'Error';
+                }
+            });
         }
     }
 
-    toggleBtn.addEventListener('click', toggleSidebar);
-    overlay.addEventListener('click', toggleSidebar);
+    // 统一的倒计时处理函数
+    function initializeCountdown() {
+        const updateAllCircles = () => {
+            const FULL_DASH_ARRAY = 2 * Math.PI * 22;
+            const timeLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
+
+            document.querySelectorAll('.otp-code').forEach(element => {
+                const numberElement = element.querySelector('.countdown-number');
+                const circle = element.querySelector('.progress-circle');
+
+                if (numberElement && circle) {
+                    const progress = (timeLeft / 30) * FULL_DASH_ARRAY;
+                    circle.style.strokeDasharray = FULL_DASH_ARRAY;
+                    circle.style.strokeDashoffset = FULL_DASH_ARRAY - progress;
+                    numberElement.textContent = timeLeft;
+                }
+            });
+
+            // 当倒计时到达0时更新所有 OTP 码
+            if (timeLeft === 30) {
+                updateOtpCodes();
+            }
+        };
+
+        // 清除可能存在的旧计时器
+        if (globalUpdateTimer) {
+            clearInterval(globalUpdateTimer);
+        }
+
+        // 立即执行一次
+        updateAllCircles();
+        // 设置新的计时器
+        globalUpdateTimer = setInterval(updateAllCircles, 1000);
+    }
+
+    // 搜索功能
+    function searchKeys() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const keyName = row.querySelector('td:first-child')?.textContent.toLowerCase();
+            const shouldShow = keyName && keyName.includes(searchTerm);
+            row.style.display = shouldShow ? '' : 'none';
+        });
+    }
 
     // 文件上传处理
     document.getElementById('qrCode').addEventListener('change', function(e) {
@@ -624,59 +570,16 @@
         }
     });
 
-    // 搜索功能
-    // 搜索功能
-    function searchKeys() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            const keyName = row.querySelector('td:first-child')?.textContent.toLowerCase();
-            const shouldShow = keyName && keyName.includes(searchTerm);
-            row.style.display = shouldShow ? '' : 'none';
-        });
-    }
-
-    // OTP代码更新
-    async function updateOtpCodes() {
-        const otpElements = document.querySelectorAll('.otp-code');
-        if (otpElements.length === 0) return;
-
-        for (const element of otpElements) {
-            const secretKey = element.getAttribute('data-secret-key');
-            if (secretKey && secretKey.trim() !== '') {
-                try {
-                    const response = await fetch('/generate-otp?secretKey=' + encodeURIComponent(secretKey));
-                    if (!response.ok) {
-                        throw new Error('HTTP error! status: ' + response.status);
-                    }
-                    const data = await response.json();
-                    const otpValueElement = element.querySelector('.otp-value');
-                    if (otpValueElement) {
-                        otpValueElement.textContent = data.otpCode;
-                    }
-                } catch (error) {
-                    console.error('Error fetching OTP code:', error);
-                    const otpValueElement = element.querySelector('.otp-value');
-                    if (otpValueElement) {
-                        otpValueElement.textContent = 'Error';
-                    }
-                }
-            }
-        }
-    }
-
-
-
     // 密钥显示切换
-    function toggleSecretKeyVisibility(event) {
-        const element = event.target;
-        if (element.textContent === '******') {
-            element.textContent = element.getAttribute('data-secret-key');
-        } else {
-            element.textContent = '******';
-        }
-    }
+    document.querySelectorAll('.masked').forEach(element => {
+        element.addEventListener('click', function() {
+            if (this.textContent === '******') {
+                this.textContent = this.getAttribute('data-secret-key');
+            } else {
+                this.textContent = '******';
+            }
+        });
+    });
 
     // 删除密钥
     async function deleteKey(keyName) {
@@ -734,145 +637,19 @@
     }
 
     // 页面初始化
-    // 页面初始化
     window.addEventListener('load', () => {
-        // 先获取一次验证码
+        // 初始化时获取一次 OTP 码
         updateOtpCodes();
-
-        // 启动倒计时
-        document.querySelectorAll('.otp-code').forEach(element => {
-            startCountdown(element);
-        });
-
-        // 其他事件监听...
-        document.querySelectorAll('.masked').forEach(element => {
-            element.addEventListener('click', toggleSecretKeyVisibility);
-        });
+        // 启动统一的倒计时
+        initializeCountdown();
     });
 
-    // 添加到现有 script 标签中
-    // 粘贴处理
-    document.addEventListener('paste', function(event) {
-        const items = event.clipboardData.items;
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') !== -1) {
-                const file = items[i].getAsFile();
-                handleImageFile(file);
-                break;
-            }
+    // 页面卸载时清理
+    window.addEventListener('beforeunload', () => {
+        if (globalUpdateTimer) {
+            clearInterval(globalUpdateTimer);
         }
     });
-
-    // 拖拽处理
-    const pasteZone = document.getElementById('pasteZone');
-
-    pasteZone.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.add('dragover');
-    });
-
-    pasteZone.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.remove('dragover');
-    });
-
-    pasteZone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.remove('dragover');
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type.indexOf('image') !== -1) {
-            handleImageFile(files[0]);
-        }
-    });
-
-    function handleImageFile(file) {
-        document.getElementById('fileName').textContent = file.name || 'Pasted image';
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('previewImage');
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-        }
-        reader.readAsDataURL(file);
-
-        const fileInput = document.getElementById('qrCode');
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
-
-        document.getElementById('secretKey').value = '';
-        document.getElementById('secretKey').readOnly = true;
-    }
-
-    // 修改倒计时函数
-    function startCountdown(element) {
-        const numberElement = element.querySelector('.countdown-number');
-        const circle = element.querySelector('.progress-circle');
-        const FULL_DASH_ARRAY = 2 * Math.PI * 22;
-
-        // 获取当前的时间点对应的剩余秒数
-        let timeLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
-        let lastTimeLeft = timeLeft; // 记录上一次的时间，用于检测是否到达0
-
-        circle.style.strokeDasharray = FULL_DASH_ARRAY;
-
-        // 清除之前的定时器
-        if (element._countdownTimer) {
-            clearInterval(element._countdownTimer);
-        }
-
-        async function updateProgress() {
-            // 更新上一次的时间
-            lastTimeLeft = timeLeft;
-            // 计算剩余时间
-            timeLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
-
-            const progress = (timeLeft / 30) * FULL_DASH_ARRAY;
-            circle.style.strokeDashoffset = FULL_DASH_ARRAY - progress;
-            numberElement.textContent = timeLeft;
-
-            // 检测是否经过了0点（从29秒到0秒的转换）
-            if (lastTimeLeft < timeLeft) {
-                await updateOtpCodes(); // 请求新的验证码
-            }
-        }
-
-        // 立即开始倒计时
-        updateProgress();
-
-        // 设置定时器，每秒更新
-        element._countdownTimer = setInterval(updateProgress, 1000);
-
-        // 额外确保每30秒调用一次
-        if (!window._globalOtpTimer) {
-            window._globalOtpTimer = setInterval(updateOtpCodes, 30000);
-        }
-    }
-
-    // 页面加载时初始化
-    window.addEventListener('load', () => {
-        // 先获取一次验证码
-        updateOtpCodes();
-
-        // 启动倒计时
-        document.querySelectorAll('.otp-code').forEach(element => {
-            startCountdown(element);
-        });
-
-        // 清理函数
-        window.addEventListener('beforeunload', () => {
-            if (window._globalOtpTimer) {
-                clearInterval(window._globalOtpTimer);
-            }
-        });
-    });
-
-
-
 </script>
 </body>
 </html>
