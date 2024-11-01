@@ -42,9 +42,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class OTPController {
 
-    String issuer = "mfa-start";
-    String accountName = "user@example.com";
-
     @Autowired
     private OTPService otpService;
 
@@ -107,7 +104,7 @@ public class OTPController {
                 }
                 OTPKey otpKey = new OTPKey(keyName, finalSecretKey.get());
                 otpKey.setIssuer("mfa-start");
-                OTPKey byKeyName = otpKeyRepository.findByKeyName(otpKey.getKeyName());
+                OTPKey byKeyName = otpKeyRepository.findBySecretKey(otpKey.getSecretKey());
                 if (byKeyName == null){
                     otpService.saveKey(otpKey);
                 }
@@ -130,7 +127,7 @@ public class OTPController {
 
                     String qrCodeNew = qrCodeService.generateQRCodeImage(otpAuthUri);
                     otpKey.setQrCode(qrCodeNew);
-                    OTPKey byKeyName = otpKeyRepository.findByKeyName(otpKey.getKeyName());
+                    OTPKey byKeyName = otpKeyRepository.findBySecretKey(otpKey.getSecretKey());
                     if (byKeyName != null){
                         otpKeys.add(byKeyName);
                     }else {

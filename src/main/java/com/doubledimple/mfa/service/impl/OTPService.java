@@ -37,6 +37,9 @@ public class OTPService {
     @Autowired
     private QRCodeService qrCodeService;
 
+    private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
+
+
     public List<OTPKey> getAllKeys() {
         return otpKeyRepository.findAll();
     }
@@ -63,8 +66,8 @@ public class OTPService {
     }
 
     public String generateOtpCode(String secretKey) {
-        GoogleAuthenticator gAuth = new GoogleAuthenticator(new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder().setTimeStepSizeInMillis(60000).build());
-        return String.valueOf(gAuth.getTotpPassword(secretKey));
+        int code = gAuth.getTotpPassword(secretKey);
+        return String.format("%06d", code);
     }
 
     @Transactional

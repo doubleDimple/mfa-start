@@ -4,86 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Key Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f4;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f7fe;
+            min-height: 100vh;
+        }
+
+        /* 布局容器 */
+        .layout-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            min-height: 100vh;
         }
 
-        .container {
-            width: 90%;
-            max-width: 800px;
-            background: #fff;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            transition: all 0.3s ease;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        h1, h2 {
+        .sidebar-header {
+            padding: 30px 20px;
             text-align: center;
-            color: #333;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-container {
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .logo span {
+            font-size: 24px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin: 4px 8px;
+            border-radius: 10px;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            background: #f4f7fe;
+        }
+
+        /* 切换按钮 */
+        .toggle-sidebar {
+            position: fixed;
+            left: 280px;
+            top: 20px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-sidebar:hover {
+            background: #667eea;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+        .card h2 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* 表单元素样式 */
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .add-key-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
         label {
+            display: block;
+            color: #4a5568;
+            font-size: 14px;
             font-weight: 500;
-            color: #555;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            outline: none;
-            transition: border-color 0.3s;
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
         input[type="text"]:focus {
-            border-color: #007bff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
         }
 
+        /* 文件上传区域样式 */
         .file-upload {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 15px;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
             text-align: center;
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
+            margin: 15px 0;
+            background: #f8fafc;
         }
 
         .file-upload:hover {
-            border-color: #007bff;
+            border-color: #667eea;
         }
 
         .file-upload input[type="file"] {
@@ -92,22 +193,23 @@
 
         .file-upload-btn {
             display: inline-block;
-            padding: 8px 16px;
-            background-color: #e9ecef;
-            color: #495057;
-            border-radius: 4px;
+            padding: 10px 20px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            color: #4a5568;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .file-upload-btn:hover {
-            background-color: #dde2e6;
+            background: #cbd5e0;
         }
 
         .file-name {
-            color: #6c757d;
+            color: #718096;
+            margin-top: 10px;
             font-size: 0.9em;
-            margin-top: 5px;
         }
 
         .preview-image {
@@ -115,29 +217,29 @@
             max-height: 150px;
             margin: 10px auto 0;
             display: none;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
 
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
+        /* 搜索框样式 */
         .search-form {
-            margin: 20px 0;
+            margin-bottom: 20px;
         }
 
+        #searchInput {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        /* 表格样式 */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -162,6 +264,7 @@
             user-select: none;
         }
 
+        /* QR码样式 */
         .qr-code img {
             width: 50px;
             height: 50px;
@@ -173,6 +276,7 @@
             transform: scale(1.1);
         }
 
+        /* OTP代码样式 */
         .otp-code {
             display: flex;
             flex-direction: column;
@@ -192,6 +296,24 @@
             color: #6c757d;
         }
 
+        /* 按钮样式 */
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 删除按钮样式 */
         .delete-btn {
             background-color: #dc3545;
             padding: 6px 12px;
@@ -202,6 +324,7 @@
             background-color: #c82333;
         }
 
+        /* 空消息样式 */
         .empty-message {
             text-align: center;
             padding: 20px;
@@ -209,10 +332,45 @@
             font-style: italic;
         }
 
+        /* 遮罩层 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(2px);
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* 响应式设计 */
         @media (max-width: 768px) {
-            .container {
-                width: 95%;
-                padding: 15px;
+            .toggle-sidebar {
+                display: flex;
+                left: 0;
+            }
+
+            .toggle-sidebar.active {
+                left: 280px;
+            }
+
+            .sidebar {
+                transform: translateX(-280px);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
             }
 
             th, td {
@@ -224,96 +382,169 @@
                 width: 40px;
                 height: 40px;
             }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .toggle-sidebar {
+                display: none;
+            }
+
+            .sidebar {
+                transform: none;
+            }
+
+            .main-content {
+                margin-left: 280px;
+            }
+
+            .overlay {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>OTP Key Management</h1>
-
-    <div class="add-key-section">
-        <h2>Add New Key</h2>
-        <form action="/save-secret" method="post" enctype="multipart/form-data" id="keyForm">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
-            <div class="form-group">
-                <label for="keyName">Key Name:</label>
-                <input type="text" id="keyName" name="keyName" required
-                       placeholder="Enter a name for this key">
+<div class="layout-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo">
+                    <span>🔐</span>
+                </div>
+                <h2>OTP Management</h2>
             </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <i>🔑</i>
+                MFA Management
+            </a>
+            <a href="#" class="menu-item">
+                <i>⚙️</i>
+                System Settings
+            </a>
+        </nav>
+    </aside>
 
-            <div class="form-group">
-                <label for="secretKey">Secret Key:</label>
-                <input type="text" id="secretKey" name="secretKey" required
-                       placeholder="Enter secret key or upload QR code">
-            </div>
+    <!-- 切换按钮 -->
+    <button class="toggle-sidebar">
+        ➡️
+    </button>
 
-            <div class="file-upload">
-                <label class="file-upload-btn">
-                    Upload QR Code
-                    <input type="file" id="qrCode" name="qrCode" accept="image/*">
-                </label>
-                <div class="file-name" id="fileName">No file chosen</div>
-                <img id="previewImage" class="preview-image" alt="QR Code preview">
-            </div>
+    <!-- 遮罩层 -->
+    <div class="overlay"></div>
 
-            <button type="submit">Save Key</button>
-        </form>
-    </div>
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 添加密钥卡片 -->
+        <div class="card">
+            <h2>Add New Key</h2>
+            <form action="/save-secret" method="post" enctype="multipart/form-data" id="keyForm">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-    <div class="search-form">
-        <input type="text" id="searchInput" onkeyup="searchKeys()"
-               placeholder="Search keys by name...">
-    </div>
+                <div class="form-group">
+                    <label for="keyName">Key Name:</label>
+                    <input type="text" id="keyName" name="keyName" required
+                           placeholder="Enter a name for this key">
+                </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Key Name</th>
-            <th>Key Issuer</th>
-            <th>Secret Key</th>
-            <th>QR Code</th>
-            <th>OTP Code</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <#if otpKeys?? && (otpKeys?size > 0)>
-            <#list otpKeys as otpKey>
+                <div class="form-group">
+                    <label for="secretKey">Secret Key:</label>
+                    <input type="text" id="secretKey" name="secretKey" required
+                           placeholder="Enter secret key or upload QR code">
+                </div>
+
+                <div class="file-upload">
+                    <label class="file-upload-btn">
+                        Upload QR Code
+                        <input type="file" id="qrCode" name="qrCode" accept="image/*">
+                    </label>
+                    <div id="fileName">No file chosen</div>
+                    <img id="previewImage" class="preview-image" alt="QR Code preview">
+                </div>
+
+                <button type="submit">Save Key</button>
+            </form>
+        </div>
+
+        <!-- 密钥列表卡片 -->
+        <div class="card">
+            <h2>Key Management</h2>
+            <input type="text" id="searchInput" placeholder="Search keys..." onkeyup="searchKeys()">
+
+            <table>
+                <thead>
                 <tr>
-                    <td>${otpKey.keyName}</td>
-                    <td>${otpKey.issuer!'default'}</td>
-                    <td class="masked" data-secret-key="${otpKey.secretKey}">******</td>
-                    <td class="qr-code">
-                        <img src="data:image/png;base64,${otpKey.qrCode}"
-                             alt="QR Code" onclick="enlargeQrCode(this)">
-                    </td>
-                    <td class="otp-code" data-secret-key="${otpKey.secretKey!''}">
-                        <span class="otp-value">Loading...</span>
-                        <span class="countdown">60s</span>
-                    </td>
-                    <td>
-                        <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">Delete</button>
-                    </td>
+                    <th>Key Name</th>
+                    <th>Key Issuer</th>
+                    <th>Secret Key</th>
+                    <th>QR Code</th>
+                    <th>OTP Code</th>
+                    <th>Actions</th>
                 </tr>
-            </#list>
-        <#else>
-            <tr>
-                <td colspan="5" class="empty-message">No OTP keys available</td>
-            </tr>
-        </#if>
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                <#if otpKeys?? && (otpKeys?size > 0)>
+                    <#list otpKeys as otpKey>
+                        <tr>
+                            <td>${otpKey.keyName}</td>
+                            <td>${otpKey.issuer!'default'}</td>
+                            <td class="masked" data-secret-key="${otpKey.secretKey}">******</td>
+                            <td class="qr-code">
+                                <img src="data:image/png;base64,${otpKey.qrCode}"
+                                     alt="QR Code" onclick="enlargeQrCode(this)">
+                            </td>
+                            <td class="otp-code" data-secret-key="${otpKey.secretKey!''}">
+                                <span class="otp-value">Loading...</span>
+                                <span class="countdown">60s</span>
+                            </td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">Delete</button>
+                            </td>
+                        </tr>
+                    </#list>
+                <#else>
+                    <tr>
+                        <td colspan="6" style="text-align: center">No OTP keys available</td>
+                    </tr>
+                </#if>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </div>
 
 <script>
+    // 侧边栏控制
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const toggleBtn = document.querySelector('.toggle-sidebar');
+    const overlay = document.querySelector('.overlay');
+
+    function toggleSidebar() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('active');
+            toggleBtn.classList.toggle('active');
+            overlay.classList.toggle('active');
+            toggleBtn.innerHTML = sidebar.classList.contains('active') ? '⬅️' : '➡️';
+        }
+    }
+
+    toggleBtn.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', toggleSidebar);
+
+    // 文件上传处理
     document.getElementById('qrCode').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
-            // 更新文件名显示
             document.getElementById('fileName').textContent = file.name;
-
-            // 显示预览图
             const reader = new FileReader();
             reader.onload = function(e) {
                 const preview = document.getElementById('previewImage');
@@ -321,32 +552,29 @@
                 preview.style.display = 'block';
             }
             reader.readAsDataURL(file);
-
-            // 禁用 secretKey 输入
             document.getElementById('secretKey').value = '';
             document.getElementById('secretKey').readOnly = true;
         } else {
-            // 重置显示
             document.getElementById('fileName').textContent = 'No file chosen';
             document.getElementById('previewImage').style.display = 'none';
             document.getElementById('secretKey').readOnly = false;
         }
     });
 
-    // 保留原有的函数...
+    // 搜索功能
+    // 搜索功能
     function searchKeys() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const rows = document.querySelectorAll('tbody tr');
+
         rows.forEach(row => {
-            const keyName = row.querySelector('td:first-child').textContent.toLowerCase();
-            if (keyName.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+            const keyName = row.querySelector('td:first-child')?.textContent.toLowerCase();
+            const shouldShow = keyName && keyName.includes(searchTerm);
+            row.style.display = shouldShow ? '' : 'none';
         });
     }
 
+    // OTP代码更新
     async function updateOtpCodes() {
         const otpElements = document.querySelectorAll('.otp-code');
         if (otpElements.length === 0) return;
@@ -355,33 +583,45 @@
             const secretKey = element.getAttribute('data-secret-key');
             if (secretKey && secretKey.trim() !== '') {
                 try {
-                    const response = await fetch('/generate-otp?secretKey=' + secretKey);
+                    const response = await fetch('/generate-otp?secretKey=' + encodeURIComponent(secretKey));
                     if (!response.ok) {
                         throw new Error('HTTP error! status: ' + response.status);
                     }
                     const data = await response.json();
-                    element.querySelector('.otp-value').textContent = data.otpCode;
-                    startCountdown(element.querySelector('.countdown'));
+                    const otpValueElement = element.querySelector('.otp-value');
+                    if (otpValueElement) {
+                        otpValueElement.textContent = data.otpCode;
+                        startCountdown(element.querySelector('.countdown'));
+                    }
                 } catch (error) {
                     console.error('Error fetching OTP code:', error);
+                    const otpValueElement = element.querySelector('.otp-value');
+                    if (otpValueElement) {
+                        otpValueElement.textContent = 'Error';
+                    }
                 }
             }
         }
     }
 
+    // 倒计时功能
     function startCountdown(countdownElement) {
+        if (!countdownElement) return;
+
         let countdown = 60;
         countdownElement.textContent = countdown + 's';
 
         const interval = setInterval(() => {
             countdown--;
-            countdownElement.textContent = countdown + 's';
-            if (countdown === 0) {
+            if (countdown >= 0) {
+                countdownElement.textContent = countdown + 's';
+            } else {
                 clearInterval(interval);
             }
         }, 1000);
     }
 
+    // 密钥显示切换
     function toggleSecretKeyVisibility(event) {
         const element = event.target;
         if (element.textContent === '******') {
@@ -391,6 +631,7 @@
         }
     }
 
+    // 删除密钥
     async function deleteKey(keyName) {
         if (confirm('Are you sure you want to delete the key ' + keyName + '?')) {
             try {
@@ -401,11 +642,13 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken
                     },
-                    body: JSON.stringify({ keyName: keyName }),
+                    body: JSON.stringify({ keyName: keyName })
                 });
+
                 if (!response.ok) {
                     throw new Error('HTTP error! status: ' + response.status);
                 }
+
                 location.reload();
             } catch (error) {
                 console.error('Error deleting key:', error);
@@ -414,6 +657,7 @@
         }
     }
 
+    // QR码放大显示
     function enlargeQrCode(imgElement) {
         const enlargedImg = document.createElement('div');
         enlargedImg.style.position = 'fixed';
@@ -442,13 +686,18 @@
         document.body.appendChild(enlargedImg);
     }
 
-    window.onload = () => {
+    // 页面初始化
+    window.addEventListener('load', () => {
+        // 添加密钥显示切换事件监听
         document.querySelectorAll('.masked').forEach(element => {
             element.addEventListener('click', toggleSecretKeyVisibility);
         });
+
+        // 开始OTP更新循环
         updateOtpCodes();
-        setInterval(updateOtpCodes, 60000);
-    };
+        setInterval(updateOtpCodes, 60000); // 每分钟更新一次
+    });
+
 </script>
 </body>
 </html>

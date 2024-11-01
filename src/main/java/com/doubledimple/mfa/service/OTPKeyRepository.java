@@ -15,4 +15,6 @@ public interface OTPKeyRepository extends JpaRepository<OTPKey, Long>, JpaSpecif
     OTPKey queryOTPKeyByKeyName(String keyName);
 
     OTPKey findByKeyName(String keyName);
+
+    OTPKey findBySecretKey(String secretKey);
 }

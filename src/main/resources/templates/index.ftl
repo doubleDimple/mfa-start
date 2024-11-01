@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Key Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -407,6 +408,60 @@
                 display: none !important;
             }
         }
+
+        /* 在原有样式的基础上添加 */
+        .countdown-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .countdown-number {
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+            z-index: 2;
+        }
+
+        .circle-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .circle-progress circle {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .circle-bg {
+            stroke: #e2e8f0;
+        }
+
+        .progress-circle {
+            stroke: #667eea;
+        }
+
+        .paste-tip {
+            color: #718096;
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .file-upload.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -461,11 +516,12 @@
                            placeholder="Enter secret key or upload QR code">
                 </div>
 
-                <div class="file-upload">
+                <div class="file-upload" id="pasteZone">
                     <label class="file-upload-btn">
                         Upload QR Code
                         <input type="file" id="qrCode" name="qrCode" accept="image/*">
                     </label>
+                    <div class="paste-tip">Or paste the image directly (Ctrl+V) / drag the image here</div>
                     <div id="fileName">No file chosen</div>
                     <img id="previewImage" class="preview-image" alt="QR Code preview">
                 </div>
@@ -501,9 +557,16 @@
                                 <img src="data:image/png;base64,${otpKey.qrCode}"
                                      alt="QR Code" onclick="enlargeQrCode(this)">
                             </td>
+                            <!-- 找到 OTP Code 这一列，将其改为： -->
                             <td class="otp-code" data-secret-key="${otpKey.secretKey!''}">
                                 <span class="otp-value">Loading...</span>
-                                <span class="countdown">60s</span>
+                                <div class="countdown-container">
+                                    <div class="countdown-number">30</div>
+                                    <svg class="circle-progress">
+                                        <circle class="circle-bg" cx="25" cy="25" r="22"></circle>
+                                        <circle class="progress-circle" cx="25" cy="25" r="22"></circle>
+                                    </svg>
+                                </div>
                             </td>
                             <td>
                                 <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">Delete</button>
@@ -591,7 +654,6 @@
                     const otpValueElement = element.querySelector('.otp-value');
                     if (otpValueElement) {
                         otpValueElement.textContent = data.otpCode;
-                        startCountdown(element.querySelector('.countdown'));
                     }
                 } catch (error) {
                     console.error('Error fetching OTP code:', error);
@@ -604,22 +666,7 @@
         }
     }
 
-    // 倒计时功能
-    function startCountdown(countdownElement) {
-        if (!countdownElement) return;
 
-        let countdown = 60;
-        countdownElement.textContent = countdown + 's';
-
-        const interval = setInterval(() => {
-            countdown--;
-            if (countdown >= 0) {
-                countdownElement.textContent = countdown + 's';
-            } else {
-                clearInterval(interval);
-            }
-        }, 1000);
-    }
 
     // 密钥显示切换
     function toggleSecretKeyVisibility(event) {
@@ -687,16 +734,144 @@
     }
 
     // 页面初始化
+    // 页面初始化
     window.addEventListener('load', () => {
-        // 添加密钥显示切换事件监听
+        // 先获取一次验证码
+        updateOtpCodes();
+
+        // 启动倒计时
+        document.querySelectorAll('.otp-code').forEach(element => {
+            startCountdown(element);
+        });
+
+        // 其他事件监听...
         document.querySelectorAll('.masked').forEach(element => {
             element.addEventListener('click', toggleSecretKeyVisibility);
         });
-
-        // 开始OTP更新循环
-        updateOtpCodes();
-        setInterval(updateOtpCodes, 60000); // 每分钟更新一次
     });
+
+    // 添加到现有 script 标签中
+    // 粘贴处理
+    document.addEventListener('paste', function(event) {
+        const items = event.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                handleImageFile(file);
+                break;
+            }
+        }
+    });
+
+    // 拖拽处理
+    const pasteZone = document.getElementById('pasteZone');
+
+    pasteZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    pasteZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    pasteZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.indexOf('image') !== -1) {
+            handleImageFile(files[0]);
+        }
+    });
+
+    function handleImageFile(file) {
+        document.getElementById('fileName').textContent = file.name || 'Pasted image';
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('previewImage');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+
+        const fileInput = document.getElementById('qrCode');
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+        document.getElementById('secretKey').value = '';
+        document.getElementById('secretKey').readOnly = true;
+    }
+
+    // 修改倒计时函数
+    function startCountdown(element) {
+        const numberElement = element.querySelector('.countdown-number');
+        const circle = element.querySelector('.progress-circle');
+        const FULL_DASH_ARRAY = 2 * Math.PI * 22;
+
+        // 获取当前的时间点对应的剩余秒数
+        let timeLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
+        let lastTimeLeft = timeLeft; // 记录上一次的时间，用于检测是否到达0
+
+        circle.style.strokeDasharray = FULL_DASH_ARRAY;
+
+        // 清除之前的定时器
+        if (element._countdownTimer) {
+            clearInterval(element._countdownTimer);
+        }
+
+        async function updateProgress() {
+            // 更新上一次的时间
+            lastTimeLeft = timeLeft;
+            // 计算剩余时间
+            timeLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
+
+            const progress = (timeLeft / 30) * FULL_DASH_ARRAY;
+            circle.style.strokeDashoffset = FULL_DASH_ARRAY - progress;
+            numberElement.textContent = timeLeft;
+
+            // 检测是否经过了0点（从29秒到0秒的转换）
+            if (lastTimeLeft < timeLeft) {
+                await updateOtpCodes(); // 请求新的验证码
+            }
+        }
+
+        // 立即开始倒计时
+        updateProgress();
+
+        // 设置定时器，每秒更新
+        element._countdownTimer = setInterval(updateProgress, 1000);
+
+        // 额外确保每30秒调用一次
+        if (!window._globalOtpTimer) {
+            window._globalOtpTimer = setInterval(updateOtpCodes, 30000);
+        }
+    }
+
+    // 页面加载时初始化
+    window.addEventListener('load', () => {
+        // 先获取一次验证码
+        updateOtpCodes();
+
+        // 启动倒计时
+        document.querySelectorAll('.otp-code').forEach(element => {
+            startCountdown(element);
+        });
+
+        // 清理函数
+        window.addEventListener('beforeunload', () => {
+            if (window._globalOtpTimer) {
+                clearInterval(window._globalOtpTimer);
+            }
+        });
+    });
+
+
 
 </script>
 </body>
