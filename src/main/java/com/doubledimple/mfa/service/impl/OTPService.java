@@ -45,9 +45,6 @@ public class OTPService {
     private QRCodeService qrCodeService;
 
     @Resource
-    private GoogleAuthService googleAuthService;
-
-    @Resource
     private GoogleAuthenticatorDef googleAuthenticatorDef;
 
 
