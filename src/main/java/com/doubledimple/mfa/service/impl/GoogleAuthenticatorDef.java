@@ -1,5 +1,6 @@
 package com.doubledimple.mfa.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base32;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.time.Instant;
  * @date 2024:11:02日 01:02
  */
 @Service
+@Slf4j
 public class GoogleAuthenticatorDef {
     private static final int TIME_STEP = 30;  // 时间片长度，单位秒
     private static final int CODE_LENGTH = 6; // 验证码长度
@@ -26,8 +28,11 @@ public class GoogleAuthenticatorDef {
             long timeSlice = currentTime / TIME_STEP;
 
             // 调试信息
-            System.out.println("Current Time: " + currentTime);
-            System.out.println("Time Slice: " + timeSlice);
+            if (log.isDebugEnabled()){
+                log.debug("Current Time: " + currentTime);
+                log.debug("Time Slice: " + timeSlice);
+            }
+
 
             // 3. 解码密钥
             Base32 base32 = new Base32();
@@ -69,8 +74,11 @@ public class GoogleAuthenticatorDef {
             String currentCode = generateCode(secretKey);
 
             // 调试信息
-            System.out.println("Input Code: " + code);
-            System.out.println("Generated Code: " + currentCode);
+            if (log.isDebugEnabled()){
+                log.debug("Input Code: " + code);
+                log.debug("Generated Code: " + currentCode);
+            }
+
 
             // 考虑前后 30 秒的容差
             return code.equals(currentCode) ||
