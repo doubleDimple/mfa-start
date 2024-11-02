@@ -190,16 +190,16 @@ public class OTPController {
     }
 
 
-    @GetMapping("/export")
+    @GetMapping("/export-data")
     public void exportToCSV(HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"otp_keys.csv\"");
         PrintWriter writer = response.getWriter();
-        writer.println("ID,KeyName,SecretKey");
+        writer.println("Key Name,Issuer,Secret Key,Created Date");
 
         List<OTPKey> otpKeys = otpService.getAllKeys();
         for (OTPKey otpKey : otpKeys) {
-            writer.printf("%d,%s,%s%n", otpKey.getId(), otpKey.getKeyName(), otpKey.getSecretKey());
+            writer.printf("%s,%s,%s,%s%n", otpKey.getKeyName(), otpKey.getIssuer(), otpKey.getSecretKey(),otpKey.getCreateTime());
         }
         writer.flush();
     }

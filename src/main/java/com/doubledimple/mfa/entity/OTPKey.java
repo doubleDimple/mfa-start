@@ -1,4 +1,7 @@
 package com.doubledimple.mfa.entity;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 /**
@@ -20,6 +23,20 @@ public class OTPKey {
     private String qrCode;
 
     private String issuer;
+
+    // 添加创建时间字段
+    @Column(name = "createTime", nullable = false)
+    private LocalDateTime createTime = LocalDateTime.now();  // 设置默认值
+
+    // 添加更新时间字段
+    @Column(name = "updateTime", nullable = false)
+    private LocalDateTime updateTime = LocalDateTime.now();  // 设置默认值
+
+    // 在每次更新实体时自动更新updateTime
+    @PreUpdate
+    public void preUpdate() {
+        updateTime = LocalDateTime.now();
+    }
 
 
     public OTPKey() {
@@ -69,6 +86,22 @@ public class OTPKey {
 
     public void setIssuer(String issuer) {
         this.issuer = issuer;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
     }
 }
 

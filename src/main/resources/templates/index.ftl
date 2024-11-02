@@ -348,6 +348,42 @@
                 height: 40px;
             }
         }
+
+        /* 添加新的样式 */
+        .export-btn {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            margin-left: 10px;
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+        }
+
+        .paste-zone {
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .paste-zone:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .paste-zone.dragover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -393,6 +429,9 @@
                     </label>
                     <div id="fileName">No file chosen</div>
                     <img id="previewImage" class="preview-image" alt="QR Code preview">
+                    <div class="paste-zone" id="pasteArea">
+                        Click or paste image here
+                    </div>
                 </div>
                 <button type="submit">Save Key</button>
             </form>
@@ -401,6 +440,7 @@
         <div class="card">
             <h2>Key Management</h2>
             <input type="text" id="searchInput" placeholder="Search keys..." onkeyup="searchKeys()">
+            <button onclick="exportData()" class="export-btn">Export All Data</button>
             <table>
                 <thead>
                 <tr>
@@ -649,6 +689,152 @@
         if (globalUpdateTimer) {
             clearInterval(globalUpdateTimer);
         }
+    });
+
+
+    //文件处理
+    function exportData() {
+        try {
+            // 获取表格数据
+            const rows = [];
+            const headers = ['Key Name', 'Issuer', 'Secret Key'];
+            rows.push(headers);
+
+            // 获取表格中的所有行
+            document.querySelectorAll('tbody tr').forEach(function(row) {
+                // 跳过"No OTP keys available"的行
+                if (row.cells.length < 3) return;
+
+                const rowData = [
+                    row.cells[0].textContent,                              // Key Name
+                    row.cells[1].textContent,                              // Issuer
+                    row.cells[2].getAttribute('data-secret-key') || ''
+                ];
+                rows.push(rowData);
+            });
+
+            // 处理CSV中的特殊字符
+            function processCell(cell) {
+                if (cell == null) {
+                    return '';
+                }
+                cell = cell.toString();
+                if (cell.indexOf(',') >= 0 || cell.indexOf('"') >= 0 || cell.indexOf('\n') >= 0) {
+                    cell = cell.replace(/"/g, '""');
+                    cell = '"' + cell + '"';
+                }
+                return cell;
+            }
+
+            // 生成CSV内容
+            const csvContent = rows
+                .map(function(row) {
+                    return row.map(processCell).join(',');
+                })
+                .join('\n');
+
+            // 创建并下载CSV文件
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+
+            // 生成带时间戳的文件名
+            const date = new Date();
+            const timestamp = date.getFullYear() + '-' +
+                (date.getMonth() + 1) + '-' +
+                date.getDate() + '-' +
+                date.getHours() + '-' +
+                date.getMinutes() + '-' +
+                date.getSeconds();
+            a.download = 'otp_keys_export_' + timestamp + '.csv';
+
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert('Failed to export data. Please try again.');
+        }
+    }
+
+    // 添加粘贴功能
+    document.addEventListener('DOMContentLoaded', function() {
+        const pasteArea = document.getElementById('pasteArea');
+        const previewImage = document.getElementById('previewImage');
+        const fileName = document.getElementById('fileName');
+        const secretKeyInput = document.getElementById('secretKey');
+
+        // 处理粘贴事件
+        document.addEventListener('paste', function(e) {
+            if (e.clipboardData && e.clipboardData.items) {
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        const file = items[i].getAsFile();
+                        handlePastedFile(file);
+                        e.preventDefault();
+                        break;
+                    }
+                }
+            }
+        });
+
+        // 处理拖放事件
+        pasteArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            pasteArea.classList.add('dragover');
+        });
+
+        pasteArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            pasteArea.classList.remove('dragover');
+        });
+
+        pasteArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            pasteArea.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handlePastedFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        function handlePastedFile(file) {
+            if (file && file.type.indexOf('image') !== -1) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    fileName.textContent = file.name || 'Pasted image';
+                    secretKeyInput.value = '';
+                    secretKeyInput.readOnly = true;
+                }
+                reader.readAsDataURL(file);
+
+                // 创建一个新的File对象并设置到input[type=file]
+                const container = new DataTransfer();
+                container.items.add(file);
+                document.getElementById('qrCode').files = container.files;
+            }
+        }
+
+        // 点击粘贴区域触发粘贴对话框
+        pasteArea.addEventListener('click', function() {
+            navigator.clipboard.read().then(clipboardItems => {
+                for (const clipboardItem of clipboardItems) {
+                    for (const type of clipboardItem.types) {
+                        if (type.startsWith('image/')) {
+                            clipboardItem.getType(type).then(blob => {
+                                handlePastedFile(new File([blob], "pasted-image.png", { type: blob.type }));
+                            });
+                        }
+                    }
+                }
+            }).catch(err => {
+                console.log('Failed to read clipboard:', err);
+            });
+        });
     });
 </script>
 </body>
