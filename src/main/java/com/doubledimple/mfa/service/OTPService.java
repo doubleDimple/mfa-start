@@ -1,18 +1,11 @@
-package com.doubledimple.mfa.service.impl;
+package com.doubledimple.mfa.service;
 
 
-import com.doubledimple.mfa.controller.OTPController;
 import com.doubledimple.mfa.entity.OTPKey;
+import com.doubledimple.mfa.repository.OTPKeyRepository;
 import com.doubledimple.mfa.response.OtpResponse;
-import com.doubledimple.mfa.service.OTPKeyRepository;
-import com.doubledimple.mfa.utils.TOTPUtils;
 import com.google.zxing.WriterException;
-import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
-import com.warrenstrange.googleauth.ICredentialRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +18,6 @@ import javax.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author doubleDimple

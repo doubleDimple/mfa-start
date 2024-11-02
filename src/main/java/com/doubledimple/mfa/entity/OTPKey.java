@@ -1,9 +1,12 @@
 package com.doubledimple.mfa.entity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author doubleDimple
  * @date 2024:10:05日 00:57
@@ -26,10 +29,12 @@ public class OTPKey {
 
     // 添加创建时间字段
     @Column(name = "createTime", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime = LocalDateTime.now();  // 设置默认值
 
     // 添加更新时间字段
     @Column(name = "updateTime", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime = LocalDateTime.now();  // 设置默认值
 
     // 在每次更新实体时自动更新updateTime
@@ -103,5 +108,6 @@ public class OTPKey {
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
+
 }
 

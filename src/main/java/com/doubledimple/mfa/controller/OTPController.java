@@ -1,12 +1,12 @@
 package com.doubledimple.mfa.controller;
 
 import com.doubledimple.mfa.entity.OTPKey;
+import com.doubledimple.mfa.repository.OTPKeyRepository;
 import com.doubledimple.mfa.request.OtpBatchRequest;
 import com.doubledimple.mfa.response.OtpResponse;
 import com.doubledimple.mfa.response.OtpResponse2;
-import com.doubledimple.mfa.service.OTPKeyRepository;
-import com.doubledimple.mfa.service.impl.OTPService;
-import com.doubledimple.mfa.service.impl.QRCodeService;
+import com.doubledimple.mfa.service.OTPService;
+import com.doubledimple.mfa.service.QRCodeService;
 import com.doubledimple.mfa.utils.GoogleAuthMigrationParser;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -16,9 +16,6 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.criterion.Example;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,9 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
 

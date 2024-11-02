@@ -402,9 +402,9 @@
                 <i>🔑</i>
                 MFA Management
             </a>
-            <a href="#" class="menu-item">
-                <i>⚙️</i>
-                System Settings
+            <a href="/settings" class="menu-item">
+                <i>☁️</i>
+                Sync Cloud Settings
             </a>
         </nav>
     </aside>
@@ -449,6 +449,7 @@
                     <th>Secret Key</th>
                     <th>QR Code</th>
                     <th>OTP Code</th>
+                    <th>Create Time</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -472,6 +473,7 @@
                                     </svg>
                                 </div>
                             </td>
+                            <td>${otpKey.createTime!'default'}</td>
                             <td>
                                 <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">Delete</button>
                             </td>

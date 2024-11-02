@@ -1,4 +1,4 @@
-package com.doubledimple.mfa.service.impl;
+package com.doubledimple.mfa.service;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;

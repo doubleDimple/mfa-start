@@ -1,4 +1,7 @@
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
   servlet:
     multipart:
       max-file-size: 100MB
@@ -14,16 +17,22 @@ spring:
     request-context-attribute: req
     suffix: .ftl
   datasource:
-    url: jdbc:h2:file:./data/otp_keys_db
+    url: jdbc:h2:file:./data/otp_keys_db;MODE=MySQL
     driverClassName: org.h2.Driver
     username: otp_keys_user
     password: password_20240901aAa-@@@
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
   h2:
     console:
       enabled: false
   profiles:
     active: release
+upload:
+  baseUrl: ./data
