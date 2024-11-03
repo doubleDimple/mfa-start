@@ -1,25 +1,38 @@
 package com.doubledimple.mfa.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpException;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.doubledimple.mfa.entity.AListParam;
 import com.doubledimple.mfa.entity.OTPKey;
 import com.doubledimple.mfa.entity.SyncHistory;
 import com.doubledimple.mfa.entity.SyncSettings;
 import com.doubledimple.mfa.repository.OTPKeyRepository;
 import com.doubledimple.mfa.repository.SyncHistoryRepository;
 import com.doubledimple.mfa.repository.SyncSettingsRepository;
+import com.doubledimple.mfa.response.AListResponse;
+import com.doubledimple.mfa.response.AListTokenResponse;
 import com.doubledimple.mfa.service.SyncService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.awt.print.Pageable;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -35,6 +48,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import static com.doubledimple.mfa.constant.Constant.A_LIST_AUTH_LOGIN_URL_SUFFIX;
+import static com.doubledimple.mfa.constant.Constant.A_LIST_PUT_URL_SUFFIX;
 
 /**
  * @author doubleDimple
@@ -77,22 +93,23 @@ public class SyncServiceImpl implements SyncService {
 
     @Override
     public List<SyncHistory> getHistory() {
-        return syncHistoryRepository.findAllByOrderByTimeDesc();
+        int pageSize = 15;
+        PageRequest time = PageRequest.of(0, pageSize, Sort.by(Sort.Direction.DESC, "time"));
+        return syncHistoryRepository.findAllByOrderByTimeDesc(time);
     }
 
     @Override
-    public boolean testConnection(String url, String token) {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet request = new HttpGet(url + "/api/fs/list");
-            request.setHeader("Authorization", token);
-
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                return response.getStatusLine().getStatusCode() == 200;
-            }
-        } catch (Exception e) {
-            log.error("Test connection failed", e);
+    public boolean testConnection(String url,String username, String password) {
+        SyncSettings syncSettings = new SyncSettings();
+        syncSettings.setAListUrl(url);
+        syncSettings.setUserName(username);
+        syncSettings.setPassword(password);
+        String aListToken = getAListToken(syncSettings);
+        if (StringUtils.isEmpty(aListToken)){
+            log.error("Test connection failed please your userName and password");
             return false;
         }
+        return true;
     }
 
     @Async
@@ -212,12 +229,16 @@ public class SyncServiceImpl implements SyncService {
             uploadPath = uploadPath.replaceAll("^/+", "");
 
             // 构建完整的上传URL
-            String uploadUrl = alistUrl + "/api/fs/put";
+            String uploadUrl = alistUrl + A_LIST_PUT_URL_SUFFIX;
 
             log.info("Uploading to: {}", uploadUrl);
             log.info("Upload path: {}", uploadPath);
-
-            uploadFile(file.getPath(),uploadPath,uploadUrl,settings.getAListToken());
+            String aListToken = getAListToken(settings);
+            if (StringUtils.isEmpty(aListToken)){
+                log.error("Failed to get aList token");
+                return false;
+            }
+            uploadFile(file.getPath(),uploadPath,uploadUrl,aListToken);
             return true;
 
         } catch (Exception e) {
@@ -258,6 +279,35 @@ public class SyncServiceImpl implements SyncService {
                 tempFile.delete();
             }
         }
+    }
+
+    @Override
+    public String getAListToken(SyncSettings settings) {
+        String userName = settings.getUserName();
+        String password = settings.getPassword();
+        String aListUrl = settings.getAListUrl();
+        // 如果URL以/结尾，去掉/
+        String token = null;
+        try {
+            if (aListUrl.endsWith("/")) {
+                aListUrl = StrUtil.removeSuffix(aListUrl, "/");
+            }
+            String fullPath = aListUrl + A_LIST_AUTH_LOGIN_URL_SUFFIX;
+            AListParam build = AListParam.builder().userName(userName).password(password).build();
+            String s = JSONUtil.toJsonStr(build);
+            HttpResponse execute = HttpUtil.createPost(fullPath).body(s).execute();
+            String body = execute.body();
+
+            AListResponse aListResponse = JSONUtil.toBean(body, AListResponse.class);
+            // 将data转换为JSONObject
+            JSONObject jsonObject = JSONUtil.parseObj(aListResponse.getData());
+            // 获取token
+            token = jsonObject.getStr("token");
+        } catch (HttpException e) {
+            log.error("get aList token err: {}",e.getMessage(),e);
+            return StringUtils.EMPTY;
+        }
+        return token;
     }
 
     public LocalDateTime getNextSyncTime() {
@@ -304,14 +354,34 @@ public class SyncServiceImpl implements SyncService {
             // 发送请求
             try (Response response = client.newCall(request).execute()) {
                 if (response.isSuccessful()) {
-                    System.out.println("Upload successful: " + response.body().string());
+                    if (response.code() == 200){
+                        log.info("Upload successful: {}",response.body().string());
+                    }else {
+                        log.error("Upload failed code:{}  message:{}",response.code(),response.message());
+                    }
                 } else {
-                    System.out.println("Upload failed: " + response.code() + " " + response.message());
+                    log.error("Upload failed code:{}  message:{}",response.code(),response.message());
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        String userName = "admin";
+        String password = "NEW_PASSWORD_20240919@@@";
+        AListParam build = AListParam.builder().userName(userName).password(password).build();
+        String s = JSONUtil.toJsonStr(build);
+        HttpResponse execute = HttpUtil.createPost(" http://152.53.1.173:5244/api/auth/login").body(s).execute();
+        String body = execute.body();
+
+        AListResponse aListResponse = JSONUtil.toBean(body, AListResponse.class);
+        // 将data转换为JSONObject
+        JSONObject jsonObject = JSONUtil.parseObj(aListResponse.getData());
+        // 获取token
+        String token = jsonObject.getStr("token");
+        System.out.println(token);
     }
 }

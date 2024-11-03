@@ -21,6 +21,8 @@ public class SyncSettings {
     private String aListUrl;
     private String aListToken;
     private String backupPath;
+    private String password;
+    private String userName;
     // 同步周期（天数）
     private Integer syncInterval;
 

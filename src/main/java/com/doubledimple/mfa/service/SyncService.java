@@ -15,11 +15,13 @@ public interface SyncService {
 
     public List<SyncHistory> getHistory();
 
-    public boolean testConnection(String url, String token);
+    public boolean testConnection(String url,String username, String password);
 
     public CompletableFuture<Boolean> syncNow();
 
     public LocalDateTime getNextSyncTime();
 
     public void syncNowTask();
+
+    public String getAListToken(SyncSettings settings);
 }

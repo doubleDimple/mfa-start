@@ -375,11 +375,19 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="alistToken">Access Token</label>
-                        <input type="password" id="alistToken" class="form-control"
-                               placeholder="Enter your Alist access token"
+                        <label for="userName">AList UserName</label>
+                        <input type="text" id="userName" class="form-control"
+                               placeholder="Enter your AList Login UserName"
                                onchange="validateForm()">
-                        <small class="form-text text-muted">Your Alist access token</small>
+                        <small class="form-text text-muted">Your AList userName</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">AList Password</label>
+                        <input type="password" id="password" class="form-control"
+                               placeholder="Enter your AList Login Password"
+                               onchange="validateForm()">
+                        <small class="form-text text-muted">Your AList Login Password</small>
                     </div>
 
                     <div class="form-group">
@@ -444,9 +452,11 @@
     async function testConnection() {
         try {
             const url = document.getElementById('alistUrl').value;
-            const token = document.getElementById('alistToken').value;
+            const password = document.getElementById('password').value;
+            const userName = document.getElementById('userName').value;
+            const backupPath = document.getElementById('backupPath').value;
 
-            if (!url || !token) {
+            if (!url || !password || !userName || !backupPath) {
                 updateStatus('Please enter URL and Token first', 'status-error');
                 return;
             }
@@ -459,7 +469,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrf_value
                 },
-                body: JSON.stringify({ url, token })
+                body: JSON.stringify({ url, password,backupPath,userName })
             });
 
             const result = await response.json();
@@ -484,7 +494,8 @@
             const settings = {
                 enabled: document.getElementById('enableSync').checked,
                 alistUrl: document.getElementById('alistUrl').value.trim(),
-                alistToken: document.getElementById('alistToken').value.trim(),
+                userName: document.getElementById('userName').value.trim(),
+                password: document.getElementById('password').value.trim(),
                 backupPath: document.getElementById('backupPath').value.trim(),
                 syncInterval: document.getElementById('syncInterval').value
             };
@@ -582,11 +593,12 @@
 
         // 获取所有必填字段的值
         const url = document.getElementById('alistUrl').value.trim();
-        const token = document.getElementById('alistToken').value.trim();
+        const userName = document.getElementById('userName').value.trim();
+        const password = document.getElementById('password').value.trim();
         const path = document.getElementById('backupPath').value.trim();
 
         // 验证必填字段
-        const isValid = url && token && path;
+        const isValid = url && userName && password && path;
 
         // 更新保存按钮状态
         saveButton.disabled = !isValid;
@@ -607,7 +619,8 @@
             if (settings) {
                 document.getElementById('enableSync').checked = settings.enabled;
                 document.getElementById('alistUrl').value = settings.alistUrl || '';
-                document.getElementById('alistToken').value = settings.alistToken || '';
+                document.getElementById('userName').value = settings.userName || '';
+                document.getElementById('password').value = settings.password || '';
                 document.getElementById('backupPath').value = settings.backupPath || '';
                 document.getElementById('syncInterval').value = settings.syncInterval || '7';
 

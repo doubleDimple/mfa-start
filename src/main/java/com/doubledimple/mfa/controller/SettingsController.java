@@ -44,7 +44,10 @@ public class SettingsController {
     @PostMapping("/api/test-connection")
     @ResponseBody
     public Map<String, Object> testConnection(@RequestBody Map<String, String> request) {
-        boolean success = syncService.testConnection(request.get("url"), request.get("token"));
+        String userName = request.get("userName");
+        String password = request.get("password");
+        String url = request.get("url");
+        boolean success = syncService.testConnection(url, userName,password);
         Map<String, Object> response = new HashMap<>();
         response.put("success", success);
         response.put("message", success ? "Connection successful" : "Connection failed");
@@ -84,7 +87,8 @@ public class SettingsController {
         Map<String, Object> response = new HashMap<>();
         String aListUrl = request.get("alistUrl");
         Boolean enabled = Boolean.valueOf(request.get("enabled"));
-        String aListToken = request.get("alistToken");
+        String password = request.get("password");
+        String userName = request.get("userName");
         String backupPath = request.get("backupPath");
         Integer interval = Integer.valueOf(request.get("syncInterval"));
         try {
@@ -95,7 +99,8 @@ public class SettingsController {
                 settingsDb.setBackupPath(backupPath);
                 settingsDb.setEnabled(enabled);
                 settingsDb.setAListUrl(aListUrl);
-                settingsDb.setAListToken(aListToken);
+                settingsDb.setPassword(password);
+                settingsDb.setUserName(userName);
                 syncService.saveSettings(settingsDb);
 
             }else {
@@ -103,7 +108,8 @@ public class SettingsController {
                 settingsDb.setBackupPath(backupPath);
                 settingsDb.setEnabled(enabled);
                 settingsDb.setAListUrl(aListUrl);
-                settingsDb.setAListToken(aListToken);
+                settingsDb.setPassword(password);
+                settingsDb.setUserName(userName);
                 syncService.saveSettings(settingsDb);
             }
             response.put("success", true);
