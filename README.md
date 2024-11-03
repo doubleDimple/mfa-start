@@ -20,15 +20,15 @@
   
         3.3.1:下载jar包
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/latest/mfa-start-release.jar
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.4/mfa-start-release.jar
       
         3.3.2:下载运行脚本
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/latest/mfa-start.sh
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start.sh
       
         3.3.3:下载配置文件模板
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/latest/mfa-start.yml
+          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start.yml
 
 四:配置说明:
  
