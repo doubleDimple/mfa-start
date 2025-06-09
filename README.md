@@ -62,7 +62,7 @@
 
 五:启动
 
-  5.1:给oci-start.sh 执行权限添加
+  5.1:给mfa-start.sh 执行权限添加
     chmod 777 mfa-start.sh
 
   5.2:启动程序
