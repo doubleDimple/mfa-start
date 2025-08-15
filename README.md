@@ -89,15 +89,6 @@ wget -O mfa-start.sh https://raw.githubusercontent.com/doubleDimple/shell-tools/
 ```
 > 更新到最新版本，保留现有配置和凭据
 
-### 凭据管理
-
-#### 6️⃣ 查看当前凭据
-```bash
-./mfa-start.sh password
-# 或
-./mfa-start.sh passwd
-```
-
 #### 7️⃣ 修改凭据
 
 **同时修改用户名和密码：**
