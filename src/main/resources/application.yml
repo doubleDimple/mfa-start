@@ -32,6 +32,10 @@ spring:
   h2:
     console:
       enabled: false
+      settings:
+        web-allow-others: false  # 禁止外部访问
+        trace: false
+        web-port: -1  # 禁用web端口
   profiles:
     active: release
 upload:

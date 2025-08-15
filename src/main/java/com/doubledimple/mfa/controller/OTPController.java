@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -53,12 +54,12 @@ public class OTPController {
 
     // 显示主页
     @GetMapping("/")
-    public String index(Model model) throws IOException, WriterException {
+    public String index(Model model){
         List<OTPKey> otpKeys = otpService.getAllKeys();
         if (otpKeys.size() > 0){
             model.addAttribute("otpKeys", otpKeys);
         }
-        return "index"; // 对应 index.html 文件
+        return "index";
     }
 
     // 保存密钥
@@ -197,5 +198,81 @@ public class OTPController {
             writer.printf("%s,%s,%s,%s%n", otpKey.getKeyName(), otpKey.getIssuer(), otpKey.getSecretKey(),otpKey.getCreateTime());
         }
         writer.flush();
+    }
+
+    // 导入密钥
+    @PostMapping("/import-keys")
+    public String importKeys(@RequestParam("csvFile") MultipartFile csvFile) {
+        try {
+            if (csvFile.isEmpty()) {
+                log.error("CSV file is empty");
+                return "redirect:/";
+            }
+
+            String content = new String(csvFile.getBytes(), StandardCharsets.UTF_8);
+            String[] lines = content.split("\n");
+
+            List<OTPKey> otpKeysToImport = new ArrayList<>();
+
+            // 跳过标题行，从第二行开始处理
+            for (int i = 1; i < lines.length; i++) {
+                String line = lines[i].trim();
+                if (line.isEmpty()) continue;
+
+                // 解析CSV行，处理可能的引号
+                String[] parts = parseCSVLine(line);
+                if (parts.length >= 3) {
+                    String keyName = parts[0].trim();
+                    String issuer = parts[1].trim();
+                    String secretKey = parts[2].trim();
+
+                    if (!keyName.isEmpty() && !secretKey.isEmpty()) {
+                        // 检查是否已存在
+                        OTPKey existingKey = otpKeyRepository.findBySecretKey(secretKey);
+                        if (existingKey == null) {
+                            OTPKey otpKey = new OTPKey(keyName, secretKey);
+                            otpKey.setIssuer(issuer.isEmpty() ? "mfa-start" : issuer);
+                            String otpAuthUri = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s",
+                                    otpKey.getIssuer(), otpKey.getKeyName(), otpKey.getSecretKey(), otpKey.getIssuer());
+                            String qrCodeNew = qrCodeService.generateQRCodeImage(otpAuthUri);
+                            otpKey.setQrCode(qrCodeNew);
+                            otpKeysToImport.add(otpKey);
+                        }
+                    }
+                }
+            }
+
+            if (!otpKeysToImport.isEmpty()) {
+                otpService.saveListKey(otpKeysToImport);
+                log.info("Successfully imported {} OTP keys", otpKeysToImport.size());
+            }
+
+            return "redirect:/";
+        } catch (Exception e) {
+            log.error("Error importing CSV file", e);
+            return "redirect:/";
+        }
+    }
+
+    // 解析CSV行的辅助方法
+    private String[] parseCSVLine(String line) {
+        List<String> result = new ArrayList<>();
+        boolean inQuotes = false;
+        StringBuilder current = new StringBuilder();
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                result.add(current.toString());
+                current = new StringBuilder();
+            } else {
+                current.append(c);
+            }
+        }
+        result.add(current.toString());
+
+        return result.toArray(new String[0]);
     }
 }

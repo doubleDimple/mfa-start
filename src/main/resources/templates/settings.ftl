@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* 基础样式保持不变 */
         * {
             margin: 0;
             padding: 0;
@@ -23,71 +22,6 @@
         .layout-container {
             display: flex;
             min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            transition: all 0.3s ease;
-            position: fixed;
-            height: 100vh;
-            z-index: 1000;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-header {
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo-container {
-            margin-bottom: 10px;
-        }
-
-        .logo {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .logo span {
-            font-size: 24px;
-        }
-
-        .sidebar-menu {
-            padding: 20px 0;
-        }
-
-        .menu-item {
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s;
-            margin: 4px 8px;
-            border-radius: 10px;
-        }
-
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-
-        .menu-item.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .menu-item i {
-            margin-right: 12px;
-            font-size: 20px;
         }
 
         .main-content {
@@ -204,6 +138,14 @@
             background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
         }
 
+        .sync-btn {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+        }
+
+        .sync-btn:hover {
+            background: linear-gradient(135deg, #2c5282 0%, #2a4365 100%);
+        }
+
         .settings-status {
             margin-top: 15px;
             padding: 15px;
@@ -314,43 +256,31 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-280px);
-            }
-
             .main-content {
                 margin-left: 0;
                 padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .sync-history table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
             }
         }
     </style>
 </head>
 <body>
 <div class="layout-container">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-container">
-                <div class="logo">
-                    <span>🔐</span>
-                </div>
-                <h2>OTP 管理</h2>
-            </div>
-        </div>
-        <nav class="sidebar-menu">
-            <a href="/" class="menu-item">
-                <i>🔑</i>
-                MFA 管理
-            </a>
-            <a href="/settings" class="menu-item active">
-                <i>☁️️</i>
-                同步设置
-            </a>
-        </nav>
-    </aside>
+    <!-- 引入公共侧边栏 -->
+    <#include "common/sidebar.ftl">
 
     <main class="main-content">
         <div class="card">
-            <h2>Sync Settings</h2>
+            <h2>同步设置</h2>
 
             <!-- Alist配置 -->
             <div class="settings-section">
@@ -395,7 +325,7 @@
                         <input type="text" id="backupPath" class="form-control"
                                placeholder="/backup/otp"
                                onchange="validateForm()">
-                        <small class="form-text text-muted">Path where backups will be stored</small>
+                        <small class="form-text text-muted">备份文件存储路径</small>
                     </div>
 
                     <div class="form-group">
@@ -410,11 +340,20 @@
 
                     <div class="button-group">
                         <button type="button" id="saveButton" class="btn btn-primary"
-                                onclick="saveSettings()">保存设置</button>
+                                onclick="saveSettings()">
+                            <i class="fas fa-save"></i>
+                            保存设置
+                        </button>
                         <button type="button" class="btn btn-secondary test-btn"
-                                onclick="testConnection()">测试连接</button>
+                                onclick="testConnection()">
+                            <i class="fas fa-plug"></i>
+                            测试连接
+                        </button>
                         <button type="button" class="btn btn-info sync-btn"
-                                onclick="syncNow()">开始备份</button>
+                                onclick="syncNow()">
+                            <i class="fas fa-sync-alt"></i>
+                            开始备份
+                        </button>
                     </div>
                 </form>
 
@@ -443,7 +382,15 @@
         </div>
     </main>
 </div>
+
 <script>
+    // 设置当前页面
+    document.addEventListener('DOMContentLoaded', function() {
+        setActiveMenuItem('settings');
+        loadSettings();
+        loadHistory();
+    });
+
     // CSRF token
     const csrf_name = "${_csrf.parameterName}";
     const csrf_value = "${_csrf.token}";
@@ -457,11 +404,11 @@
             const backupPath = document.getElementById('backupPath').value;
 
             if (!url || !password || !userName || !backupPath) {
-                updateStatus('Please enter URL and Token first', 'status-error');
+                updateStatus('请先填写完整的URL和认证信息', 'status-error');
                 return;
             }
 
-            updateStatus('Testing connection...', 'status-pending');
+            updateStatus('正在测试连接...', 'status-pending');
 
             const response = await fetch('/api/test-connection', {
                 method: 'POST',
@@ -469,24 +416,24 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrf_value
                 },
-                body: JSON.stringify({ url, password,backupPath,userName })
+                body: JSON.stringify({ url, password, backupPath, userName })
             });
 
             const result = await response.json();
             updateStatus(
-                result.success ? 'Connection successful!' : 'Connection failed: ' + result.message,
+                result.success ? '连接测试成功！' : '连接失败：' + result.message,
                 result.success ? 'status-success' : 'status-error'
             );
         } catch (error) {
             console.error('Test connection failed:', error);
-            updateStatus('Connection test failed: ' + error.message, 'status-error');
+            updateStatus('连接测试失败：' + error.message, 'status-error');
         }
     }
 
     // 保存设置
     async function saveSettings() {
         if (!validateForm()) {
-            updateStatus('Please fill in all required fields', 'status-error');
+            updateStatus('请填写所有必需字段', 'status-error');
             return;
         }
 
@@ -501,7 +448,7 @@
             };
 
             console.log('Saving settings:', settings);
-            updateStatus('Saving settings...', 'status-pending');
+            updateStatus('正在保存设置...', 'status-pending');
 
             const response = await fetch('/api/save-settings', {
                 method: 'POST',
@@ -514,14 +461,14 @@
 
             const result = await response.json();
             if (result.success) {
-                updateStatus('Settings saved successfully', 'status-success');
+                updateStatus('设置保存成功', 'status-success');
                 loadHistory();
             } else {
-                updateStatus('Failed to save settings: ' + result.message, 'status-error');
+                updateStatus('设置保存失败：' + result.message, 'status-error');
             }
         } catch (error) {
             console.error('Failed to save settings:', error);
-            updateStatus('Failed to save settings: ' + error.message, 'status-error');
+            updateStatus('设置保存失败：' + error.message, 'status-error');
         }
     }
 
@@ -549,7 +496,7 @@
                 history.forEach(function(record) {
                     const time = new Date(record.time).toLocaleString();
                     const statusClass = record.success ? 'status-success' : 'status-error';
-                    const statusText = record.success ? 'Success' : 'Failed';
+                    const statusText = record.success ? '成功' : '失败';
                     const size = formatSize(record.size);
 
                     html += '<tr>';
@@ -560,14 +507,14 @@
                     html += '</tr>';
                 });
             } else {
-                html = '<tr><td colspan="4" style="text-align: center">No sync history available</td></tr>';
+                html = '<tr><td colspan="4" style="text-align: center; color: #718096;">暂无同步历史</td></tr>';
             }
 
             historyTable.innerHTML = html;
         } catch (error) {
             console.error('Failed to load history:', error);
             const historyTable = document.getElementById('historyTable');
-            historyTable.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #f56565;">Failed to load sync history</td></tr>';
+            historyTable.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #f56565;">加载同步历史失败</td></tr>';
         }
     }
 
@@ -586,21 +533,16 @@
         const saveButton = document.getElementById('saveButton');
 
         if (!enabled) {
-            // 如果未启用同步，允许保存
             saveButton.disabled = false;
             return true;
         }
 
-        // 获取所有必填字段的值
         const url = document.getElementById('alistUrl').value.trim();
         const userName = document.getElementById('userName').value.trim();
         const password = document.getElementById('password').value.trim();
         const path = document.getElementById('backupPath').value.trim();
 
-        // 验证必填字段
         const isValid = url && userName && password && path;
-
-        // 更新保存按钮状态
         saveButton.disabled = !isValid;
 
         return isValid;
@@ -624,41 +566,34 @@
                 document.getElementById('backupPath').value = settings.backupPath || '';
                 document.getElementById('syncInterval').value = settings.syncInterval || '7';
 
-                // 添加最后同步时间显示
                 if (settings.lastSyncTime) {
                     const lastSyncDate = new Date(settings.lastSyncTime);
-                    updateStatus('Last sync: ' + lastSyncDate.toLocaleString(), 'status-success');
+                    updateStatus('最后同步时间：' + lastSyncDate.toLocaleString(), 'status-success');
                 }
 
                 validateForm();
             }
         } catch (error) {
             console.error('Failed to load settings:', error);
-            updateStatus('Failed to load settings', 'status-error');
+            updateStatus('加载设置失败', 'status-error');
         }
     }
 
-    // 页面加载时初始化
-    document.addEventListener('DOMContentLoaded', function() {
-        loadSettings();
-        loadHistory();
-    });
-
-    // 添加立即同步功能
+    // 立即同步功能
     async function syncNow() {
         try {
             const enabled = document.getElementById('enableSync').checked;
             if (!enabled) {
-                updateStatus('Please enable sync first', 'status-error');
+                updateStatus('请先启用同步功能', 'status-error');
                 return;
             }
 
             if (!validateForm()) {
-                updateStatus('Please fill in all required fields before syncing', 'status-error');
+                updateStatus('请先填写完整配置信息', 'status-error');
                 return;
             }
 
-            updateStatus('Starting sync...', 'status-pending');
+            updateStatus('正在启动同步...', 'status-pending');
 
             const response = await fetch('/api/sync-now', {
                 method: 'POST',
@@ -671,17 +606,15 @@
             const result = await response.json();
 
             if (result.success) {
-                updateStatus('Sync completed successfully', 'status-success');
-                // 更新同步历史
+                updateStatus('同步完成', 'status-success');
                 await loadHistory();
-                // 重新加载设置以更新最后同步时间
                 await loadSettings();
             } else {
-                updateStatus('Sync failed: ' + (result.message || 'Unknown error'), 'status-error');
+                updateStatus('同步失败：' + (result.message || '未知错误'), 'status-error');
             }
         } catch (error) {
             console.error('Sync failed:', error);
-            updateStatus('Sync failed: ' + error.message, 'status-error');
+            updateStatus('同步失败：' + error.message, 'status-error');
         }
     }
 </script>

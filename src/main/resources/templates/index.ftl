@@ -24,71 +24,6 @@
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            transition: all 0.3s ease;
-            position: fixed;
-            height: 100vh;
-            z-index: 1000;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-header {
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo-container {
-            margin-bottom: 10px;
-        }
-
-        .logo {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .logo span {
-            font-size: 24px;
-        }
-
-        .sidebar-menu {
-            padding: 20px 0;
-        }
-
-        .menu-item {
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s;
-            margin: 4px 8px;
-            border-radius: 10px;
-        }
-
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-
-        .menu-item.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .menu-item i {
-            margin-right: 12px;
-            font-size: 20px;
-        }
-
         .main-content {
             flex: 1;
             margin-left: 280px;
@@ -322,7 +257,6 @@
             background-color: #c82333;
         }
 
-        /* 模态框样式 */
         .modal {
             display: none;
             position: fixed;
@@ -440,6 +374,13 @@
             margin-bottom: 20px;
         }
 
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         .modal-footer {
             display: flex;
             justify-content: flex-end;
@@ -476,10 +417,6 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-280px);
-            }
-
             .main-content {
                 margin-left: 0;
                 padding: 20px;
@@ -511,39 +448,34 @@
                 flex-direction: column;
             }
         }
+
+        .import-btn {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            margin-right: 10px;
+        }
+
+        .import-btn:hover {
+            background: linear-gradient(135deg, #2c5282 0%, #2a4365 100%);
+        }
     </style>
 </head>
 <body>
 <div class="layout-container">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-container">
-                <div class="logo">
-                    <span>🔐</span>
-                </div>
-                <h2>OTP 管理</h2>
-            </div>
-        </div>
-        <nav class="sidebar-menu">
-            <a href="#" class="menu-item active">
-                <i>🔑</i>
-                MFA 管理
-            </a>
-            <a href="/settings" class="menu-item">
-                <i>⚙️</i>
-                同步管理
-            </a>
-        </nav>
-    </aside>
+    <!-- 引入公共侧边栏 -->
+    <#include "common/sidebar.ftl">
 
     <main class="main-content">
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="header-controls">
                 <h2>密钥管理</h2>
                 <div class="button-group">
                     <button class="add-key-btn" onclick="openAddKeyModal()">
                         <i class="fas fa-plus"></i>
                         添加密钥
+                    </button>
+                    <button onclick="openImportModal()" class="import-btn">
+                        <i class="fas fa-upload"></i>
+                        导入
                     </button>
                     <button onclick="exportData()" class="export-btn">
                         <i class="fas fa-download"></i>
@@ -574,7 +506,11 @@
                             <td>${otpKey.issuer!'default'}</td>
                             <td class="masked" data-secret-key="${otpKey.secretKey}">******</td>
                             <td class="qr-code">
-                                <img src="data:image/png;base64,${otpKey.qrCode}" alt="QR Code" onclick="enlargeQrCode(this)">
+                                <#if otpKey.qrCode??>
+                                    <img src="data:image/png;base64,${otpKey.qrCode}" alt="QR Code" onclick="enlargeQrCode(this)">
+                                <#else>
+                                    <span style="color: #999;">无二维码</span>
+                                </#if>
                             </td>
                             <td class="otp-code" data-secret-key="${otpKey.secretKey!''}">
                                 <span class="otp-value">Loading...</span>
@@ -586,7 +522,7 @@
                                     </svg>
                                 </div>
                             </td>
-                            <td>${otpKey.createTime!'default'}</td>
+                            <td>${otpKey.formattedCreateTime!'default'}</td>
                             <td>
                                 <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">删除</button>
                             </td>
@@ -646,7 +582,45 @@
     </div>
 </div>
 
+<!-- 导入密钥模态框 -->
+<div id="importModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">导入密钥</h3>
+            <button class="close-btn" onclick="closeImportModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form action="/import-keys" method="post" enctype="multipart/form-data" id="importForm">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <div class="form-group">
+                <label for="csvFile">选择CSV文件:</label>
+                <div class="file-upload">
+                    <label class="file-upload-btn">
+                        选择文件
+                        <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+                    </label>
+                    <div id="csvFileName">暂无文件</div>
+                </div>
+                <small class="form-text text-muted">支持从导出的CSV文件导入密钥数据</small>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="cancel-btn" onclick="closeImportModal()">取消</button>
+                <button type="submit">导入</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    // 设置当前页面
+    document.addEventListener('DOMContentLoaded', function() {
+        setActiveMenuItem('index');
+    });
+
     // 全局变量
     let globalUpdateTimer = null;
 
@@ -654,18 +628,14 @@
     function openAddKeyModal() {
         const modal = document.getElementById('addKeyModal');
         modal.classList.add('show');
-        document.body.style.overflow = 'hidden'; // 防止背景滚动
-
-        // 重置表单
+        document.body.style.overflow = 'hidden';
         resetForm();
     }
 
     function closeAddKeyModal() {
         const modal = document.getElementById('addKeyModal');
         modal.classList.remove('show');
-        document.body.style.overflow = 'auto'; // 恢复滚动
-
-        // 重置表单
+        document.body.style.overflow = 'auto';
         resetForm();
     }
 
@@ -715,13 +685,10 @@
             }
 
             const otpResponses = await response.json();
-
-            // 使用Map来存储secretKey到otpCode的映射
             const otpMap = new Map(
                 otpResponses.map(response => [response.secretKey, response.otpCode])
             );
 
-            // 更新每个OTP显示
             otpElements.forEach(element => {
                 const secretKey = element.getAttribute('data-secret-key');
                 const otpValueElement = element.querySelector('.otp-value');
@@ -758,20 +725,16 @@
                 }
             });
 
-            // 当倒计时到达0时更新所有 OTP 码
             if (timeLeft === 30) {
                 updateOtpCodes();
             }
         };
 
-        // 清除可能存在的旧计时器
         if (globalUpdateTimer) {
             clearInterval(globalUpdateTimer);
         }
 
-        // 立即执行一次
         updateAllCircles();
-        // 设置新的计时器
         globalUpdateTimer = setInterval(updateAllCircles, 1000);
     }
 
@@ -877,25 +840,21 @@
     // 导出数据函数
     function exportData() {
         try {
-            // 获取表格数据
             const rows = [];
             const headers = ['Key Name', 'Issuer', 'Secret Key'];
             rows.push(headers);
 
-            // 获取表格中的所有行
             document.querySelectorAll('tbody tr').forEach(function(row) {
-                // 跳过"No OTP keys available"的行
                 if (row.cells.length < 3) return;
 
                 const rowData = [
-                    row.cells[0].textContent,                              // Key Name
-                    row.cells[1].textContent,                              // Issuer
+                    row.cells[0].textContent,
+                    row.cells[1].textContent,
                     row.cells[2].getAttribute('data-secret-key') || ''
                 ];
                 rows.push(rowData);
             });
 
-            // 处理CSV中的特殊字符
             function processCell(cell) {
                 if (cell == null) {
                     return '';
@@ -908,20 +867,17 @@
                 return cell;
             }
 
-            // 生成CSV内容
             const csvContent = rows
                 .map(function(row) {
                     return row.map(processCell).join(',');
                 })
                 .join('\n');
 
-            // 创建并下载CSV文件
             const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
 
-            // 生成带时间戳的文件名
             const date = new Date();
             const timestamp = date.getFullYear() + '-' +
                 (date.getMonth() + 1) + '-' +
@@ -994,7 +950,6 @@
                 }
                 reader.readAsDataURL(file);
 
-                // 创建一个新的File对象并设置到input[type=file]
                 const container = new DataTransfer();
                 container.items.add(file);
                 document.getElementById('qrCode').files = container.files;
@@ -1019,18 +974,9 @@
         });
     });
 
-    // 表单提交后关闭模态框
-    document.getElementById('keyForm').addEventListener('submit', function(e) {
-        // 这里可以添加表单验证逻辑
-        // 如果验证通过，表单会正常提交，页面会刷新
-        // 如果需要AJAX提交，可以在这里处理
-    });
-
     // 页面初始化
     window.addEventListener('load', () => {
-        // 初始化时获取一次 OTP 码
         updateOtpCodes();
-        // 启动统一的倒计时
         initializeCountdown();
     });
 
@@ -1038,6 +984,43 @@
     window.addEventListener('beforeunload', () => {
         if (globalUpdateTimer) {
             clearInterval(globalUpdateTimer);
+        }
+    });
+
+    // 导入模态框控制
+    function openImportModal() {
+        const modal = document.getElementById('importModal');
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        resetImportForm();
+    }
+
+    function closeImportModal() {
+        const modal = document.getElementById('importModal');
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto';
+        resetImportForm();
+    }
+
+    function resetImportForm() {
+        document.getElementById('importForm').reset();
+        document.getElementById('csvFileName').textContent = '暂无文件';
+    }
+
+    // CSV文件选择处理
+    document.getElementById('csvFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('csvFileName').textContent = file.name;
+        } else {
+            document.getElementById('csvFileName').textContent = '暂无文件';
+        }
+    });
+
+    // 导入模态框点击背景关闭
+    document.getElementById('importModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeImportModal();
         }
     });
 </script>
