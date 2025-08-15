@@ -36,40 +36,35 @@
   
       3.3:下载部署包文件
   
-        3.3.1:下载jar包
+        3.3.1:下载执行脚本
     
-          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.4/mfa-start-release.jar
+          wget -O mfa-start.sh https://raw.githubusercontent.com/doubleDimple/shell-tools/master/mfa-start.sh && chmod +x mfa-start.sh
       
-        3.3.2:下载运行脚本
-    
-          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start.sh
-      
-        3.3.3:下载配置文件模板
-    
-          wget https://github.com/doubleDimple/mfa-start/releases/download/v-0.0.3/mfa-start.yml
+ 四: 运行
+ #1. 启动应用
+# ./mfa-start.sh start
 
-四:配置说明:
- 
-    server:
-      port: 9999(修改为自己的端口号)
+#2. 停止应用
+#./mfa-start.sh stop
 
-    spring:
-      security:
-        user:
-          name: 面板登录用户名,自行指定
-          password: 面板登录密码,自行指定
+#3. 重启应用
+#./mfa-start.sh restart
 
+#4. 查看状态
+#./mfa-start.sh status
 
-五:启动
+#5. 更新应用
+#./mfa-start.sh update
 
-  5.1:给mfa-start.sh 执行权限添加
-    chmod 777 mfa-start.sh
+#6. 查看当前凭据
+#./mfa-start.sh password 或者 ./mfa-start.sh passwd
 
-  5.2:启动程序
-    ./mfa-start.sh start
+#7. 修改用户名和密码
+# 同时修改用户名和密码
+#./mfa-start.sh password admin mypassword123
+# 只修改用户名（保持原密码）
+#./mfa-start.sh password newadmin
+# 只修改密码（保持原用户名）
+#./mfa-start.sh password "" newpassword456
+        
 
-  5.3:查看程序启动状态
-    ./mfa-start.sh status
-
-  5.4:停止程序
-    ./mfa-start.sh stop
