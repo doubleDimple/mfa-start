@@ -51,8 +51,6 @@ sudo su - root
 # 创建应用目录并进入
 mkdir -p /root/mfa-start && cd /root/mfa-start
 
-# 创建数据目录
-mkdir -p data
 ```
 
 ### 3. 下载部署脚本
