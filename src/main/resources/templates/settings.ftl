@@ -339,11 +339,11 @@
         <nav class="sidebar-menu">
             <a href="/" class="menu-item">
                 <i>🔑</i>
-                MFA Management
+                MFA 管理
             </a>
             <a href="/settings" class="menu-item active">
                 <i>☁️️</i>
-                Sync Cloud Settings
+                同步设置
             </a>
         </nav>
     </aside>
@@ -354,7 +354,7 @@
 
             <!-- Alist配置 -->
             <div class="settings-section">
-                <div class="settings-header">Alist Configuration</div>
+                <div class="settings-header">Alist 配置</div>
                 <form id="settingsForm" onsubmit="return false;">
                     <div class="form-group">
                         <label class="toggle-container">
@@ -362,36 +362,36 @@
                                 <input type="checkbox" id="enableSync" onchange="validateForm()">
                                 <span class="slider"></span>
                             </label>
-                            <span>Enable Alist Sync</span>
+                            <span>启用同步</span>
                         </label>
                     </div>
 
                     <div class="form-group">
-                        <label for="alistUrl">Alist Server URL</label>
+                        <label for="alistUrl">Alist 服务地址</label>
                         <input type="text" id="alistUrl" class="form-control"
                                placeholder="https://your-alist-server.com"
                                onchange="validateForm()">
-                        <small class="form-text text-muted">Enter your Alist server URL</small>
+                        <small class="form-text text-muted">输入你的Alist服务地址</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="userName">AList UserName</label>
+                        <label for="userName">AList 用户名</label>
                         <input type="text" id="userName" class="form-control"
                                placeholder="Enter your AList Login UserName"
                                onchange="validateForm()">
-                        <small class="form-text text-muted">Your AList userName</small>
+                        <small class="form-text text-muted">你的Alist用户名</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="password">AList Password</label>
+                        <label for="password">AList 密码</label>
                         <input type="password" id="password" class="form-control"
                                placeholder="Enter your AList Login Password"
                                onchange="validateForm()">
-                        <small class="form-text text-muted">Your AList Login Password</small>
+                        <small class="form-text text-muted">你的AList登录密码</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="backupPath">Backup Path</label>
+                        <label for="backupPath">备份路径</label>
                         <input type="text" id="backupPath" class="form-control"
                                placeholder="/backup/otp"
                                onchange="validateForm()">
@@ -399,22 +399,22 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="syncInterval">Sync Interval</label>
+                        <label for="syncInterval">同步设置</label>
                         <select id="syncInterval" class="form-control" onchange="validateForm()">
-                            <option value="1">Every Day</option>
-                            <option value="7">Every Week</option>
-                            <option value="14">Every Two Weeks</option>
-                            <option value="30">Every Month</option>
+                            <option value="1">每天</option>
+                            <option value="7">每周</option>
+                            <option value="14">每两周</option>
+                            <option value="30">每个月</option>
                         </select>
                     </div>
 
                     <div class="button-group">
                         <button type="button" id="saveButton" class="btn btn-primary"
-                                onclick="saveSettings()">Save Settings</button>
+                                onclick="saveSettings()">保存设置</button>
                         <button type="button" class="btn btn-secondary test-btn"
-                                onclick="testConnection()">Test Connection</button>
+                                onclick="testConnection()">测试连接</button>
                         <button type="button" class="btn btn-info sync-btn"
-                                onclick="syncNow()">Sync Now</button>
+                                onclick="syncNow()">开始备份</button>
                     </div>
                 </form>
 
@@ -423,15 +423,15 @@
 
             <!-- 同步历史 -->
             <div class="settings-section">
-                <div class="settings-header">Sync History</div>
+                <div class="settings-header">备份历史</div>
                 <div class="sync-history">
                     <table>
                         <thead>
                         <tr>
-                            <th>Time</th>
-                            <th>Status</th>
-                            <th>Details</th>
-                            <th>Size</th>
+                            <th>时间</th>
+                            <th>状态</th>
+                            <th>详细信息</th>
+                            <th>备份大小</th>
                         </tr>
                         </thead>
                         <tbody id="historyTable">

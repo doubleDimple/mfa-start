@@ -5,7 +5,7 @@ spring:
   security:
     user:
       name: admin
-      password: admin
+      password: admin1234
   datasource:
     username: sa
     password: password

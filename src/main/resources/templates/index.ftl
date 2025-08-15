@@ -394,63 +394,63 @@
                 <div class="logo">
                     <span>🔐</span>
                 </div>
-                <h2>OTP Management</h2>
+                <h2>OTP 管理</h2>
             </div>
         </div>
         <nav class="sidebar-menu">
             <a href="#" class="menu-item active">
                 <i>🔑</i>
-                MFA Management
+                MFA 管理
             </a>
             <a href="/settings" class="menu-item">
                 <i>☁️</i>
-                Sync Cloud Settings
+                同步管理
             </a>
         </nav>
     </aside>
 
     <main class="main-content">
         <div class="card">
-            <h2>Add New Key</h2>
+            <h2>添加秘钥</h2>
             <form action="/save-secret" method="post" enctype="multipart/form-data" id="keyForm">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="form-group">
-                    <label for="keyName">Key Name:</label>
+                    <label for="keyName">秘钥名称:</label>
                     <input type="text" id="keyName" name="keyName" required placeholder="Enter a name for this key">
                 </div>
                 <div class="form-group">
-                    <label for="secretKey">Secret Key:</label>
+                    <label for="secretKey">秘钥:</label>
                     <input type="text" id="secretKey" name="secretKey" required placeholder="Enter secret key or upload QR code">
                 </div>
                 <div class="file-upload" id="pasteZone">
                     <label class="file-upload-btn">
-                        Upload QR Code
+                        上传秘钥二维码
                         <input type="file" id="qrCode" name="qrCode" accept="image/*">
                     </label>
-                    <div id="fileName">No file chosen</div>
+                    <div id="fileName">暂无文件</div>
                     <img id="previewImage" class="preview-image" alt="QR Code preview">
                     <div class="paste-zone" id="pasteArea">
-                        Click or paste image here
+                        此处点击上传和粘贴文件
                     </div>
                 </div>
-                <button type="submit">Save Key</button>
+                <button type="submit">保存</button>
             </form>
         </div>
 
         <div class="card">
-            <h2>Key Management</h2>
+            <h2>秘钥管理</h2>
             <input type="text" id="searchInput" placeholder="Search keys..." onkeyup="searchKeys()">
-            <button onclick="exportData()" class="export-btn">Export All Data</button>
+            <button onclick="exportData()" class="export-btn">导出</button>
             <table>
                 <thead>
                 <tr>
-                    <th>Key Name</th>
-                    <th>Key Issuer</th>
-                    <th>Secret Key</th>
-                    <th>QR Code</th>
-                    <th>OTP Code</th>
-                    <th>Create Time</th>
-                    <th>Actions</th>
+                    <th>秘钥名称</th>
+                    <th>秘钥信息</th>
+                    <th>秘钥</th>
+                    <th>二维码</th>
+                    <th>验证码</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
