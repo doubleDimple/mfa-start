@@ -1,11 +1,36 @@
 #!/bin/bash
 
+#1. 启动应用
+# ./mfa-start.sh start
+
+#2. 停止应用
+#./mfa-start.sh stop
+
+#3. 重启应用
+#./mfa-start.sh restart
+
+#4. 查看状态
+#./mfa-start.sh status
+
+#5. 更新应用
+#./mfa-start.sh update
+
+#6. 查看当前凭据
+#./mfa-start.sh password 或者 ./mfa-start.sh passwd
+
+#7. 修改用户名和密码
+# 同时修改用户名和密码
+#./mfa-start.sh password admin mypassword123
+# 只修改用户名（保持原密码）
+#./mfa-start.sh password newadmin
+# 只修改密码（保持原用户名）
+#./mfa-start.sh password "" newpassword456
+
+
 # 配置变量
 BASE_DIR="/root/mfa-start"
 JAR_PATH="$BASE_DIR/mfa-start-release.jar"
 CONFIG_FILE="$BASE_DIR/mfa-start.yml"
-LOG_FILE="$BASE_DIR/mfa-start.log"
-PID_FILE="$BASE_DIR/mfa-start.pid"
 PASSWORD_FILE="$BASE_DIR/.mfa-password"
 
 # 下载链接配置
@@ -132,8 +157,6 @@ spring:
 logging:
   level:
     root: INFO
-  file:
-    name: $LOG_FILE
 EOF
     fi
 
@@ -196,20 +219,25 @@ ensure_files() {
     fi
 }
 
+# 检查应用是否正在运行
+is_running() {
+    pgrep -f "$JAR_PATH" > /dev/null 2>&1
+    return $?
+}
+
+# 获取进程PID
+get_pid() {
+    pgrep -f "$JAR_PATH" 2>/dev/null
+}
+
 # 启动应用
 start() {
     ensure_files
 
     # 检查应用是否已经在运行
-    if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
-        if ps -p $PID > /dev/null 2>&1; then
-            echo "Application is already running with PID: $PID"
-            exit 0
-        else
-            echo "Stale PID file found, removing..."
-            rm -f "$PID_FILE"
-        fi
+    if is_running; then
+        echo "Application is already running with PID: $(get_pid)"
+        exit 0
     fi
 
     # 显示当前配置的用户信息
@@ -223,57 +251,42 @@ start() {
 
     # 启动JAR包
     echo "Starting application..."
-    nohup java -jar "$JAR_PATH" --spring.config.additional-location="$CONFIG_FILE" > "$LOG_FILE" 2>&1 &
-
-    # 获取PID并输出
-    PID=$!
-    echo "Application started with PID: $PID"
-    echo "Log file: $LOG_FILE"
-
-    # 保存PID到文件
-    echo $PID > "$PID_FILE"
+    nohup java -jar "$JAR_PATH" --spring.config.additional-location="$CONFIG_FILE" > /dev/null 2>&1 &
 
     # 等待一下检查启动是否成功
     sleep 3
-    if ps -p $PID > /dev/null 2>&1; then
-        echo "Application started successfully!"
+    if is_running; then
+        echo "Application started successfully! PID: $(get_pid)"
     else
-        echo "Warning: Application may have failed to start. Check log file: $LOG_FILE"
-        rm -f "$PID_FILE"
+        echo "Warning: Application may have failed to start."
     fi
 }
 
 # 停止应用
 stop() {
-    if [ ! -f "$PID_FILE" ]; then
-        echo "PID file not found. Is the application running?"
+    if ! is_running; then
+        echo "Application is not running."
         return 1
     fi
 
-    PID=$(cat "$PID_FILE")
-    if ps -p $PID > /dev/null 2>&1; then
-        echo "Stopping application with PID: $PID"
-        kill $PID
+    local PID=$(get_pid)
+    echo "Stopping application with PID: $PID"
+    kill $PID
 
-        # 等待进程优雅关闭
-        local count=0
-        while ps -p $PID > /dev/null 2>&1 && [ $count -lt 10 ]; do
-            sleep 1
-            count=$((count + 1))
-        done
+    # 等待进程优雅关闭
+    local count=0
+    while is_running && [ $count -lt 10 ]; do
+        sleep 1
+        count=$((count + 1))
+    done
 
-        if ps -p $PID > /dev/null 2>&1; then
-            echo "Application did not stop gracefully, forcing shutdown..."
-            kill -9 $PID
-            sleep 1
-        fi
-
-        echo "Application stopped."
-    else
-        echo "No process found with PID: $PID"
+    if is_running; then
+        echo "Application did not stop gracefully, forcing shutdown..."
+        kill -9 $PID
+        sleep 1
     fi
 
-    rm -f "$PID_FILE"
+    echo "Application stopped."
 }
 
 # 重启应用
@@ -290,13 +303,10 @@ update() {
 
     # 停止应用（如果正在运行）
     local was_running=false
-    if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
-        if ps -p $PID > /dev/null 2>&1; then
-            was_running=true
-            echo "Stopping application for update..."
-            stop
-        fi
+    if is_running; then
+        was_running=true
+        echo "Stopping application for update..."
+        stop
     fi
 
     # 备份当前JAR文件
@@ -322,28 +332,14 @@ update() {
         fi
     else
         echo "Update failed. Restoring backup if available..."
-        # 检查是否有备份文件
-        backup_found=false
+        # 恢复备份
         for backup_file in "$JAR_PATH.backup."*; do
             if [ -f "$backup_file" ]; then
-                backup_found=true
-                latest_backup="$backup_file"
+                cp "$backup_file" "$JAR_PATH"
+                echo "Backup restored: $backup_file"
                 break
             fi
         done
-
-        if [ "$backup_found" = true ]; then
-            # 找到最新的备份文件
-            for backup_file in "$JAR_PATH.backup."*; do
-                if [ -f "$backup_file" ] && [ "$backup_file" -nt "$latest_backup" ]; then
-                    latest_backup="$backup_file"
-                fi
-            done
-            cp "$latest_backup" "$JAR_PATH"
-            echo "Backup restored: $latest_backup"
-        else
-            echo "No backup files found"
-        fi
 
         if [ "$was_running" = true ]; then
             echo "Restarting application with original files..."
@@ -355,21 +351,12 @@ update() {
 
 # 查看状态
 status() {
-    if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
-        if ps -p $PID > /dev/null 2>&1; then
-            echo "Application is running with PID: $PID"
-            if [ -f "$CONFIG_FILE" ]; then
-                username=$(grep -A3 "security:" "$CONFIG_FILE" | grep "name:" | awk '{print $2}')
-                echo "Username: $username"
-            fi
-            if [ -f "$LOG_FILE" ]; then
-                echo "Log file: $LOG_FILE"
-            fi
-        else
-            echo "PID file found but no process is running with PID: $PID"
-            echo "Cleaning up stale PID file..."
-            rm -f "$PID_FILE"
+    if is_running; then
+        local PID=$(get_pid)
+        echo "Application is running with PID: $PID"
+        if [ -f "$CONFIG_FILE" ]; then
+            username=$(grep -A3 "security:" "$CONFIG_FILE" | grep "name:" | awk '{print $2}')
+            echo "Username: $username"
         fi
     else
         echo "Application is not running."
@@ -449,13 +436,10 @@ change_credentials() {
 
     # 检查应用是否正在运行
     local was_running=false
-    if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
-        if ps -p $PID > /dev/null 2>&1; then
-            was_running=true
-            echo "Application is running, will restart after credential update..."
-            stop
-        fi
+    if is_running; then
+        was_running=true
+        echo "Application is running, will restart after credential update..."
+        stop
     fi
 
     # 更新配置文件中的用户名和密码
@@ -485,26 +469,13 @@ change_credentials() {
     fi
 }
 
-# 查看日志
-logs() {
-    if [ -f "$LOG_FILE" ]; then
-        if [ "$2" = "-f" ]; then
-            tail -f "$LOG_FILE"
-        else
-            tail -n 50 "$LOG_FILE"
-        fi
-    else
-        echo "Log file not found: $LOG_FILE"
-    fi
-}
-
 # 显示帮助信息
 show_help() {
     echo "========================================="
     echo "MFA-START 应用管理脚本 / MFA-START Application Management Script"
     echo "========================================="
     echo ""
-    echo "用法 / Usage: $0 {start|stop|restart|update|status|password|logs|help}"
+    echo "用法 / Usage: $0 {start|stop|restart|update|status|password|help}"
     echo ""
     echo "命令说明 / Commands:"
     echo "  start                              - 启动应用 (如需要会自动下载) / Start the application (auto-download if needed)"
@@ -516,7 +487,6 @@ show_help() {
     echo "  password <username> <password>     - 修改用户名和密码 / Change both username and password"
     echo "  password <username>                - 仅修改用户名 (保持当前密码) / Change only username (keep current password)"
     echo "  password \"\" <password>             - 仅修改密码 (保持当前用户名) / Change only password (keep current username)"
-    echo "  logs [-f]                          - 显示最近日志 (使用-f实时跟踪) / Show recent logs (use -f to follow)"
     echo "  help                               - 显示此帮助信息 / Show this help message"
     echo ""
     echo "使用示例 / Examples:"
@@ -525,7 +495,6 @@ show_help() {
     echo "  $0 password admin newpass123       - 设置用户名为'admin'，密码为'newpass123' / Set username to 'admin' and password to 'newpass123'"
     echo "  $0 password newuser                - 将用户名改为'newuser'，保持当前密码 / Change username to 'newuser', keep current password"
     echo "  $0 password \"\" secretpass          - 保持当前用户名，密码改为'secretpass' / Keep current username, change password to 'secretpass'"
-    echo "  $0 logs -f                         - 实时查看日志 / View logs in real-time"
     echo "  $0 update                          - 更新到最新版本 / Update to latest version"
     echo ""
     echo "首次运行特性 / First Run Features:"
@@ -536,14 +505,11 @@ show_help() {
     echo "文件位置 / File Locations:"
     echo "  JAR文件 / JAR File:        $JAR_PATH"
     echo "  配置文件 / Config File:    $CONFIG_FILE"
-    echo "  日志文件 / Log File:       $LOG_FILE"
     echo "  密码文件 / Password File:  $PASSWORD_FILE"
-    echo "  PID文件 / PID File:        $PID_FILE"
     echo ""
     echo "注意事项 / Notes:"
     echo "  - 修改凭据时会自动重启应用 (如果正在运行) / Credential changes will restart the app (if running)"
     echo "  - 更新功能会保持现有用户名和密码不变 / Update function preserves existing username and password"
-    echo "  - 所有操作都有中文提示和详细日志 / All operations have Chinese prompts and detailed logs"
     echo "========================================="
 }
 
@@ -573,14 +539,11 @@ case "$1" in
             show_password
         fi
         ;;
-    logs)
-        logs "$@"
-        ;;
     help)
         show_help
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|update|status|password|logs|help}"
+        echo "Usage: $0 {start|stop|restart|update|status|password|help}"
         echo ""
         echo "Commands:"
         echo "  start                              - Start the application (auto-download if needed)"
@@ -592,18 +555,7 @@ case "$1" in
         echo "  password <username> <password>     - Change both username and password"
         echo "  password <username>                - Change only username (keep current password)"
         echo "  password \"\" <password>             - Change only password (keep current username)"
-        echo "  logs [-f]                          - Show recent logs (use -f to follow)"
         echo "  help                               - Show this help message"
-        echo ""
-        echo "Examples:"
-        echo "  $0 password admin newpass123       - Set username to 'admin' and password to 'newpass123'"
-        echo "  $0 password newuser                - Change username to 'newuser', keep current password"
-        echo "  $0 password \"\" secretpass          - Keep current username, change password to 'secretpass'"
-        echo ""
-        echo "First run will:"
-        echo "  - Create user 'mfa-start-user' with random password"
-        echo "  - Download latest JAR and config files"
-        echo "  - Display generated credentials"
         echo ""
         echo "For more information, use: $0 help"
         exit 1
