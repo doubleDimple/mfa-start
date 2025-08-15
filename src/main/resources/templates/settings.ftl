@@ -333,7 +333,7 @@
                 <div class="logo">
                     <span>🔐</span>
                 </div>
-                <h2>OTP Management</h2>
+                <h2>OTP 管理</h2>
             </div>
         </div>
         <nav class="sidebar-menu">

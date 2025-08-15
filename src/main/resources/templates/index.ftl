@@ -322,37 +322,92 @@
             background-color: #c82333;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-280px);
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-
-            th, td {
-                padding: 8px;
-                font-size: 14px;
-            }
-
-            .qr-code img {
-                width: 40px;
-                height: 40px;
-            }
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
         }
 
-        /* 添加新的样式 */
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: scale(0.8);
+            animation: modalSlideIn 0.3s ease forwards;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-title {
+            color: #2d3748;
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #718096;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f7fafc;
+            color: #2d3748;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .add-key-btn {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            margin-right: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-key-btn:hover {
+            background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+        }
+
         .export-btn {
             background: linear-gradient(135deg, #28a745 0%, #218838 100%);
-            margin-left: 10px;
         }
 
         .export-btn:hover {
@@ -384,6 +439,78 @@
             gap: 10px;
             margin-bottom: 20px;
         }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .cancel-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .cancel-btn:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: scale(0.8) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-280px);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 10px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .qr-code img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -403,7 +530,7 @@
                 MFA 管理
             </a>
             <a href="/settings" class="menu-item">
-                <i>☁️</i>
+                <i>⚙️</i>
                 同步管理
             </a>
         </nav>
@@ -411,42 +538,28 @@
 
     <main class="main-content">
         <div class="card">
-            <h2>添加秘钥</h2>
-            <form action="/save-secret" method="post" enctype="multipart/form-data" id="keyForm">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <div class="form-group">
-                    <label for="keyName">秘钥名称:</label>
-                    <input type="text" id="keyName" name="keyName" required placeholder="Enter a name for this key">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>密钥管理</h2>
+                <div class="button-group">
+                    <button class="add-key-btn" onclick="openAddKeyModal()">
+                        <i class="fas fa-plus"></i>
+                        添加密钥
+                    </button>
+                    <button onclick="exportData()" class="export-btn">
+                        <i class="fas fa-download"></i>
+                        导出
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="secretKey">秘钥:</label>
-                    <input type="text" id="secretKey" name="secretKey" required placeholder="Enter secret key or upload QR code">
-                </div>
-                <div class="file-upload" id="pasteZone">
-                    <label class="file-upload-btn">
-                        上传秘钥二维码
-                        <input type="file" id="qrCode" name="qrCode" accept="image/*">
-                    </label>
-                    <div id="fileName">暂无文件</div>
-                    <img id="previewImage" class="preview-image" alt="QR Code preview">
-                    <div class="paste-zone" id="pasteArea">
-                        此处点击上传和粘贴文件
-                    </div>
-                </div>
-                <button type="submit">保存</button>
-            </form>
-        </div>
+            </div>
 
-        <div class="card">
-            <h2>秘钥管理</h2>
-            <input type="text" id="searchInput" placeholder="Search keys..." onkeyup="searchKeys()">
-            <button onclick="exportData()" class="export-btn">导出</button>
+            <input type="text" id="searchInput" placeholder="搜索密钥..." onkeyup="searchKeys()">
+
             <table>
                 <thead>
                 <tr>
-                    <th>秘钥名称</th>
-                    <th>秘钥信息</th>
-                    <th>秘钥</th>
+                    <th>密钥名称</th>
+                    <th>密钥信息</th>
+                    <th>密钥</th>
                     <th>二维码</th>
                     <th>验证码</th>
                     <th>创建时间</th>
@@ -475,13 +588,13 @@
                             </td>
                             <td>${otpKey.createTime!'default'}</td>
                             <td>
-                                <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">Delete</button>
+                                <button class="delete-btn" onclick="deleteKey('${otpKey.keyName}')">删除</button>
                             </td>
                         </tr>
                     </#list>
                 <#else>
                     <tr>
-                        <td colspan="6" style="text-align: center">No OTP keys available</td>
+                        <td colspan="7" style="text-align: center; color: #718096; padding: 40px;">暂无OTP密钥</td>
                     </tr>
                 </#if>
                 </tbody>
@@ -490,9 +603,92 @@
     </main>
 </div>
 
+<!-- 添加密钥模态框 -->
+<div id="addKeyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">添加密钥</h3>
+            <button class="close-btn" onclick="closeAddKeyModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form action="/save-secret" method="post" enctype="multipart/form-data" id="keyForm">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <div class="form-group">
+                <label for="keyName">密钥名称:</label>
+                <input type="text" id="keyName" name="keyName" required placeholder="请输入密钥名称">
+            </div>
+
+            <div class="form-group">
+                <label for="secretKey">密钥:</label>
+                <input type="text" id="secretKey" name="secretKey" required placeholder="请输入密钥或上传二维码">
+            </div>
+
+            <div class="file-upload" id="pasteZone">
+                <label class="file-upload-btn">
+                    上传密钥二维码
+                    <input type="file" id="qrCode" name="qrCode" accept="image/*">
+                </label>
+                <div id="fileName">暂无文件</div>
+                <img id="previewImage" class="preview-image" alt="QR Code preview">
+                <div class="paste-zone" id="pasteArea">
+                    此处点击上传和粘贴文件
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="cancel-btn" onclick="closeAddKeyModal()">取消</button>
+                <button type="submit">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     // 全局变量
     let globalUpdateTimer = null;
+
+    // 模态框控制函数
+    function openAddKeyModal() {
+        const modal = document.getElementById('addKeyModal');
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // 防止背景滚动
+
+        // 重置表单
+        resetForm();
+    }
+
+    function closeAddKeyModal() {
+        const modal = document.getElementById('addKeyModal');
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto'; // 恢复滚动
+
+        // 重置表单
+        resetForm();
+    }
+
+    function resetForm() {
+        document.getElementById('keyForm').reset();
+        document.getElementById('fileName').textContent = '暂无文件';
+        document.getElementById('previewImage').style.display = 'none';
+        document.getElementById('secretKey').readOnly = false;
+    }
+
+    // 点击模态框背景关闭
+    document.getElementById('addKeyModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAddKeyModal();
+        }
+    });
+
+    // ESC键关闭模态框
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAddKeyModal();
+        }
+    });
 
     // OTP代码批量更新函数
     async function updateOtpCodes() {
@@ -504,7 +700,7 @@
             .filter(key => key && key.trim() !== '');
 
         try {
-            const csrfToken = document.querySelector('input[name="${_csrf.parameterName}"]').value;
+            const csrfToken = document.querySelector('input[name="${_csrf.parameterName}"]')?.value || '';
             const response = await fetch('/generate-otp-batch', {
                 method: 'POST',
                 headers: {
@@ -606,7 +802,7 @@
             document.getElementById('secretKey').value = '';
             document.getElementById('secretKey').readOnly = true;
         } else {
-            document.getElementById('fileName').textContent = 'No file chosen';
+            document.getElementById('fileName').textContent = '暂无文件';
             document.getElementById('previewImage').style.display = 'none';
             document.getElementById('secretKey').readOnly = false;
         }
@@ -625,9 +821,9 @@
 
     // 删除密钥
     async function deleteKey(keyName) {
-        if (confirm('Are you sure you want to delete the key ' + keyName + '?')) {
+        if (confirm('确定要删除密钥 ' + keyName + ' 吗？')) {
             try {
-                const csrfToken = document.querySelector('input[name="${_csrf.parameterName}"]').value;
+                const csrfToken = document.querySelector('input[name="${_csrf.parameterName}"]')?.value || '';
                 const response = await fetch('/delete-key', {
                     method: 'POST',
                     headers: {
@@ -644,7 +840,7 @@
                 location.reload();
             } catch (error) {
                 console.error('Error deleting key:', error);
-                alert('Failed to delete the key. Please try again.');
+                alert('删除密钥失败，请重试。');
             }
         }
     }
@@ -662,7 +858,7 @@
         enlargedImg.style.alignItems = 'center';
         enlargedImg.style.justifyContent = 'center';
         enlargedImg.style.cursor = 'pointer';
-        enlargedImg.style.zIndex = '1000';
+        enlargedImg.style.zIndex = '10001';
 
         const img = document.createElement('img');
         img.src = imgElement.src;
@@ -678,23 +874,7 @@
         document.body.appendChild(enlargedImg);
     }
 
-    // 页面初始化
-    window.addEventListener('load', () => {
-        // 初始化时获取一次 OTP 码
-        updateOtpCodes();
-        // 启动统一的倒计时
-        initializeCountdown();
-    });
-
-    // 页面卸载时清理
-    window.addEventListener('beforeunload', () => {
-        if (globalUpdateTimer) {
-            clearInterval(globalUpdateTimer);
-        }
-    });
-
-
-    //文件处理
+    // 导出数据函数
     function exportData() {
         try {
             // 获取表格数据
@@ -757,7 +937,7 @@
             document.body.removeChild(a);
         } catch (error) {
             console.error('Export failed:', error);
-            alert('Failed to export data. Please try again.');
+            alert('导出数据失败，请重试。');
         }
     }
 
@@ -837,6 +1017,28 @@
                 console.log('Failed to read clipboard:', err);
             });
         });
+    });
+
+    // 表单提交后关闭模态框
+    document.getElementById('keyForm').addEventListener('submit', function(e) {
+        // 这里可以添加表单验证逻辑
+        // 如果验证通过，表单会正常提交，页面会刷新
+        // 如果需要AJAX提交，可以在这里处理
+    });
+
+    // 页面初始化
+    window.addEventListener('load', () => {
+        // 初始化时获取一次 OTP 码
+        updateOtpCodes();
+        // 启动统一的倒计时
+        initializeCountdown();
+    });
+
+    // 页面卸载时清理
+    window.addEventListener('beforeunload', () => {
+        if (globalUpdateTimer) {
+            clearInterval(globalUpdateTimer);
+        }
     });
 </script>
 </body>
