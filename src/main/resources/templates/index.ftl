@@ -6,6 +6,12 @@
     <title>OTP Key Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- 在 <head> 中添加 SweetAlert2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css">
+
+
     <style>
         * {
             margin: 0;
@@ -784,7 +790,19 @@
 
     // 删除密钥
     async function deleteKey(keyName) {
-        if (confirm('确定要删除密钥 ' + keyName + ' 吗？')) {
+        const result = await Swal.fire({
+            title: '确认删除',
+            text: `确定要删除密钥 "`+ keyName+`" 吗？`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '删除',
+            cancelButtonText: '取消',
+            reverseButtons: true
+        });
+
+        if (result.isConfirmed) {
             try {
                 const csrfToken = document.querySelector('input[name="${_csrf.parameterName}"]')?.value || '';
                 const response = await fetch('/delete-key', {
@@ -800,10 +818,23 @@
                     throw new Error('HTTP error! status: ' + response.status);
                 }
 
+                await Swal.fire({
+                    title: '删除成功',
+                    text: '密钥已成功删除',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
                 location.reload();
             } catch (error) {
                 console.error('Error deleting key:', error);
-                alert('删除密钥失败，请重试。');
+                await Swal.fire({
+                    title: '删除失败',
+                    text: '删除密钥时发生错误，请重试',
+                    icon: 'error',
+                    confirmButtonText: '确定'
+                });
             }
         }
     }
@@ -893,7 +924,12 @@
             document.body.removeChild(a);
         } catch (error) {
             console.error('Export failed:', error);
-            alert('导出数据失败，请重试。');
+            Swal.fire({
+                title: '导出失败',
+                text: '导出数据时发生错误，请重试',
+                icon: 'error',
+                confirmButtonText: '确定'
+            });
         }
     }
 
