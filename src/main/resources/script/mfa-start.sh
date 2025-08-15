@@ -35,7 +35,7 @@ PASSWORD_FILE="$BASE_DIR/.mfa-password"
 
 # 下载链接配置
 JAR_DOWNLOAD_URL="https://github.com/doubleDimple/mfa-start/releases/latest/download/mfa-start-release.jar"
-CONFIG_DOWNLOAD_URL="https://github.com/doubleDimple/mfa-start/releases/latest/download/mfa-start.yml"
+CONFIG_DOWNLOAD_URL="https://raw.githubusercontent.com/doubleDimple/shell-tools/master/mfa-start.yml"
 
 # 创建基础目录
 create_base_dir() {
