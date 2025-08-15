@@ -114,7 +114,7 @@ init_config() {
         echo "Password: $password"
         echo "========================================="
         echo "Please save these credentials!"
-        echo "Password also saved to: $PASSWORD_FILE"
+        #echo "Password also saved to: $PASSWORD_FILE"
         echo "========================================="
     else
         # 如果有密码文件，读取现有密码
