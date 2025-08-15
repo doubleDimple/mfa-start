@@ -101,19 +101,9 @@ wget -O mfa-start.sh https://raw.githubusercontent.com/doubleDimple/shell-tools/
 
 #### 7️⃣ 修改凭据
 
-**同时修改用户名和密码：**
+**修改用户名和密码：**
 ```bash
-./mfa-start.sh password admin mypassword123
-```
-
-**只修改用户名（保持原密码）：**
-```bash
-./mfa-start.sh password newadmin
-```
-
-**只修改密码（保持原用户名）：**
-```bash
-./mfa-start.sh password "" newpassword456
+./mfa-start.sh password 自定义用户名 自定义密码
 ```
 
 ## 📋 快速开始示例
