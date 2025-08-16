@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>MFA 管理</title>
     <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -206,8 +207,8 @@
 
         .otp-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             padding: 16px;
             border-bottom: 1px solid #e8eaed;
             cursor: pointer;
@@ -220,7 +221,8 @@
         }
 
         .otp-info-and-code {
-            flex: 1;
+            flex-grow: 1;
+            flex-shrink: 1;
             overflow: hidden;
             padding-right: 16px;
         }
@@ -237,19 +239,12 @@
         .otp-code {
             font-size: 24px;
             font-weight: 500;
-            color: var(--otp-code-color, #1a73e8); /* 使用 CSS 变量来动态改变颜色 */
+            color: var(--otp-code-color, #1a73e8);
             letter-spacing: 2px;
             font-family: 'Roboto Mono', monospace;
             cursor: pointer;
             user-select: none;
-        }
-
-        .otp-value {
-            transition: opacity 0.2s;
-        }
-
-        .otp-value.copied {
-            opacity: 0.5;
+            transition: color 0.3s ease;
         }
 
         .countdown-container {
@@ -806,6 +801,7 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
     }
 
     // 渲染OTP列表
+    // 渲染OTP列表
     function renderOTPList() {
         const otpList = document.getElementById('otpList');
         const emptyState = document.getElementById('emptyState');
@@ -824,30 +820,27 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
             const issuer = key.issuer || 'default';
             const secretKey = key.secretKey || '';
 
+            // 使用模板字面量以确保正确的字符串拼接
             html_content += `
                 <div class="otp-item" data-key="`+ keyName+`" data-secret="`+ secretKey+`">
-
-                <div class="otp-info-and-code">
-                    <div class="otp-account-full">`+ issuer + `: `+ keyName+`</div>
-
-                <div class="otp-code">
-                    <span class="otp-value">------</span>
-
-                </div>
-                </div>
-                <div class="countdown-container">
-                    <svg class="countdown-circle" width="32" height="32">
-                        <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
-                        <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
-                    </svg>
-                    <div class="countdown-text">30</div>
-                </div>
+                    <div class="otp-info-and-code">
+                        <div class="otp-account-full">`+ issuer+`: `+ keyName+`</div>
+                        <div class="otp-code">
+                            <span class="otp-value">------</span>
+                        </div>
+                    </div>
+                    <div class="countdown-container">
+                        <svg class="countdown-circle" width="32" height="32">
+                            <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
+                            <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
+                        </svg>
+                        <div class="countdown-text">30</div>
+                    </div>
                 </div>
             `;
         });
 
         otpList.innerHTML = html_content;
-
         updateOtpCodes();
         initializeCountdown();
     }
@@ -1058,9 +1051,7 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
             aspectRatio: 1.0
         };
         html5QrcodeScanner.start(
-            {
-                facingMode: "environment"
-            },
+            { facingMode: "environment" },
             config,
             (decodedText, decodedResult) => {
                 // 扫描成功，将原始字符串直接交给后端处理
@@ -1238,8 +1229,6 @@ showToast('添加失败，请重试');
             closeAddKeyModal();
         }
     });
-
-
     // 滑动删除功能
     let touchStartX = 0;
     let touchEndX = 0;
@@ -1322,13 +1311,12 @@ showToast('添加失败，请重试');
             secretKey: "${otpKey.secretKey}",
             qrCode: "${otpKey.qrCode!''}",
             issuer: "${otpKey.issuer!''}",
-
             createTime: "${otpKey.formattedCreateTime}",
             updateTime: "${otpKey.formattedUpdateTime}"
         }<#if otpKey_has_next>,</#if>
         </#list>
     ];
-    //console.log("后端注入的 otpKeys:", otpKeys);
+    console.log("后端注入的 otpKeys:", otpKeys);
 </script>
 
 </body>
