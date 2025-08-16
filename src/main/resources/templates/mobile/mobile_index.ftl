@@ -1304,7 +1304,7 @@ showToast('添加失败，请重试');
 
 <script data-csrf-token="${_csrf.token!}">
     var otpKeys = [
-        <#list otpKeys as otpKey>
+        <#list (otpKeys)! as otpKey>
         {
             id: ${otpKey.id},
             keyName: "${otpKey.keyName}",
