@@ -12,6 +12,7 @@ spring:
     url: jdbc:h2:file:./data/otp_keys_db
 
 
+
 #下载链接
 #jar包       wget https://github.com/doubleDimple/mfa-start/releases/latest/download/mfa-start-release.jar
 #脚本        wget https://github.com/doubleDimple/mfa-start/releases/latest/download/mfa-start.sh
