@@ -217,9 +217,12 @@
         }
 
         .otp-item-content {
+            /* 使用 Flexbox 布局 */
             display: flex;
-            align-items: center;
+            /* 子元素左右对齐 */
             justify-content: space-between;
+            /* 子元素垂直居中对齐 */
+            align-items: center;
         }
 
         .otp-info {
@@ -613,6 +616,37 @@
         .otp-item.swiped .swipe-delete {
             transform: translateX(0);
         }
+
+        .otp-info-left {
+            /* 占据可用空间，允许其内容换行 */
+            flex-grow: 1;
+            /* 允许收缩，避免内容溢出 */
+            flex-shrink: 1;
+            /* 隐藏溢出内容，以防万一 */
+            overflow: hidden;
+            /* 增加名称和验证码之间的间距 */
+            padding-right: 16px;
+        }
+
+        .otp-account-full {
+            font-size: 16px;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 8px;
+        }
+
+        .otp-code-section-new {
+            /* 使用 Flexbox 布局 */
+            display: flex;
+            /* 子元素垂直居中对齐 */
+            align-items: center;
+            /* 子元素之间的间距 */
+            gap: 16px;
+            /* 不允许收缩，保持固定宽度 */
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -772,20 +806,19 @@
             html_content += `
                 <div class="otp-item" data-key="`+ keyName+`" data-secret="`+ secretKey+`">
                     <div class="otp-item-content">
-                        <div class="otp-info">
-                            <div class="otp-issuer">`+ issuer+`</div>
-                            <div class="otp-account">`+ keyName+`</div>
-                        </div>
-                        <div class="otp-code-section">
-                            <div class="otp-code" onclick="copyOTPCode(this, '`+ secretKey+`')">
-                                <span class="otp-value">------</span>
-                            </div>
-                            <div class="countdown-container">
-                                <svg class="countdown-circle" width="32" height="32">
-                                    <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
-                                    <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
-                                </svg>
-                                <div class="countdown-text">30</div>
+                        <div class="otp-info-left">
+                            <div class="otp-account-full">`+ issuer + `: `+ keyName+`</div>
+                            <div class="otp-code-section-new">
+                                <div class="otp-code" onclick="copyOTPCode(this, '`+ secretKey+`')">
+                                    <span class="otp-value">------</span>
+                                </div>
+                                <div class="countdown-container">
+                                    <svg class="countdown-circle" width="32" height="32">
+                                        <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
+                                        <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
+                                    </svg>
+                                    <div class="countdown-text">30</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -947,6 +980,7 @@
     }
 
     // 选择添加方式
+    // 选择添加方式
     function selectMethod(method) {
         currentMethod = method;
         const manualBtn = document.getElementById('manualMethod');
@@ -962,6 +996,10 @@
             scanArea.style.display = 'block';
             keyForm.style.display = 'none'; // 隐藏手动输入表单
             document.getElementById('submitBtn').style.display = 'none'; // 隐藏提交按钮
+
+            // 自动启动摄像头扫描
+            startScanning();
+
         } else {
             manualBtn.classList.add('active');
             scanBtn.classList.remove('active');
@@ -1257,7 +1295,7 @@
         }<#if otpKey_has_next>,</#if>
         </#list>
     ];
-    console.log("后端注入的 otpKeys:", otpKeys);
+    //console.log("后端注入的 otpKeys:", otpKeys);
 </script>
 
 </body>

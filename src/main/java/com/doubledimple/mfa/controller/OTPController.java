@@ -57,122 +57,123 @@ public class OTPController {
 
     // 显示主页
     @GetMapping("/")
-    public String index(Model model, HttpServletRequest request){
+    public String index(Model model, HttpServletRequest request) {
         List<OTPKey> otpKeys = otpService.getAllKeys();
-        if (otpKeys.size() > 0){
+        if (otpKeys.size() > 0) {
             model.addAttribute("otpKeys", otpKeys);
         }
-        if (isMobileRequest(request)){
+        if (isMobileRequest(request)) {
             return "mobile/mobile_index";
-        }else{
+        } else {
             return "index";
         }
     }
 
     // 保存密钥
     @PostMapping("/save-secret2")
-    public String saveSecret2(@RequestParam(value ="keyName", required = false) String keyName,
-                             @RequestParam(value ="secretKey", required = false) String secretKey,
-                             @RequestParam(value = "qrCode", required = false) MultipartFile qrCode) {
+    public String saveSecret2(@RequestParam(value = "keyName", required = false) String keyName,
+                              @RequestParam(value = "secretKey", required = false) String secretKey,
+                              @RequestParam(value = "qrCode", required = false) MultipartFile qrCode) {
         AtomicReference<String> finalSecretKey = new AtomicReference<>(secretKey);
         List<Map<String, String>> accounts = new ArrayList<>();
-        if(StringUtils.isEmpty(keyName)){
-            keyName = System.currentTimeMillis()+"";
+        if (StringUtils.isEmpty(keyName)) {
+            keyName = System.currentTimeMillis() + "";
         }
         try {
-        // 如果上传了二维码文件，则解析二维码
-        if (qrCode != null && !qrCode.isEmpty()) {
-            // 读取图片
-            BufferedImage image = ImageIO.read(qrCode.getInputStream());
-            if (image == null) {
-                throw new IllegalArgumentException("Invalid image file");
-            }
-
-            // 使用ZXing解析二维码
-            BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(
-                    new BufferedImageLuminanceSource(image)));
-            Result result = new MultiFormatReader().decode(binaryBitmap);
-
-            // 解析 otpauth:// URI
-            String qrContent = result.getText();
-            log.info("qrCode text is: {}",qrContent);
-            if (qrContent.startsWith("otpauth://")) {
-                URI uri = new URI(qrContent);
-                String query = uri.getQuery();
-                // 从查询参数中获取 secret
-                Arrays.stream(query.split("&"))
-                        .filter(param -> param.startsWith("secret="))
-                        .findFirst()
-                        .ifPresent(secret -> {
-                            finalSecretKey.set(secret.substring(7));// 去掉 "secret=" 前缀
-                        });
-                // 验证 secretKey 不为空
-                if (finalSecretKey.get() == null || finalSecretKey.get().trim().isEmpty()) {
-                    throw new IllegalArgumentException("Secret key is required");
-                }
-                OTPKey otpKey = new OTPKey(keyName, finalSecretKey.get());
-                otpKey.setIssuer("mfa-start");
-                OTPKey byKeyName = otpKeyRepository.findBySecretKey(otpKey.getSecretKey());
-                if (byKeyName == null){
-                    otpService.saveKey(otpKey);
+            // 如果上传了二维码文件，则解析二维码
+            if (qrCode != null && !qrCode.isEmpty()) {
+                // 读取图片
+                BufferedImage image = ImageIO.read(qrCode.getInputStream());
+                if (image == null) {
+                    throw new IllegalArgumentException("Invalid image file");
                 }
 
-            } else if (qrContent.startsWith("otpauth-migration://")) {
+                // 使用ZXing解析二维码
+                BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(
+                        new BufferedImageLuminanceSource(image)));
+                Result result = new MultiFormatReader().decode(binaryBitmap);
 
-                List<GoogleAuthMigrationParser.OtpParameters> otpParameters = GoogleAuthMigrationParser.parseUri(qrContent);
-                List<OTPKey> otpKeys = new ArrayList<>();
-                for (GoogleAuthMigrationParser.OtpParameters account : otpParameters) {
-                    OTPKey otpKey = new OTPKey();
-                    otpKey.setKeyName(account.getName());
-                    otpKey.setSecretKey(account.getSecretInBase32());
-                    if (account.getIssuer() == null){
-                        otpKey.setIssuer("mfa-start");
-                    }else {
-                        otpKey.setIssuer(account.getIssuer());
+                // 解析 otpauth:// URI
+                String qrContent = result.getText();
+                log.info("qrCode text is: {}", qrContent);
+                if (qrContent.startsWith("otpauth://")) {
+                    URI uri = new URI(qrContent);
+                    String query = uri.getQuery();
+                    // 从查询参数中获取 secret
+                    Arrays.stream(query.split("&"))
+                            .filter(param -> param.startsWith("secret="))
+                            .findFirst()
+                            .ifPresent(secret -> {
+                                finalSecretKey.set(secret.substring(7));// 去掉 "secret=" 前缀
+                            });
+                    // 验证 secretKey 不为空
+                    if (finalSecretKey.get() == null || finalSecretKey.get().trim().isEmpty()) {
+                        throw new IllegalArgumentException("Secret key is required");
                     }
-                    String otpAuthUri = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s",
-                            otpKey.getIssuer(), otpKey.getKeyName(), otpKey.getSecretKey(), otpKey.getIssuer());
-
-                    String qrCodeNew = qrCodeService.generateQRCodeImage(otpAuthUri);
-                    otpKey.setQrCode(qrCodeNew);
+                    OTPKey otpKey = new OTPKey(keyName, finalSecretKey.get());
+                    otpKey.setIssuer("mfa-start");
                     OTPKey byKeyName = otpKeyRepository.findBySecretKey(otpKey.getSecretKey());
-                    if (byKeyName != null){
-                        otpKeys.add(byKeyName);
-                    }else {
-                        otpKeys.add(otpKey);
+                    if (byKeyName == null) {
+                        otpService.saveKey(otpKey);
                     }
 
+                } else if (qrContent.startsWith("otpauth-migration://")) {
+
+                    List<GoogleAuthMigrationParser.OtpParameters> otpParameters = GoogleAuthMigrationParser.parseUri(qrContent);
+                    List<OTPKey> otpKeys = new ArrayList<>();
+                    for (GoogleAuthMigrationParser.OtpParameters account : otpParameters) {
+                        OTPKey otpKey = new OTPKey();
+                        otpKey.setKeyName(account.getName());
+                        otpKey.setSecretKey(account.getSecretInBase32());
+                        if (account.getIssuer() == null) {
+                            otpKey.setIssuer("mfa-start");
+                        } else {
+                            otpKey.setIssuer(account.getIssuer());
+                        }
+                        String otpAuthUri = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s",
+                                otpKey.getIssuer(), otpKey.getKeyName(), otpKey.getSecretKey(), otpKey.getIssuer());
+
+                        String qrCodeNew = qrCodeService.generateQRCodeImage(otpAuthUri);
+                        otpKey.setQrCode(qrCodeNew);
+                        OTPKey byKeyName = otpKeyRepository.findBySecretKey(otpKey.getSecretKey());
+                        if (byKeyName != null) {
+                            otpKeys.add(byKeyName);
+                        } else {
+                            otpKeys.add(otpKey);
+                        }
+
+                    }
+                    otpService.saveListKey(otpKeys);
                 }
-                otpService.saveListKey(otpKeys);
+            } else {
+                OTPKey otpKey = new OTPKey(keyName, secretKey);
+                otpKey.setIssuer("mfa-start");
+                OTPKey byKeyName = otpKeyRepository.findByKeyName(keyName);
+                if (byKeyName == null) {
+                    otpService.saveKey(new OTPKey(keyName, secretKey));
+                }
             }
-        }else {
-            OTPKey otpKey = new OTPKey(keyName, secretKey);
-            otpKey.setIssuer("mfa-start");
-            OTPKey byKeyName = otpKeyRepository.findByKeyName(keyName);
-            if (byKeyName == null){
-                otpService.saveKey(new OTPKey(keyName,secretKey));
-            }
+            log.info("result:{}", accounts);
+            return "redirect:/";
+        } catch (Exception e) {
+            log.error("Error saving OTP key", e);
+            return "redirect:/";
         }
-        log.info("result:{}",accounts);
-        return "redirect:/";
-    } catch (Exception e) {
-        log.error("Error saving OTP key", e);
-        return "redirect:/";
-    }
     }
 
 
     /**
      * 统一处理前端提交的密钥和二维码内容。
      * * @param keyName 手动输入的账户名
+     *
      * @param secretKey 手动输入的密钥
      * @param qrContent 前端扫描后发送的原始二维码字符串
-     * @param qrCode 前端上传的二维码图片文件
+     * @param qrCode    前端上传的二维码图片文件
      * @return 重定向到首页
      */
     @PostMapping("/save-secret")
-    public String saveSecret(@RequestParam(value ="keyName", required = false) String keyName,
-                             @RequestParam(value ="secretKey", required = false) String secretKey,
+    public String saveSecret(@RequestParam(value = "keyName", required = false) String keyName,
+                             @RequestParam(value = "secretKey", required = false) String secretKey,
                              @RequestParam(value = "qrContent", required = false) String qrContent,
                              @RequestParam(value = "qrCode", required = false) MultipartFile qrCode) {
 
@@ -211,6 +212,7 @@ public class OTPController {
 
     /**
      * 统一处理二维码内容字符串的私有方法
+     *
      * @param qrContent 二维码内容字符串
      * @throws Exception
      */
@@ -328,7 +330,7 @@ public class OTPController {
 
         List<OTPKey> otpKeys = otpService.getAllKeys();
         for (OTPKey otpKey : otpKeys) {
-            writer.printf("%s,%s,%s,%s%n", otpKey.getKeyName(), otpKey.getIssuer(), otpKey.getSecretKey(),otpKey.getCreateTime());
+            writer.printf("%s,%s,%s,%s%n", otpKey.getKeyName(), otpKey.getIssuer(), otpKey.getSecretKey(), otpKey.getCreateTime());
         }
         writer.flush();
     }
@@ -405,7 +407,6 @@ public class OTPController {
             }
         }
         result.add(current.toString());
-
         return result.toArray(new String[0]);
     }
 }

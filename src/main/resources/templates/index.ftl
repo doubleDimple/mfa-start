@@ -490,7 +490,7 @@
                 </div>
             </div>
 
-            <input type="text" id="searchInput" placeholder="搜索密钥..." onkeyup="searchKeys()">
+            <input type="text" id="searchInput" placeholder="根据名称搜索..." onkeyup="searchKeys()">
 
             <table>
                 <thead>
