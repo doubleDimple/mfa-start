@@ -55,6 +55,12 @@ public class OTPController {
     @Resource
     private OTPKeyRepository otpKeyRepository;
 
+    @GetMapping("/api/otpKeys")
+    @ResponseBody
+    public List<OTPKey> getOtpKeys() {
+        return otpService.getAllKeys();
+    }
+
     // 显示主页
     @GetMapping("/")
     public String index(Model model, HttpServletRequest request) {
