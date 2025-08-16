@@ -476,18 +476,48 @@
             color: #5f6368;
         }
 
-        /* 扫码区域 */
+        /* 扫码区域 - 修复的样式 */
         #qr-reader {
             width: 100%;
             margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 300px;
+            position: relative;
+        }
+
+        /* 确保扫描器容器有正确的尺寸 */
+        #qr-reader > div {
+            width: 100% !important;
+        }
+
+        /* 扫描框样式优化 */
+        #qr-reader video {
+            width: 100% !important;
+            height: auto !important;
+            border-radius: 8px;
+        }
+
+        /* 扫描器UI优化 */
+        #qr-reader__camera_selection {
+            margin-bottom: 10px;
+        }
+
+        #qr-reader__scan_region {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         #qr-reader-results {
             padding: 12px;
-            background: #f8f9fa;
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
             border-radius: 8px;
             margin-bottom: 20px;
             display: none;
+            color: #2e7d32;
         }
 
         .scan-btn {
@@ -600,56 +630,6 @@
         .otp-item.swiped .swipe-delete {
             transform: translateX(0);
         }
-
-        /* === 以下为新布局的样式 === */
-        .otp-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            border-bottom: 1px solid #e8eaed;
-            cursor: pointer;
-            transition: background 0.2s;
-            position: relative;
-        }
-
-        /* 账户名和验证码的容器 */
-        .otp-info-and-code {
-            flex-grow: 1;
-            flex-shrink: 1;
-            overflow: hidden;
-            padding-right: 16px;
-        }
-
-        .otp-account-full {
-            font-size: 16px;
-            color: #202124;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 8px;
-        }
-
-        .otp-code {
-            font-size: 24px;
-            font-weight: 500;
-            color: var(--otp-code-color, #1a73e8);
-            letter-spacing: 2px;
-            font-family: 'Roboto Mono', monospace;
-            cursor: pointer;
-            user-select: none;
-            transition: color 0.3s ease;
-        }
-
-        .countdown-container {
-            position: relative;
-            width: 32px;
-            height: 32px;
-            flex-shrink: 0;
-        }
-
-        /* === 以上为新布局的样式 === */
-
     </style>
 </head>
 <body>
@@ -665,16 +645,12 @@
         <span class="mfa-start">OTP</span> Authenticator
     </div>
     <div class="user-menu">
-        <div
-                class="user-avatar" onclick="toggleUserMenu()">My</div>
+        <div class="user-avatar" onclick="toggleUserMenu()">My</div>
         <div class="dropdown-menu" id="userDropdown">
-            <#--<button class="dropdown-item" onclick="logout()">退出登录</button>-->
-
             <form action="/perform_logout" method="post" style="margin: 0;">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit" class="dropdown-item">
                     退出登录
-
                 </button>
             </form>
         </div>
@@ -685,8 +661,7 @@
     <div class="search-container">
         <div class="search-box">
             <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1
-0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
             <input type="text" class="search-input" placeholder="搜索..." id="searchInput" onkeyup="searchKeys()">
         </div>
@@ -697,7 +672,6 @@
 
     <div class="empty-state" id="emptyState" style="display: none;">
         <div class="empty-icon">🔐</div>
-
         <div class="empty-title">开始使用</div>
         <div class="empty-text">点击 + 按钮添加账号</div>
     </div>
@@ -713,13 +687,11 @@
         </div>
         <div class="modal-body">
             <div class="add-methods">
-
                 <div class="method-btn active" id="manualMethod" onclick="selectMethod('manual')">
                     <span class="method-icon">⌨️</span>
                     <span class="method-label">输入设置密钥</span>
                 </div>
                 <div class="method-btn" id="scanMethod" onclick="selectMethod('scan')">
-
                     <span class="method-icon">📷</span>
                     <span class="method-label">扫描二维码</span>
                 </div>
@@ -727,26 +699,22 @@
 
             <form id="keyForm" onsubmit="submitKeyForm(event)">
                 <div class="form-group">
-
                     <label class="form-label">账号</label>
                     <input type="text" class="form-input" id="keyName" name="keyName" required placeholder="您的账号">
                 </div>
 
                 <div class="form-group" id="secretKeyGroup">
                     <label class="form-label">您的密钥</label>
-
                     <input type="text" class="form-input" id="secretKey" name="secretKey" required placeholder="输入您的密钥">
                 </div>
 
                 <div id="scanArea" style="display: none;">
                     <div id="qr-reader"></div>
                     <div id="qr-reader-results">
-
                         <small>扫描结果：<span id="scan-result"></span></small>
                     </div>
                     <button type="button" class="scan-btn" onclick="startScanning()">开始扫描</button>
-                    <button type="button" class="scan-btn" onclick="stopScanning()" style="display:none;
-background: #ea4335;" id="stopScanBtn">停止扫描</button>
+                    <button type="button" class="scan-btn" onclick="stopScanning()" style="display:none; background: #ea4335;" id="stopScanBtn">停止扫描</button>
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitBtn">添加</button>
@@ -761,8 +729,7 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
     let currentMethod = 'manual';
     let csrfToken = '';
     let html5QrcodeScanner = null;
-    let otpKeysData
-        = [];
+    let otpKeysData = [];
 
     // 初始化
     document.addEventListener('DOMContentLoaded', function() {
@@ -776,7 +743,7 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
     // 加载OTP密钥
     async function loadOTPKeys() {
         try {
-
+            // 从服务器获取数据的逻辑
             const response = await fetch('/', {
                 method: 'GET',
                 headers: {
@@ -801,7 +768,6 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
     }
 
     // 渲染OTP列表
-    // 渲染OTP列表
     function renderOTPList() {
         const otpList = document.getElementById('otpList');
         const emptyState = document.getElementById('emptyState');
@@ -820,9 +786,8 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
             const issuer = key.issuer || 'default';
             const secretKey = key.secretKey || '';
 
-            // 使用模板字面量以确保正确的字符串拼接
             html_content += `
-                <div class="otp-item" data-key="`+ keyName+`" data-secret="`+ secretKey+`">
+                <div class="otp-item" data-key="`+ keyName+`" data-secret="`+ secretKey+`" onclick="copyOTPCode(this, '`+ secretKey+`')">
                     <div class="otp-info-and-code">
                         <div class="otp-account-full">`+ issuer+`: `+ keyName+`</div>
                         <div class="otp-code">
@@ -860,7 +825,6 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-
                     'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({ secretKeys })
@@ -876,7 +840,6 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
                 const otpValue = item.querySelector('.otp-value');
                 if (otpValue && otpMap.has(secretKey)) {
                     const code = otpMap.get(secretKey);
-
                     otpValue.textContent = formatCode(code);
                 }
             });
@@ -903,16 +866,14 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
 
                 if (text && circle) {
                     const progress = (timeLeft / 30) * FULL_DASH_ARRAY;
-
                     circle.style.strokeDasharray = FULL_DASH_ARRAY;
                     circle.style.strokeDashoffset = FULL_DASH_ARRAY - progress;
                     text.textContent = timeLeft;
 
-                    // 倒计时小于10秒变色
                     if (timeLeft <= 10) {
-                        otpCode.style.color = '#dc3545'; // 暗红色
+                        otpCode.style.color = '#dc3545';
                     } else {
-                        otpCode.style.color = '#1a73e8'; // 默认蓝色
+                        otpCode.style.color = '#1a73e8';
                     }
                 }
             });
@@ -936,11 +897,7 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
 
         try {
             await navigator.clipboard.writeText(code);
-            otpValue.classList.add('copied');
             showToast('验证码已复制');
-            setTimeout(() => {
-                otpValue.classList.remove('copied');
-            }, 300);
         } catch (error) {
             showToast('复制失败');
         }
@@ -977,11 +934,6 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
         }
     }
 
-    // 退出登录
-    function logout() {
-        window.location.href = '/logout';
-    }
-
     // 打开添加密钥模态框
     function openAddKeyModal() {
         document.getElementById('addKeyModal').classList.add('show');
@@ -1003,106 +955,161 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
         selectMethod('manual');
     }
 
-    // 选择添加方式
-    // 选择添加方式
+    // 选择添加方式 - 修复的函数
     function selectMethod(method) {
         currentMethod = method;
         const manualBtn = document.getElementById('manualMethod');
         const scanBtn = document.getElementById('scanMethod');
         const secretKeyGroup = document.getElementById('secretKeyGroup');
         const scanArea = document.getElementById('scanArea');
-        const keyForm = document.getElementById('keyForm');
+        const submitBtn = document.getElementById('submitBtn');
+
         if (method === 'scan') {
             manualBtn.classList.remove('active');
             scanBtn.classList.add('active');
             secretKeyGroup.style.display = 'none';
             scanArea.style.display = 'block';
-            keyForm.style.display = 'none'; // 隐藏手动输入表单
-            document.getElementById('submitBtn').style.display = 'none';
-// 隐藏提交按钮
-
-            // 自动启动摄像头扫描
-            startScanning();
+            submitBtn.style.display = 'none';
         } else {
             manualBtn.classList.add('active');
             scanBtn.classList.remove('active');
             secretKeyGroup.style.display = 'block';
             scanArea.style.display = 'none';
-            keyForm.style.display = 'block'; // 显示手动输入表单
-            document.getElementById('submitBtn').style.display = 'block';
-// 显示提交按钮
+            submitBtn.style.display = 'block';
             stopScanning();
         }
     }
 
-    // 开始扫描二维码
+    // 开始扫描二维码 - 修复的函数
     function startScanning() {
-        const qrReaderDiv = document.getElementById('qr-reader');
         const startBtn = document.querySelector('.scan-btn');
         const stopBtn = document.getElementById('stopScanBtn');
 
         startBtn.style.display = 'none';
         stopBtn.style.display = 'block';
 
-        html5QrcodeScanner = new Html5Qrcode('qr-reader');
-        const config = {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0
-        };
-        html5QrcodeScanner.start(
-            { facingMode: "environment" },
-            config,
-            (decodedText, decodedResult) => {
-                // 扫描成功，将原始字符串直接交给后端处理
-                handleQRCodeSuccess(decodedText);
-            },
-            (errorMessage) => {
-                // 扫描错误（可以忽略）
-            }
-        ).catch((err) => {
-            console.error(`Unable to start scanning: ` + err + ``);
-            showToast('无法访问摄像头，请检查权限设置');
+        // 确保容器存在且可见
+        const qrReaderDiv = document.getElementById('qr-reader');
+        if (!qrReaderDiv) {
+            showToast('扫描器容器不存在');
+            return;
+        }
+
+        // 清空之前的内容
+        qrReaderDiv.innerHTML = '';
+
+        try {
+            html5QrcodeScanner = new Html5Qrcode('qr-reader');
+
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0,
+                showTorchButtonIfSupported: true,
+                showZoomSliderIfSupported: true,
+                defaultZoomValueIfSupported: 2
+            };
+
+            // 获取摄像头列表并启动扫描
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    // 优先使用后置摄像头
+                    const backCamera = devices.find(device =>
+                        device.label.toLowerCase().includes('back') ||
+                        device.label.toLowerCase().includes('rear') ||
+                        device.label.toLowerCase().includes('环境')
+                    ) || devices[0];
+
+                    html5QrcodeScanner.start(
+                        backCamera.id,
+                        config,
+                        (decodedText, decodedResult) => {
+                            console.log(`扫描成功: `+ decodedText+``);
+                            handleQRCodeSuccess(decodedText);
+                        },
+                        (errorMessage) => {
+                            // 扫描错误（正常情况，可以忽略）
+                        }
+                    ).catch((err) => {
+                        console.error(`启动扫描失败: `+ err+``);
+                        showToast('启动扫描失败，请检查摄像头权限');
+                        stopScanning();
+                    });
+                } else {
+                    showToast('未找到可用摄像头');
+                    stopScanning();
+                }
+            }).catch(err => {
+                console.error(`获取摄像头列表失败: `+ err+``);
+                // 尝试使用默认摄像头配置
+                html5QrcodeScanner.start(
+                    { facingMode: "environment" },
+                    config,
+                    (decodedText, decodedResult) => {
+                        console.log(`扫描成功: `+ decodedText+``);
+                        handleQRCodeSuccess(decodedText);
+                    },
+                    (errorMessage) => {
+                        // 扫描错误（正常情况，可以忽略）
+                    }
+                ).catch((err) => {
+                    console.error(`启动默认扫描失败: `+ err+``);
+                    showToast('无法访问摄像头，请检查权限设置');
+                    stopScanning();
+                });
+            });
+
+        } catch (error) {
+            console.error('扫描器初始化失败:', error);
+            showToast('扫描器初始化失败');
             stopScanning();
-        });
+        }
     }
 
-    // 停止扫描
+    // 停止扫描 - 修复的函数
     function stopScanning() {
         const startBtn = document.querySelector('.scan-btn');
         const stopBtn = document.getElementById('stopScanBtn');
 
         if (startBtn) startBtn.style.display = 'block';
         if (stopBtn) stopBtn.style.display = 'none';
-        if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
+
+        if (html5QrcodeScanner) {
             html5QrcodeScanner.stop().then(() => {
                 html5QrcodeScanner.clear();
                 html5QrcodeScanner = null;
+                console.log('扫描已停止');
             }).catch((err) => {
-                console.error(`Failed to stop scanning: ` + err + ``);
-
+                console.error(`停止扫描失败: `+ err+``);
+                html5QrcodeScanner = null;
             });
         }
     }
 
-    // 处理扫码成功，直接提交给后端
+    // 处理扫描成功
     async function handleQRCodeSuccess(decodedText) {
-        console.log(`Scanned QR Code: ` + decodedText + ``);
-        stopScanning(); // 停止扫描
+        console.log(`扫描到二维码: `+ decodedText+``);
+        stopScanning();
+
+        // 显示扫描结果
+        const scanResult = document.getElementById('scan-result');
+        const resultsDiv = document.getElementById('qr-reader-results');
+        if (scanResult && resultsDiv) {
+            scanResult.textContent = decodedText.length > 50 ?
+                decodedText.substring(0, 50) + '...' : decodedText;
+            resultsDiv.style.display = 'block';
+        }
+
         showToast('已识别二维码，正在处理...');
 
-        const submitBtn = document.getElementById('submitBtn');
-        const keyForm = document.getElementById('keyForm');
-// 创建一个临时的表单来提交数据
+        // 直接提交给后端处理
         const tempForm = document.createElement('form');
         tempForm.action = '/save-secret';
-// 或者新的接口，如 '/save-secret-from-qr'
         tempForm.method = 'POST';
-// 将扫码结果和CSRF token添加到临时表单中
+
         const qrInput = document.createElement('input');
         qrInput.type = 'hidden';
         qrInput.name = 'qrContent';
-// 假设后端接口接收一个名为 'qrCodeText' 的参数
         qrInput.value = decodedText;
         tempForm.appendChild(qrInput);
 
@@ -1114,31 +1121,47 @@ background: #ea4335;" id="stopScanBtn">停止扫描</button>
 
         document.body.appendChild(tempForm);
         tempForm.submit();
-// 提交表单
+    }
 
-        // 如果后端接口是异步的，可以使用 fetch
-        /*
-        const formData = new FormData();
-formData.append('qrContent', decodedText);
-        formData.append('_csrf', csrfToken);
-
+    // 解析OTP URI
+    function parseOTPUri(uri) {
         try {
-            const response = await fetch('/save-secret-from-qr', {
-                method: 'POST',
-                body: formData
-            });
-if (response.ok) {
-                showToast('添加成功');
-                closeAddKeyModal();
-loadOTPKeys();
+            // 解析 otpauth:// URI
+            if (uri.startsWith('otpauth://')) {
+                const url = new URL(uri);
+                const type = url.pathname.substring(1); // totp 或 hotp
+                const label = decodeURIComponent(url.pathname.substring(6)); // 去掉 /totp/ 或 /hotp/
+                const params = new URLSearchParams(url.search);
+
+                const secret = params.get('secret');
+                const issuer = params.get('issuer') || '';
+
+                // 解析标签获取账号名
+                let accountName = label;
+                if (label.includes(':')) {
+                    const parts = label.split(':');
+                    accountName = parts[1] || parts[0];
+                }
+
+                // 填充表单
+                document.getElementById('keyName').value = accountName;
+                document.getElementById('secretKey').value = secret || '';
+
+                showToast('二维码解析成功，请确认信息后添加');
+
+                // 切换到手动输入模式以显示表单
+                selectMethod('manual');
+
             } else {
-                showToast('添加失败');
-}
+                // 如果不是标准的 otpauth URI，尝试作为密钥处理
+                document.getElementById('secretKey').value = decodedText;
+                selectMethod('manual');
+                showToast('已将扫描内容填入密钥字段，请确认');
+            }
         } catch (error) {
-            console.error('Error:', error);
-showToast('添加失败，请重试');
+            console.error('URI解析失败:', error);
+            showToast('二维码格式不正确');
         }
-        */
     }
 
     // 提交表单（仅用于手动输入）
@@ -1155,6 +1178,7 @@ showToast('添加失败，请重试');
         formData.append('keyName', keyName);
         formData.append('secretKey', secretKey);
         formData.append('_csrf', csrfToken);
+
         try {
             const response = await fetch('/save-secret', {
                 method: 'POST',
@@ -1163,12 +1187,7 @@ showToast('添加失败，请重试');
             if (response.ok) {
                 showToast('添加成功');
                 closeAddKeyModal();
-                otpKeysData.push({
-                    keyName: keyName,
-                    secretKey: secretKey,
-                    issuer: 'default'
-                });
-                renderOTPList();
+                loadOTPKeys(); // 重新加载数据
             } else {
                 const errorText = await response.text();
                 console.error('Server error:', errorText);
@@ -1196,8 +1215,7 @@ showToast('添加失败，请重试');
             });
             if (response.ok) {
                 showToast('删除成功');
-                otpKeysData = otpKeysData.filter(key => key.keyName !== keyName);
-                renderOTPList();
+                loadOTPKeys(); // 重新加载数据
             } else {
                 throw new Error('删除失败');
             }
@@ -1229,6 +1247,7 @@ showToast('添加失败，请重试');
             closeAddKeyModal();
         }
     });
+
     // 滑动删除功能
     let touchStartX = 0;
     let touchEndX = 0;
@@ -1263,8 +1282,7 @@ showToast('添加失败，请重试');
                 deleteBtn.onclick = function() {
                     if (currentSwipedItem) {
                         const keyName = currentSwipedItem.getAttribute('data-key');
-                        // 弹出确认对话框
-                        if (confirm(`确定要删除 "` + keyName + `" 吗？`)) {
+                        if (confirm(`确定要删除 "`+ keyName+`" 吗？`)) {
                             deleteKey(keyName);
                         }
                     }
@@ -1293,6 +1311,7 @@ showToast('添加失败，请重试');
         touchStartX = 0;
         touchEndX = 0;
     });
+
     // 页面卸载时清理
     window.addEventListener('beforeunload', function() {
         if (globalUpdateTimer) {
@@ -1300,23 +1319,6 @@ showToast('添加失败，请重试');
         }
         stopScanning();
     });
-</script>
-
-<script data-csrf-token="${_csrf.token!}">
-    var otpKeys = [
-        <#list (otpKeys)! as otpKey>
-        {
-            id: ${otpKey.id},
-            keyName: "${otpKey.keyName}",
-            secretKey: "${otpKey.secretKey}",
-            qrCode: "${otpKey.qrCode!''}",
-            issuer: "${otpKey.issuer!''}",
-            createTime: "${otpKey.formattedCreateTime}",
-            updateTime: "${otpKey.formattedUpdateTime}"
-        }<#if otpKey_has_next>,</#if>
-        </#list>
-    ];
-    console.log("后端注入的 otpKeys:", otpKeys);
 </script>
 
 </body>
