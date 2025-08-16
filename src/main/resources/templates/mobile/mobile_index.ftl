@@ -205,6 +205,9 @@
         }
 
         .otp-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 16px;
             border-bottom: 1px solid #e8eaed;
             cursor: pointer;
@@ -216,40 +219,25 @@
             background: #f8f9fa;
         }
 
-        .otp-item-content {
-            /* 使用 Flexbox 布局 */
-            display: flex;
-            /* 子元素左右对齐 */
-            justify-content: space-between;
-            /* 子元素垂直居中对齐 */
-            align-items: center;
-        }
-
-        .otp-info {
+        .otp-info-and-code {
             flex: 1;
+            overflow: hidden;
+            padding-right: 16px;
         }
 
-        .otp-issuer {
-            font-size: 14px;
-            color: #5f6368;
-            margin-bottom: 4px;
-        }
-
-        .otp-account {
+        .otp-account-full {
             font-size: 16px;
             color: #202124;
-        }
-
-        .otp-code-section {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 8px;
         }
 
         .otp-code {
             font-size: 24px;
             font-weight: 500;
-            color: #1a73e8;
+            color: var(--otp-code-color, #1a73e8); /* 使用 CSS 变量来动态改变颜色 */
             letter-spacing: 2px;
             font-family: 'Roboto Mono', monospace;
             cursor: pointer;
@@ -268,6 +256,7 @@
             position: relative;
             width: 32px;
             height: 32px;
+            flex-shrink: 0;
         }
 
         .countdown-circle {
@@ -617,14 +606,23 @@
             transform: translateX(0);
         }
 
-        .otp-info-left {
-            /* 占据可用空间，允许其内容换行 */
+        /* === 以下为新布局的样式 === */
+        .otp-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #e8eaed;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        /* 账户名和验证码的容器 */
+        .otp-info-and-code {
             flex-grow: 1;
-            /* 允许收缩，避免内容溢出 */
             flex-shrink: 1;
-            /* 隐藏溢出内容，以防万一 */
             overflow: hidden;
-            /* 增加名称和验证码之间的间距 */
             padding-right: 16px;
         }
 
@@ -637,16 +635,26 @@
             margin-bottom: 8px;
         }
 
-        .otp-code-section-new {
-            /* 使用 Flexbox 布局 */
-            display: flex;
-            /* 子元素垂直居中对齐 */
-            align-items: center;
-            /* 子元素之间的间距 */
-            gap: 16px;
-            /* 不允许收缩，保持固定宽度 */
+        .otp-code {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--otp-code-color, #1a73e8);
+            letter-spacing: 2px;
+            font-family: 'Roboto Mono', monospace;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        .countdown-container {
+            position: relative;
+            width: 32px;
+            height: 32px;
             flex-shrink: 0;
         }
+
+        /* === 以上为新布局的样式 === */
+
     </style>
 </head>
 <body>
@@ -662,7 +670,8 @@
         <span class="mfa-start">OTP</span> Authenticator
     </div>
     <div class="user-menu">
-        <div class="user-avatar" onclick="toggleUserMenu()">My</div>
+        <div
+                class="user-avatar" onclick="toggleUserMenu()">My</div>
         <div class="dropdown-menu" id="userDropdown">
             <#--<button class="dropdown-item" onclick="logout()">退出登录</button>-->
 
@@ -670,6 +679,7 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit" class="dropdown-item">
                     退出登录
+
                 </button>
             </form>
         </div>
@@ -680,7 +690,8 @@
     <div class="search-container">
         <div class="search-box">
             <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1
+0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
             <input type="text" class="search-input" placeholder="搜索..." id="searchInput" onkeyup="searchKeys()">
         </div>
@@ -691,6 +702,7 @@
 
     <div class="empty-state" id="emptyState" style="display: none;">
         <div class="empty-icon">🔐</div>
+
         <div class="empty-title">开始使用</div>
         <div class="empty-text">点击 + 按钮添加账号</div>
     </div>
@@ -706,11 +718,13 @@
         </div>
         <div class="modal-body">
             <div class="add-methods">
+
                 <div class="method-btn active" id="manualMethod" onclick="selectMethod('manual')">
                     <span class="method-icon">⌨️</span>
                     <span class="method-label">输入设置密钥</span>
                 </div>
                 <div class="method-btn" id="scanMethod" onclick="selectMethod('scan')">
+
                     <span class="method-icon">📷</span>
                     <span class="method-label">扫描二维码</span>
                 </div>
@@ -718,22 +732,26 @@
 
             <form id="keyForm" onsubmit="submitKeyForm(event)">
                 <div class="form-group">
+
                     <label class="form-label">账号</label>
                     <input type="text" class="form-input" id="keyName" name="keyName" required placeholder="您的账号">
                 </div>
 
                 <div class="form-group" id="secretKeyGroup">
                     <label class="form-label">您的密钥</label>
+
                     <input type="text" class="form-input" id="secretKey" name="secretKey" required placeholder="输入您的密钥">
                 </div>
 
                 <div id="scanArea" style="display: none;">
                     <div id="qr-reader"></div>
                     <div id="qr-reader-results">
+
                         <small>扫描结果：<span id="scan-result"></span></small>
                     </div>
                     <button type="button" class="scan-btn" onclick="startScanning()">开始扫描</button>
-                    <button type="button" class="scan-btn" onclick="stopScanning()" style="display:none; background: #ea4335;" id="stopScanBtn">停止扫描</button>
+                    <button type="button" class="scan-btn" onclick="stopScanning()" style="display:none;
+background: #ea4335;" id="stopScanBtn">停止扫描</button>
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitBtn">添加</button>
@@ -748,7 +766,8 @@
     let currentMethod = 'manual';
     let csrfToken = '';
     let html5QrcodeScanner = null;
-    let otpKeysData = [];
+    let otpKeysData
+        = [];
 
     // 初始化
     document.addEventListener('DOMContentLoaded', function() {
@@ -762,12 +781,14 @@
     // 加载OTP密钥
     async function loadOTPKeys() {
         try {
+
             const response = await fetch('/', {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
                 }
             });
+
             const html = await response.text();
             const scriptMatch = html.match(/var\s+otpKeys\s*=\s*(\[[\s\S]*?\]);/);
             if (scriptMatch) {
@@ -805,23 +826,22 @@
 
             html_content += `
                 <div class="otp-item" data-key="`+ keyName+`" data-secret="`+ secretKey+`">
-                    <div class="otp-item-content">
-                        <div class="otp-info-left">
-                            <div class="otp-account-full">`+ issuer + `: `+ keyName+`</div>
-                            <div class="otp-code-section-new">
-                                <div class="otp-code" onclick="copyOTPCode(this, '`+ secretKey+`')">
-                                    <span class="otp-value">------</span>
-                                </div>
-                                <div class="countdown-container">
-                                    <svg class="countdown-circle" width="32" height="32">
-                                        <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
-                                        <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
-                                    </svg>
-                                    <div class="countdown-text">30</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+                <div class="otp-info-and-code">
+                    <div class="otp-account-full">`+ issuer + `: `+ keyName+`</div>
+
+                <div class="otp-code">
+                    <span class="otp-value">------</span>
+
+                </div>
+                </div>
+                <div class="countdown-container">
+                    <svg class="countdown-circle" width="32" height="32">
+                        <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
+                        <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
+                    </svg>
+                    <div class="countdown-text">30</div>
+                </div>
                 </div>
             `;
         });
@@ -847,6 +867,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+
                     'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({ secretKeys })
@@ -862,6 +883,7 @@
                 const otpValue = item.querySelector('.otp-value');
                 if (otpValue && otpMap.has(secretKey)) {
                     const code = otpMap.get(secretKey);
+
                     otpValue.textContent = formatCode(code);
                 }
             });
@@ -884,12 +906,21 @@
             document.querySelectorAll('.countdown-container').forEach(container => {
                 const text = container.querySelector('.countdown-text');
                 const circle = container.querySelector('.countdown-progress');
+                const otpCode = container.closest('.otp-item').querySelector('.otp-code');
 
                 if (text && circle) {
                     const progress = (timeLeft / 30) * FULL_DASH_ARRAY;
+
                     circle.style.strokeDasharray = FULL_DASH_ARRAY;
                     circle.style.strokeDashoffset = FULL_DASH_ARRAY - progress;
                     text.textContent = timeLeft;
+
+                    // 倒计时小于10秒变色
+                    if (timeLeft <= 10) {
+                        otpCode.style.color = '#dc3545'; // 暗红色
+                    } else {
+                        otpCode.style.color = '#1a73e8'; // 默认蓝色
+                    }
                 }
             });
             if (timeLeft === 30) {
@@ -988,25 +1019,25 @@
         const secretKeyGroup = document.getElementById('secretKeyGroup');
         const scanArea = document.getElementById('scanArea');
         const keyForm = document.getElementById('keyForm');
-
         if (method === 'scan') {
             manualBtn.classList.remove('active');
             scanBtn.classList.add('active');
             secretKeyGroup.style.display = 'none';
             scanArea.style.display = 'block';
             keyForm.style.display = 'none'; // 隐藏手动输入表单
-            document.getElementById('submitBtn').style.display = 'none'; // 隐藏提交按钮
+            document.getElementById('submitBtn').style.display = 'none';
+// 隐藏提交按钮
 
             // 自动启动摄像头扫描
             startScanning();
-
         } else {
             manualBtn.classList.add('active');
             scanBtn.classList.remove('active');
             secretKeyGroup.style.display = 'block';
             scanArea.style.display = 'none';
             keyForm.style.display = 'block'; // 显示手动输入表单
-            document.getElementById('submitBtn').style.display = 'block'; // 显示提交按钮
+            document.getElementById('submitBtn').style.display = 'block';
+// 显示提交按钮
             stopScanning();
         }
     }
@@ -1027,7 +1058,9 @@
             aspectRatio: 1.0
         };
         html5QrcodeScanner.start(
-            { facingMode: "environment" },
+            {
+                facingMode: "environment"
+            },
             config,
             (decodedText, decodedResult) => {
                 // 扫描成功，将原始字符串直接交给后端处理
@@ -1056,6 +1089,7 @@
                 html5QrcodeScanner = null;
             }).catch((err) => {
                 console.error(`Failed to stop scanning: ` + err + ``);
+
             });
         }
     }
@@ -1068,16 +1102,16 @@
 
         const submitBtn = document.getElementById('submitBtn');
         const keyForm = document.getElementById('keyForm');
-
-        // 创建一个临时的表单来提交数据
+// 创建一个临时的表单来提交数据
         const tempForm = document.createElement('form');
-        tempForm.action = '/save-secret'; // 或者新的接口，如 '/save-secret-from-qr'
+        tempForm.action = '/save-secret';
+// 或者新的接口，如 '/save-secret-from-qr'
         tempForm.method = 'POST';
-
-        // 将扫码结果和CSRF token添加到临时表单中
+// 将扫码结果和CSRF token添加到临时表单中
         const qrInput = document.createElement('input');
         qrInput.type = 'hidden';
-        qrInput.name = 'qrContent'; // 假设后端接口接收一个名为 'qrCodeText' 的参数
+        qrInput.name = 'qrContent';
+// 假设后端接口接收一个名为 'qrCodeText' 的参数
         qrInput.value = decodedText;
         tempForm.appendChild(qrInput);
 
@@ -1088,12 +1122,13 @@
         tempForm.appendChild(csrfInput);
 
         document.body.appendChild(tempForm);
-        tempForm.submit(); // 提交表单
+        tempForm.submit();
+// 提交表单
 
         // 如果后端接口是异步的，可以使用 fetch
         /*
         const formData = new FormData();
-        formData.append('qrContent', decodedText);
+formData.append('qrContent', decodedText);
         formData.append('_csrf', csrfToken);
 
         try {
@@ -1101,17 +1136,16 @@
                 method: 'POST',
                 body: formData
             });
-
-            if (response.ok) {
+if (response.ok) {
                 showToast('添加成功');
                 closeAddKeyModal();
-                loadOTPKeys();
+loadOTPKeys();
             } else {
                 showToast('添加失败');
-            }
+}
         } catch (error) {
             console.error('Error:', error);
-            showToast('添加失败，请重试');
+showToast('添加失败，请重试');
         }
         */
     }
@@ -1130,7 +1164,6 @@
         formData.append('keyName', keyName);
         formData.append('secretKey', secretKey);
         formData.append('_csrf', csrfToken);
-
         try {
             const response = await fetch('/save-secret', {
                 method: 'POST',
@@ -1161,10 +1194,6 @@
 
     // 删除密钥
     async function deleteKey(keyName) {
-        if (!confirm(`确定要删除 "` + keyName + `" 吗？`)) {
-            return;
-        }
-
         try {
             const response = await fetch('/delete-key', {
                 method: 'POST',
@@ -1210,6 +1239,7 @@
         }
     });
 
+
     // 滑动删除功能
     let touchStartX = 0;
     let touchEndX = 0;
@@ -1244,7 +1274,10 @@
                 deleteBtn.onclick = function() {
                     if (currentSwipedItem) {
                         const keyName = currentSwipedItem.getAttribute('data-key');
-                        deleteKey(keyName);
+                        // 弹出确认对话框
+                        if (confirm(`确定要删除 "` + keyName + `" 吗？`)) {
+                            deleteKey(keyName);
+                        }
                     }
                 };
                 currentSwipedItem.style.position = 'relative';
@@ -1271,7 +1304,6 @@
         touchStartX = 0;
         touchEndX = 0;
     });
-
     // 页面卸载时清理
     window.addEventListener('beforeunload', function() {
         if (globalUpdateTimer) {
@@ -1290,6 +1322,7 @@
             secretKey: "${otpKey.secretKey}",
             qrCode: "${otpKey.qrCode!''}",
             issuer: "${otpKey.issuer!''}",
+
             createTime: "${otpKey.formattedCreateTime}",
             updateTime: "${otpKey.formattedUpdateTime}"
         }<#if otpKey_has_next>,</#if>
