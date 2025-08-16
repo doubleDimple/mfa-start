@@ -215,8 +215,9 @@
             cursor: pointer;
             transition: background 0.2s;
             position: relative;
-            transform: translateX(0); /* 初始位置 */
-            transition: transform 0.3s ease-out; /* 增加过渡效果 */
+            transform: translateX(0);
+            transition: transform 0.25s ease-out; /* 调整过渡时间，使动画更平滑 */
+            overflow: hidden; /* 确保删除按钮不会溢出 */
         }
 
         .otp-item:active {
@@ -504,11 +505,11 @@
             z-index: 10;
             pointer-events: none;
             display: none;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .scan-overlay.active {
-            display: block;
+            display: block !important;
         }
 
         /* 扫描框 */
@@ -566,16 +567,21 @@
             height: 2px;
             background: linear-gradient(180deg, transparent, #10b981, transparent);
             top: 0;
-            animation: scanLineMove 2s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
+            animation: scanLineMove 2s ease-in-out infinite; /* 确保动画无限循环 */
             box-shadow: 0 0 10px #10b981;
         }
 
         @keyframes scanLineMove {
             0% {
                 top: 0;
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
             }
             100% {
-                top: 100%;
+                top: calc(100% - 2px);
+                opacity: 1;
             }
         }
 
@@ -736,7 +742,7 @@
             right: 0;
             top: 0;
             bottom: 0;
-            width: 80px;
+            width: 80px; /* 确保宽度固定 */
             background: #ea4335;
             display: flex;
             align-items: center;
@@ -744,10 +750,10 @@
             color: white;
             font-size: 14px;
             transform: translateX(100%);
-            transition: transform 0.3s ease-out;
-            cursor: pointer; /* 确保有点击光标 */
-            z-index: 10; /* 确保在最上层 */
-            user-select: none; /* 防止文本选择 */
+            transition: transform 0.25s ease-out; /* 与父元素保持一致的过渡时间 */
+            cursor: pointer;
+            z-index: 10;
+            user-select: none;
         }
 
         .otp-item.swiped .swipe-delete {
@@ -1210,11 +1216,12 @@
     }
 
     // 开始扫描二维码
-    // 开始扫描二维码
     async function startScanning() {
         const startBtn = document.getElementById('startScanBtn');
         const stopBtn = document.getElementById('stopScanBtn');
         const qrReaderDiv = document.getElementById('qr-reader');
+
+        console.log('开始启动扫描器...');
 
         if (isScanning) {
             console.log('扫描已在进行中');
@@ -1222,6 +1229,7 @@
         }
 
         if (!startBtn || !stopBtn || !qrReaderDiv) {
+            console.error('扫描器元素不存在');
             Swal.fire({
                 icon: 'error',
                 title: '错误',
@@ -1230,85 +1238,174 @@
             return;
         }
 
+        // 更新按钮状态
         startBtn.style.display = 'none';
         startBtn.disabled = true;
         stopBtn.style.display = 'block';
         isScanning = true;
 
-        // 在启动扫描前，动态插入扫描动画覆盖层
+        // 清除之前的内容
+        qrReaderDiv.innerHTML = '';
+
+        // 立即添加扫描动画覆盖层
+        addScanOverlay();
+
+        try {
+            console.log('获取摄像头列表...');
+            const cameras = await getCameras();
+            console.log('可用摄像头:', cameras);
+
+            if (!cameras || cameras.length === 0) {
+                throw new Error('未找到可用摄像头');
+            }
+
+            const selectedCamera = selectCameraByType(cameras, currentCameraType);
+            console.log('选择的摄像头:', selectedCamera);
+
+            if (!selectedCamera) {
+                throw new Error('未找到指定类型的摄像头');
+            }
+
+            // 创建扫描器实例
+            html5QrcodeScanner = new Html5Qrcode('qr-reader');
+
+            // 优化的扫描配置
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0,
+                showTorchButtonIfSupported: false,
+                showZoomSliderIfSupported: false,
+                disableFlip: false,
+                videoConstraints: {
+                    width: { ideal: 640 },
+                    height: { ideal: 480 },
+                    facingMode: currentCameraType === 'back' ? 'environment' : 'user'
+                }
+            };
+
+            console.log('启动扫描器，配置:', config);
+
+            // 启动扫描器
+            await html5QrcodeScanner.start(
+                selectedCamera.id,
+                config,
+                // 成功回调 - 只有在这里检测到二维码时才停止动画
+                (decodedText, decodedResult) => {
+                    console.log('二维码扫描成功!');
+                    console.log('解码文本:', decodedText);
+
+                    // 检测到二维码，停止扫描动画
+                    stopScanAnimation();
+
+                    // 处理结果
+                    handleQRCodeSuccess(decodedText);
+                },
+                // 错误回调 - 继续保持动画运行
+                (errorMessage) => {
+                    // 扫描错误时不停止动画，继续扫描
+                    if (!errorMessage.includes('NotFoundException')) {
+                        console.warn('扫描错误:', errorMessage);
+                    }
+                }
+            );
+
+            console.log('扫描器启动成功，开始扫描...');
+
+        } catch (error) {
+            console.error('启动扫描器失败:', error);
+
+            let errorMessage = '启动扫描失败';
+            if (error.message.includes('Permission denied')) {
+                errorMessage = '摄像头权限被拒绝，请允许摄像头访问';
+            } else if (error.message.includes('找到')) {
+                errorMessage = error.message;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: '启动失败',
+                text: errorMessage
+            });
+
+            resetScanButtons();
+        }
+    }
+
+    // 添加扫描覆盖层 - 确保动画持续运行
+    function addScanOverlay() {
+        const qrReaderDiv = document.getElementById('qr-reader');
+        if (!qrReaderDiv) return;
+
+        // 移除现有覆盖层
+        const existingOverlay = qrReaderDiv.querySelector('.scan-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+
+        // 添加新的覆盖层，确保动画类激活
         const scanOverlayHtml = `
-        <div class="scan-overlay active" id="scanOverlay">
+        <div class="scan-overlay active" id="scanOverlay" style="display: block;">
             <div class="scan-box">
                 <div class="scan-corner top-left"></div>
                 <div class="scan-corner top-right"></div>
                 <div class="scan-corner bottom-left"></div>
                 <div class="scan-corner bottom-right"></div>
                 <div class="scan-line"></div>
-                <div class="scan-tip">请将二维码放入框内</div>
+                <div class="scan-tip">请将二维码放入框内进行扫描</div>
             </div>
         </div>
     `;
-        qrReaderDiv.insertAdjacentHTML('afterbegin', scanOverlayHtml);
+        qrReaderDiv.insertAdjacentHTML('beforeend', scanOverlayHtml);
 
-        try {
-            const cameras = await getCameras();
-            if (!cameras || cameras.length === 0) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '错误',
-                    text: '未找到可用摄像头'
-                });
+        console.log('扫描动画覆盖层已添加并激活');
+    }
+
+    // 单独停止扫描动画（不停止扫描器）
+    function stopScanAnimation() {
+        console.log('停止扫描动画');
+        const scanOverlay = document.getElementById('scanOverlay');
+        if (scanOverlay) {
+            scanOverlay.classList.remove('active');
+            scanOverlay.style.display = 'none';
+        }
+    }
+
+    // 停止扫描器
+    function stopScanning() {
+        console.log('停止扫描器...');
+
+        if (!isScanning) {
+            console.log('扫描器未运行');
+            return;
+        }
+
+        // 先停止动画
+        stopScanAnimation();
+
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.stop().then(() => {
+                console.log('扫描器已停止');
+                html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
                 resetScanButtons();
-                return;
-            }
-
-            const selectedCamera = selectCameraByType(cameras, currentCameraType);
-            if (!selectedCamera) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '错误',
-                    text: '未找到指定类型的摄像头'
-                });
+            }).catch((err) => {
+                console.error('停止扫描失败:', err);
+                html5QrcodeScanner = null;
                 resetScanButtons();
-                return;
-            }
-
-            html5QrcodeScanner = new Html5Qrcode('qr-reader');
-            const config = {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0,
-                showTorchButtonIfSupported: true,
-                showZoomSliderIfSupported: true,
-                defaultZoomValueIfSupported: 2,
-                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-            };
-
-            await html5QrcodeScanner.start(
-                selectedCamera.id,
-                config,
-                (decodedText, decodedResult) => {
-                    handleQRCodeSuccess(decodedText);
-                },
-                (errorMessage) => {
-                    // 扫描错误（正常情况，不需要处理）
-                }
-            );
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: '启动失败',
-                text: '启动扫描失败，请检查摄像头权限。'
             });
+        } else {
+            console.log('扫描器实例不存在，直接重置状态');
             resetScanButtons();
         }
     }
 
     // 重置扫描按钮状态
     function resetScanButtons() {
+        console.log('重置扫描按钮状态');
+
         const startBtn = document.getElementById('startScanBtn');
         const stopBtn = document.getElementById('stopScanBtn');
-        const scanOverlay = document.getElementById('scanOverlay');
 
         if (startBtn) {
             startBtn.style.display = 'block';
@@ -1317,43 +1414,26 @@
         if (stopBtn) {
             stopBtn.style.display = 'none';
         }
-        if (scanOverlay) {
-            scanOverlay.classList.remove('active');
-        }
+
+        // 确保动画覆盖层被移除
+        stopScanAnimation();
+
         isScanning = false;
-    }
-
-    // 停止扫描
-    function stopScanning() {
-        if (!isScanning) {
-            return;
-        }
-
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.stop().then(() => {
-                html5QrcodeScanner.clear();
-                html5QrcodeScanner = null;
-                resetScanButtons();
-            }).catch((err) => {
-                console.error('停止扫描失败: ' + err);
-                html5QrcodeScanner = null;
-                resetScanButtons();
-            });
-        } else {
-            resetScanButtons();
-        }
     }
 
     // 处理扫描成功
     async function handleQRCodeSuccess(decodedText) {
-        stopScanning();
+        console.log('开始处理二维码扫描结果:', decodedText);
+
+        // 显示扫描结果
         const resultsDiv = document.getElementById('qr-reader-results');
         if (resultsDiv) {
             resultsDiv.style.display = 'block';
-            document.getElementById('scan-result').textContent = decodedText.length > 50 ?
-                decodedText.substring(0, 50) + '...' : decodedText;
+            const resultText = decodedText.length > 50 ? decodedText.substring(0, 50) + '...' : decodedText;
+            document.getElementById('scan-result').textContent = resultText;
         }
 
+        // 显示处理提示
         Swal.fire({
             title: '已识别二维码',
             text: '正在处理，请稍候...',
@@ -1365,7 +1445,7 @@
         });
 
         try {
-            // 提交给后端处理，使用 fetchWithCsrf
+            // 提交给后端处理
             const response = await fetchWithCsrf('/save-secret', 'POST', { qrContent: decodedText });
             if (response.ok) {
                 Swal.fire({
@@ -1380,11 +1460,22 @@
                 throw new Error(errorText || '服务器返回错误');
             }
         } catch (error) {
+            console.error('处理二维码失败:', error);
             Swal.fire({
                 icon: 'error',
                 title: '处理失败',
-                text: '处理二维码失败，请检查二维码格式。'
+                text: '处理二维码失败，请检查二维码格式。错误: ' + error.message
             });
+
+            // 处理失败后，重新启动扫描
+            setTimeout(() => {
+                if (!isScanning) {
+                    startScanning();
+                }
+            }, 2000);
+        } finally {
+            // 最终停止扫描器
+            stopScanning();
         }
     }
 
@@ -1490,6 +1581,7 @@
     let touchStartY = 0;
     let currentSwipedItem = null;
     let isHorizontalSwipe = false;
+    const deleteBtnWidth = 80; // 删除按钮固定宽度
 
     // 使用事件委托，为所有 .otp-item 元素处理 touchstart 事件
     document.getElementById('otpList').addEventListener('touchstart', function(e) {
@@ -1516,7 +1608,6 @@
         const currentY = e.touches[0].clientY;
         const diffX = touchStartX - currentX;
         const diffY = touchStartY - currentY;
-        const deleteBtnWidth = 80;
 
         // 判断是水平滑动还是垂直滑动
         if (!isHorizontalSwipe) {
@@ -1535,12 +1626,16 @@
             // 阻止页面滚动和默认行为
             e.preventDefault();
 
-            // 确保滑动只在有效范围内进行
-            const transformX = Math.min(Math.max(0, diffX), deleteBtnWidth);
+            // 精确控制滑动距离：只能向左滑动，且最大不超过删除按钮宽度
+            let transformX = 0;
+            if (diffX > 0) { // 只处理向左滑动
+                transformX = Math.min(diffX, deleteBtnWidth); // 限制最大滑动距离
+            }
+
             currentSwipedItem.style.transform = `translateX(-`+ transformX+`px)`;
 
-            // 根据滑动距离的阈值来控制 'swiped' class
-            if (diffX > 10) {
+            // 根据滑动距离控制 'swiped' class
+            if (transformX > 10) {
                 currentSwipedItem.classList.add('swiped');
             } else {
                 currentSwipedItem.classList.remove('swiped');
@@ -1558,24 +1653,24 @@
 
         const touchendX = e.changedTouches[0].clientX;
         const diff = touchStartX - touchendX;
-        const deleteBtnWidth = 80;
 
-        // 降低固定删除按钮的阈值
-        if (diff > deleteBtnWidth / 3) {
+        // 根据滑动距离决定最终状态
+        if (diff > deleteBtnWidth * 0.3) { // 滑动超过30%就显示删除按钮
+            // 精确定位到删除按钮宽度
             currentSwipedItem.style.transform = `translateX(-`+ deleteBtnWidth+`px)`;
             currentSwipedItem.classList.add('swiped');
         } else {
-            // 否则，隐藏删除按钮
+            // 滑动距离不够，复位
             currentSwipedItem.classList.remove('swiped');
             currentSwipedItem.style.transform = 'translateX(0)';
         }
 
         // 重置状态
         isHorizontalSwipe = false;
-        // 不要立即清空 currentSwipedItem，保持引用以便删除按钮点击
+        // 保持 currentSwipedItem 引用，用于删除按钮点击
     }, { passive: true });
 
-    // 修复问题2：使用事件委托，为所有 .swipe-delete 元素添加点击事件
+    // 删除按钮点击事件
     document.getElementById('otpList').addEventListener('click', function(e) {
         const swipeDeleteBtn = e.target.closest('.swipe-delete');
         if (swipeDeleteBtn) {
@@ -1587,6 +1682,26 @@
                 const keyName = otpItem.getAttribute('data-key');
                 console.log('删除按钮被点击，keyName:', keyName);
                 deleteKey(keyName);
+            }
+        }
+    });
+
+    // 点击其他地方时收起已展开的删除按钮
+    document.addEventListener('click', function(e) {
+        if (currentSwipedItem && !e.target.closest('.otp-item')) {
+            currentSwipedItem.classList.remove('swiped');
+            currentSwipedItem.style.transform = 'translateX(0)';
+            currentSwipedItem = null;
+        }
+    });
+
+    // 添加过渡动画结束后的处理，确保最终位置精确
+    document.getElementById('otpList').addEventListener('transitionend', function(e) {
+        if (e.target.classList.contains('otp-item') && e.propertyName === 'transform') {
+            const item = e.target;
+            if (item.classList.contains('swiped')) {
+                // 确保精确定位到删除按钮宽度
+                item.style.transform = `translateX(-`+ deleteBtnWidth+`px)`;
             }
         }
     });
