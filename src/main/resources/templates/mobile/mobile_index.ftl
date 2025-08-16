@@ -906,6 +906,8 @@
     let availableCameras = [];
     let currentCameraType = 'back'; // 'back' 或 'front'
     let isScanning = false;
+    let scanProcessed = false; // 新增：防止重复处理扫描结果
+
     // 初始化
     document.addEventListener('DOMContentLoaded', function() {
         const csrfScript = document.querySelector('script[data-csrf-token]');
@@ -914,6 +916,7 @@
         }
         loadOTPKeys();
     });
+
     // 通用的fetch请求函数，包含错误处理和CSRF头
     async function fetchWithCsrf(url, method, body) {
         const headers = {
@@ -936,7 +939,6 @@
             }
             return response;
         } catch (error) {
-            console.error(`Fetch error for `+ url+`:`, error);
             throw error;
         }
     }
@@ -1170,6 +1172,7 @@
         document.getElementById('keyForm').reset();
         document.getElementById('secretKey').readOnly = false;
         selectMethod('manual');
+        scanProcessed = false; // 重置扫描处理状态
     }
 
     // 选择添加方式
@@ -1180,12 +1183,14 @@
         const secretKeyGroup = document.getElementById('secretKeyGroup');
         const scanArea = document.getElementById('scanArea');
         const submitBtn = document.getElementById('submitBtn');
+
         if (method === 'scan') {
             manualBtn.classList.remove('active');
             scanBtn.classList.add('active');
             secretKeyGroup.style.display = 'none';
             scanArea.style.display = 'block';
             submitBtn.style.display = 'none';
+            scanProcessed = false; // 重置扫描处理状态
             // 自动启动扫描
             setTimeout(() => {
                 startScanning();
@@ -1216,10 +1221,10 @@
     // 切换摄像头
     function switchCamera(type) {
         currentCameraType = type;
-// 更新按钮状态
+        // 更新按钮状态
         document.getElementById('backCameraBtn').classList.toggle('active', type === 'back');
         document.getElementById('frontCameraBtn').classList.toggle('active', type === 'front');
-// 如果正在扫描，重新启动扫描
+        // 如果正在扫描，重新启动扫描
         if (isScanning) {
             stopScanning();
             setTimeout(() => {
@@ -1237,7 +1242,6 @@
                 const label = camera.label.toLowerCase();
                 return label.includes('back') || label.includes('rear') ||
                     label.includes('环境') || label.includes('后') ||
-
                     !label.includes('front') && !label.includes('前');
             });
             return backCamera || cameras[0];
@@ -1251,7 +1255,7 @@
         }
     }
 
-    // 开始扫描二维码
+    // 开始扫描二维码 - 修复版本
     async function startScanning() {
         const startBtn = document.getElementById('startScanBtn');
         const stopBtn = document.getElementById('stopScanBtn');
@@ -1279,9 +1283,11 @@
         startBtn.disabled = true;
         stopBtn.style.display = 'block';
         isScanning = true;
+        scanProcessed = false; // 重置处理状态
 
         // 清除之前的内容
         qrReaderDiv.innerHTML = '';
+
         try {
             console.log('获取摄像头列表...');
             const cameras = await getCameras();
@@ -1299,51 +1305,80 @@
 
             // 创建扫描器实例
             html5QrcodeScanner = new Html5Qrcode('qr-reader');
-            // 优化的扫描配置
+
+            // 优化的扫描配置 - 修复版本
             const config = {
                 fps: 10,
                 qrbox: { width: 250, height: 250 },
                 aspectRatio: 1.0,
-                showTorchButtonIfSupported: false,
-
+                showTorchButtonIfSupported: true,
                 showZoomSliderIfSupported: false,
                 disableFlip: false,
                 videoConstraints: {
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
-
-                    facingMode: currentCameraType === 'back' ?
-                        'environment' : 'user'
-                }
+                    width: { ideal: 640, max: 1280 },
+                    height: { ideal: 480, max: 720 },
+                    facingMode: currentCameraType === 'back' ? 'environment' : 'user'
+                },
+                // 添加更多扫描类型支持
+                supportedScanTypes: [
+                    Html5QrcodeScanType.SCAN_TYPE_CAMERA
+                ],
+                // 实验性功能，提高扫描准确性
+                experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true
+                },
+                // 格式支持
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.CODABAR
+                ]
             };
+
             console.log('启动扫描器，配置:', config);
 
-            // 启动扫描器
+            // 启动扫描器 - 修复版本
             await html5QrcodeScanner.start(
                 selectedCamera.id,
                 config,
-                // 成功回调 - 只有在这里检测到二维码时才停止动画
+                // 成功回调 - 修复版本
                 (decodedText, decodedResult) => {
-
                     console.log('二维码扫描成功!');
                     console.log('解码文本:', decodedText);
+                    console.log('解码结果:', decodedResult);
+
+                    // 防止重复处理
+                    if (scanProcessed) {
+                        console.log('扫描结果已处理，跳过');
+                        return;
+                    }
+
+                    scanProcessed = true;
 
                     // 检测到二维码，停止扫描动画
                     stopScanAnimation();
 
                     // 处理结果
-
                     handleQRCodeSuccess(decodedText);
                 },
-                // 错误回调 - 继续保持动画运行
+                // 错误回调 - 修复版本
                 (errorMessage) => {
                     // 扫描错误时不停止动画，继续扫描
-
-                    if (!errorMessage.includes('NotFoundException')) {
+                    // 只记录非常见的错误
+                    if (!errorMessage.includes('NotFoundException') &&
+                        !errorMessage.includes('No MultiFormat Readers') &&
+                        !errorMessage.includes('No QR code found')) {
                         console.warn('扫描错误:', errorMessage);
                     }
                 }
             );
+
             console.log('扫描器启动成功，添加扫描动画覆盖层...');
             // 摄像头成功启动后，再添加扫描动画覆盖层
             addScanOverlay();
@@ -1355,6 +1390,12 @@
                 errorMessage = '摄像头权限被拒绝，请允许摄像头访问';
             } else if (error.message.includes('找到')) {
                 errorMessage = error.message;
+            } else if (error.message.includes('NotAllowedError')) {
+                errorMessage = '摄像头访问被拒绝，请在浏览器设置中允许摄像头权限';
+            } else if (error.message.includes('NotFoundError')) {
+                errorMessage = '未找到摄像头设备';
+            } else if (error.message.includes('NotReadableError')) {
+                errorMessage = '摄像头被其他应用占用，请关闭其他应用后重试';
             }
 
             Swal.fire({
@@ -1395,6 +1436,7 @@
 
         // 先停止动画
         stopScanAnimation();
+
         if (html5QrcodeScanner) {
             html5QrcodeScanner.stop().then(() => {
                 console.log('扫描器已停止');
@@ -1402,7 +1444,6 @@
                 html5QrcodeScanner = null;
                 resetScanButtons();
             }).catch((err) => {
-
                 console.error('停止扫描失败:', err);
                 html5QrcodeScanner = null;
                 resetScanButtons();
@@ -1430,12 +1471,16 @@
         // 确保动画覆盖层被移除
         stopScanAnimation();
         isScanning = false;
+        scanProcessed = false;
     }
 
-    // 处理扫描成功
+    // 处理扫描成功 - 修复版本
     async function handleQRCodeSuccess(decodedText) {
         console.log('开始处理二维码扫描结果:', decodedText);
-// 显示扫描结果
+
+        // 立即停止扫描
+        stopScanning();
+
         const resultsDiv = document.getElementById('qr-reader-results');
         if (resultsDiv) {
             resultsDiv.style.display = 'block';
@@ -1450,12 +1495,12 @@
             icon: 'info',
             showConfirmButton: false,
             didOpen: () => {
-
                 Swal.showLoading();
             }
         });
+
         try {
-            // 提交给后端处理
+            // 提交给后端处理，使用 fetchWithCsrf
             const response = await fetchWithCsrf('/save-secret', 'POST', { qrContent: decodedText });
             if (response.ok) {
                 Swal.fire({
@@ -1476,15 +1521,6 @@
                 title: '处理失败',
                 text: '处理二维码失败，请检查二维码格式。错误: ' + error.message
             });
-// 处理失败后，重新启动扫描
-            setTimeout(() => {
-                if (!isScanning) {
-                    startScanning();
-                }
-            }, 2000);
-        } finally {
-            // 最终停止扫描器
-            stopScanning();
         }
     }
 
@@ -1517,7 +1553,6 @@
                     icon: 'success',
                     title: '添加成功',
                     showConfirmButton: false,
-
                     timer: 1500
                 });
                 closeAddKeyModal();
@@ -1547,7 +1582,6 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-
             cancelButtonColor: '#3085d6',
             confirmButtonText: '确定删除',
             cancelButtonText: '取消'
@@ -1555,16 +1589,13 @@
             if (result.isConfirmed) {
                 try {
                     // 使用 fetchWithCsrf
-
                     const response = await fetchWithCsrf('/delete-key', 'POST', { keyName: keyName });
                     if (response.ok) {
                         Swal.fire({
                             icon: 'success',
-
                             title: '删除成功',
                             showConfirmButton: false,
                             timer: 1500
-
                         });
                         loadOTPKeys();
                     } else {
@@ -1588,6 +1619,7 @@
             closeAddKeyModal();
         }
     });
+
     // 滑动删除功能
     let touchStartX = 0;
     let touchStartY = 0;
@@ -1604,7 +1636,6 @@
         if (currentSwipedItem && currentSwipedItem !== otpItem) {
             currentSwipedItem.classList.remove('swiped');
             currentSwipedItem.style.transform = 'translateX(0)';
-
         }
 
         touchStartX = e.touches[0].clientX;
@@ -1612,6 +1643,7 @@
         currentSwipedItem = otpItem;
         isHorizontalSwipe = false;
     }, { passive: true });
+
     // 使用事件委托，为所有 .otp-item 元素处理 touchmove 事件
     document.getElementById('otpList').addEventListener('touchmove', function(e) {
         if (!currentSwipedItem) return;
@@ -1623,14 +1655,12 @@
 
         // 判断是水平滑动还是垂直滑动
         if (!isHorizontalSwipe) {
-
             if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
                 isHorizontalSwipe = true;
                 // 阻止页面滚动
                 e.preventDefault();
             } else if (Math.abs(diffY) > 10) {
                 // 垂直滑动，不处理删除逻辑
-
                 currentSwipedItem = null;
                 return;
             }
@@ -1641,14 +1671,13 @@
             e.preventDefault();
 
             // 精确控制滑动距离：只能向左滑动，且最大不超过删除按钮宽度
-
             let transformX = 0;
             if (diffX > 0) { // 只处理向左滑动
-                transformX = Math.min(diffX, deleteBtnWidth);
-// 限制最大滑动距离
+                transformX = Math.min(diffX, deleteBtnWidth); // 限制最大滑动距离
             }
 
             currentSwipedItem.style.transform = `translateX(-`+ transformX+`px)`;
+
             // 根据滑动距离控制 'swiped' class
             if (transformX > 10) {
                 currentSwipedItem.classList.add('swiped');
@@ -1657,6 +1686,7 @@
             }
         }
     }, { passive: false });
+
     // 使用事件委托，为所有 .otp-item 元素处理 touchend 事件
     document.getElementById('otpList').addEventListener('touchend', function(e) {
         if (!currentSwipedItem || !isHorizontalSwipe) {
@@ -1668,7 +1698,6 @@
         const touchendX = e.changedTouches[0].clientX;
         const diff = touchStartX - touchendX;
 
-
         // 根据滑动距离决定最终状态
         if (diff > deleteBtnWidth * 0.2) { // 滑动超过30%就显示删除按钮
             // 精确定位到删除按钮宽度
@@ -1677,7 +1706,6 @@
         } else {
             // 滑动距离不够，复位
             currentSwipedItem.classList.remove('swiped');
-
             currentSwipedItem.style.transform = 'translateX(0)';
         }
 
@@ -1685,6 +1713,7 @@
         isHorizontalSwipe = false;
         // 保持 currentSwipedItem 引用，用于删除按钮点击
     }, { passive: true });
+
     // 删除按钮点击事件
     document.getElementById('otpList').addEventListener('click', function(e) {
         const swipeDeleteBtn = e.target.closest('.swipe-delete');
@@ -1694,13 +1723,13 @@
 
             const otpItem = swipeDeleteBtn.closest('.otp-item');
             if (otpItem) {
-                const keyName =
-                    otpItem.getAttribute('data-key');
+                const keyName = otpItem.getAttribute('data-key');
                 console.log('删除按钮被点击，keyName:', keyName);
                 deleteKey(keyName);
             }
         }
     });
+
     // 点击其他地方时收起已展开的删除按钮
     document.addEventListener('click', function(e) {
         if (currentSwipedItem && !e.target.closest('.otp-item')) {
@@ -1709,6 +1738,7 @@
             currentSwipedItem = null;
         }
     });
+
     // 添加过渡动画结束后的处理，确保最终位置精确
     document.getElementById('otpList').addEventListener('transitionend', function(e) {
         if (e.target.classList.contains('otp-item') && e.propertyName === 'transform') {
@@ -1717,178 +1747,8 @@
                 // 确保精确定位到删除按钮宽度
                 item.style.transform = `translateX(-`+ deleteBtnWidth+`px)`;
             }
-
         }
     });
-    // 点击其他地方时收起已展开的删除按钮
-    document.addEventListener('click', function(e) {
-        if (currentSwipedItem && !e.target.closest('.otp-item')) {
-            currentSwipedItem.classList.remove('swiped');
-            currentSwipedItem.style.transform = 'translateX(0)';
-            currentSwipedItem = null;
-        }
-    });
-    // 修复二维码扫描问题 - 更新扫描配置和回调处理
-    async function startScanning() {
-        const startBtn = document.getElementById('startScanBtn');
-        const stopBtn = document.getElementById('stopScanBtn');
-        const qrReaderDiv = document.getElementById('qr-reader');
-
-        if (isScanning) {
-            console.log('扫描已在进行中');
-            return;
-        }
-
-        if (!startBtn || !stopBtn || !qrReaderDiv) {
-            Swal.fire({
-                icon: 'error',
-                title: '错误',
-                text: '扫描器容器或按钮不存在，请刷新页面。'
-            });
-            return;
-        }
-
-        startBtn.style.display = 'none';
-        startBtn.disabled = true;
-        stopBtn.style.display = 'block';
-        isScanning = true;
-
-        // 清除之前的扫描覆盖层
-        const existingOverlay = qrReaderDiv.querySelector('#scanOverlay');
-        if (existingOverlay) {
-            existingOverlay.remove();
-        }
-
-        try {
-            const cameras = await getCameras();
-            if (!cameras || cameras.length === 0) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '错误',
-                    text: '未找到可用摄像头'
-
-                });
-                resetScanButtons();
-                return;
-            }
-
-            const selectedCamera = selectCameraByType(cameras, currentCameraType);
-            if (!selectedCamera) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '错误',
-                    text: '未找到指定类型的摄像头'
-                });
-                resetScanButtons();
-                return;
-            }
-
-            html5QrcodeScanner = new Html5Qrcode('qr-reader');
-// 修复扫描配置
-            const config = {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0,
-                showTorchButtonIfSupported: true,
-
-                showZoomSliderIfSupported: false, // 禁用缩放滑块避免冲突
-                defaultZoomValueIfSupported: 1,
-                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-                experimentalFeatures: {
-                    useBarCodeDetectorIfSupported: true
-                }
-
-            };
-
-            console.log('开始启动扫描器，选择的摄像头:', selectedCamera);
-            await html5QrcodeScanner.start(
-                selectedCamera.id,
-                config,
-                (decodedText, decodedResult) => {
-                    console.log('二维码扫描成功:', decodedText);
-                    // 仅当成功时停止动画并处理结果
-                    stopScanAnimation();
-                    handleQRCodeSuccess(decodedText);
-                },
-                (errorMessage) => {
-                    // 扫描错误时不停止动画，保持扫描状态
-                    console.log('扫描错误:', errorMessage);
-                }
-            );
-            console.log('扫描器启动成功');
-            // 摄像头成功启动后，动态插入扫描动画覆盖层
-            const scanOverlayHtml = `
-                <div class="scan-overlay active" id="scanOverlay">
-                    <div class="scan-box">
-                        <div class="scan-corner top-left"></div>
-                        <div class="scan-corner top-right"></div>
-                        <div class="scan-corner bottom-left"></div>
-                        <div class="scan-corner bottom-right"></div>
-                        <div class="scan-line"></div>
-                        <div class="scan-tip">请将二维码放入框内</div>
-                    </div>
-                </div>
-            `;
-            qrReaderDiv.insertAdjacentHTML('afterbegin', scanOverlayHtml);
-
-        } catch (error) {
-            console.error('启动扫描器失败:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '启动失败',
-                text: '启动扫描失败，请检查摄像头权限。错误: ' + error.message
-            });
-            resetScanButtons();
-        }
-    }
-
-    // 处理扫描成功 - 确保正确处理回调
-    async function handleQRCodeSuccess(decodedText) {
-        console.log('处理二维码扫描结果:', decodedText);
-// 立即停止扫描
-        stopScanning();
-
-        const resultsDiv = document.getElementById('qr-reader-results');
-        if (resultsDiv) {
-            resultsDiv.style.display = 'block';
-            document.getElementById('scan-result').textContent = decodedText.length > 50 ?
-                decodedText.substring(0, 50) + '...' : decodedText;
-        }
-
-        Swal.fire({
-            title: '已识别二维码',
-            text: '正在处理，请稍候...',
-            icon: 'info',
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-
-            }
-        });
-        try {
-            // 提交给后端处理，使用 fetchWithCsrf
-            const response = await fetchWithCsrf('/save-secret', 'POST', { qrContent: decodedText });
-            if (response.ok) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '添加成功',
-                    text: '账号已成功添加！'
-                });
-                closeAddKeyModal();
-                loadOTPKeys();
-            } else {
-                const errorText = await response.text();
-                throw new Error(errorText || '服务器返回错误');
-            }
-        } catch (error) {
-            console.error('处理二维码失败:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '处理失败',
-                text: '处理二维码失败，请检查二维码格式。错误: ' + error.message
-            });
-        }
-    }
 
     // 页面卸载时清理
     window.addEventListener('beforeunload', function() {
