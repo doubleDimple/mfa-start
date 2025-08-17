@@ -1,5 +1,6 @@
 package com.doubledimple.mfa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -10,9 +11,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @SpringBootApplication
 //@EnableJpaRepositories(basePackages = {"com.doubledimple.mfa.service.*"})
+@Slf4j
 public class MfaStartApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MfaStartApplication.class, args);
+        log.info("MFA-START START SUCCESS........");
     }
 }
