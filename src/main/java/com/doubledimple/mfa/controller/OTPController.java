@@ -182,7 +182,7 @@ public class OTPController {
                              @RequestParam(value = "secretKey", required = false) String secretKey,
                              @RequestParam(value = "qrContent", required = false) String qrContent,
                              @RequestParam(value = "qrCode", required = false) MultipartFile qrCode) {
-
+        log.info("keyName: {}, secretKey: {}, qrContent: {}, qrCode: {}", keyName, secretKey, qrContent, qrCode);
         try {
             if (!StringUtils.isEmpty(qrContent)) {
                 // 情景1: 前端发送了二维码字符串

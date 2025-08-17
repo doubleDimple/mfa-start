@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>MFA 管理</title>
-    <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
@@ -21,7 +21,7 @@
             overflow-x: hidden;
         }
 
-        /* 头部导航 */
+        /* Header navigation */
         .header {
             position: fixed;
             top: 0;
@@ -68,12 +68,9 @@
             transition: 0.3s;
         }
 
-        .menu-icon span:nth-child(1) { top: 6px;
-        }
-        .menu-icon span:nth-child(2) { top: 11px;
-        }
-        .menu-icon span:nth-child(3) { top: 16px;
-        }
+        .menu-icon span:nth-child(1) { top: 6px; }
+        .menu-icon span:nth-child(2) { top: 11px; }
+        .menu-icon span:nth-child(3) { top: 16px; }
 
         .app-title {
             flex: 1;
@@ -110,7 +107,7 @@
             transform: scale(0.95);
         }
 
-        /* 用户菜单下拉 */
+        /* User dropdown menu */
         .dropdown-menu {
             position: absolute;
             top: 40px;
@@ -160,14 +157,14 @@
             }
         }
 
-        /* 主内容区 */
+        /* Main content area */
         .main-content {
             padding-top: 56px;
             padding-bottom: 80px;
             min-height: 100vh;
         }
 
-        /* 搜索框 */
+        /* Search box */
         .search-container {
             padding: 12px 16px;
             background: white;
@@ -207,12 +204,12 @@
             color: #80868b;
         }
 
-        /* OTP列表 */
+        /* OTP list */
         .otp-list {
             background: white;
             min-height: calc(100vh - 140px);
-            overflow-x: hidden; /* 防止水平滚动 */
-            padding-top: 70px; /* 为固定搜索框腾出空间 */
+            overflow-x: hidden;
+            padding-top: 70px;
         }
 
         .otp-item {
@@ -222,12 +219,11 @@
             padding: 16px;
             border-bottom: 1px solid #e8eaed;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.25s ease-out;
             position: relative;
             transform: translateX(0);
-            transition: transform 0.25s ease-out; /* 调整过渡时间，使动画更平滑 */
             overflow: hidden;
-            /* 确保删除按钮不会溢出 */
+            width: 100%;
         }
 
         .otp-item:active {
@@ -298,7 +294,7 @@
             color: #5f6368;
         }
 
-        /* 添加按钮 (FAB) - 确保显示 */
+        /* Add button (FAB) */
         .fab {
             position: fixed;
             bottom: 24px;
@@ -324,7 +320,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* 空状态 */
+        /* Empty state */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -358,7 +354,7 @@
             line-height: 20px;
         }
 
-        /* 模态框 */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -490,50 +486,47 @@
             color: #5f6368;
         }
 
-        /* 扫码区域 - 修复的样式 */
-        #qr-reader {
+        /* Scan area */
+        .scan-area {
+            margin: 20px 0;
+        }
+
+        .video-container {
+            position: relative;
             width: 100%;
-            margin: 20px auto;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
-            min-height: 350px;
-            max-height: 400px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin-bottom: 15px;
         }
 
-        /* 扫描动画覆盖层 */
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
         .scan-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            z-index: 10;
             pointer-events: none;
-            display: none;
-            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .scan-overlay.active {
-            display: block !important;
-        }
-
-        /* 扫描框 */
         .scan-box {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             width: 250px;
             height: 250px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            position: relative;
         }
 
-        /* 扫描框四个角 */
         .scan-corner {
             position: absolute;
             width: 25px;
@@ -569,34 +562,21 @@
             border-top: none;
         }
 
-        /* 扫描线动画 */
         .scan-line {
             position: absolute;
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(180deg, transparent, #10b981, transparent);
+            background: linear-gradient(90deg, transparent, #10b981, transparent);
             top: 0;
             animation: scanLineMove 2s ease-in-out infinite;
-            /* 确保动画无限循环 */
-            box-shadow: 0 0 10px #10b981;
         }
 
         @keyframes scanLineMove {
-            0% {
-                top: 0;
-                opacity: 1;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                top: calc(100% - 2px);
-                opacity: 1;
-            }
+            0%, 100% { top: 0; }
+            50% { top: calc(100% - 2px); }
         }
 
-        /* 扫描提示文字 */
         .scan-tip {
             position: absolute;
             bottom: -40px;
@@ -607,83 +587,6 @@
             text-align: center;
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
             white-space: nowrap;
-        }
-
-        /* 确保扫描器容器有正确的尺寸 */
-        #qr-reader > div {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-
-        /* 扫描框样式优化 */
-        #qr-reader video {
-            width: 100% !important;
-            height: auto !important;
-            max-height: 350px !important;
-            border-radius: 8px;
-            object-fit: contain;
-            background-color: #000;
-        }
-
-        /* 扫描器UI优化 */
-        #qr-reader__camera_selection {
-            margin-bottom: 10px;
-        }
-
-        #qr-reader__scan_region {
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            position: relative;
-        }
-
-        #qr-reader__dashboard {
-            padding: 10px;
-        }
-
-        #qr-reader-results {
-            padding: 12px;
-            background: #e8f5e8;
-            border: 1px solid #4caf50;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-            color: #2e7d32;
-        }
-
-        /* 摄像头控制按钮 */
-        .camera-controls {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .camera-btn {
-            flex: 1;
-            padding: 8px 12px;
-            background: #f1f3f4;
-            border: 1px solid #dadce0;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .camera-btn.active {
-            background: #1a73e8;
-            color: white;
-            border-color: #1a73e8;
-        }
-
-        .camera-btn:hover {
-            background: #e8eaed;
-        }
-
-        .camera-btn.active:hover {
-            background: #1557b0;
         }
 
         .scan-btn {
@@ -732,7 +635,7 @@
             cursor: not-allowed;
         }
 
-        /* Loading动画 */
+        /* Loading animation */
         .loading {
             display: inline-block;
             width: 18px;
@@ -744,17 +647,16 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
-        /* 滑动删除 */
+        /* Swipe delete - fixed version */
         .swipe-delete {
             position: absolute;
             right: 0;
             top: 0;
             bottom: 0;
-            width: 80px; /* 确保宽度固定 */
+            width: 80px;
             background: #ea4335;
             display: flex;
             align-items: center;
@@ -763,7 +665,6 @@
             font-size: 14px;
             transform: translateX(100%);
             transition: transform 0.25s ease-out;
-            /* 与父元素保持一致的过渡时间 */
             cursor: pointer;
             z-index: 10;
             user-select: none;
@@ -771,6 +672,17 @@
 
         .otp-item.swiped .swipe-delete {
             transform: translateX(0);
+        }
+
+        /* Other animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
     </style>
 </head>
@@ -784,17 +696,15 @@
         </div>
     </button>
     <div class="app-title">
-        <span class="mfa-start">OTP</span> Authenticator
+        <span class="mfa-start">MFA-START</span> Authenticator
     </div>
     <div class="user-menu">
-        <div
-                class="user-avatar" onclick="toggleUserMenu()">My</div>
+        <div class="user-avatar" onclick="toggleUserMenu()">My</div>
         <div class="dropdown-menu" id="userDropdown">
             <form action="/perform_logout" method="post" style="margin: 0;">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit" class="dropdown-item">
                     退出登录
-
                 </button>
             </form>
         </div>
@@ -805,8 +715,7 @@
     <div class="search-container">
         <div class="search-box">
             <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01
-5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
             <input type="text" class="search-input" placeholder="搜索..." id="searchInput" onkeyup="searchKeys()">
         </div>
@@ -819,7 +728,6 @@
         <div class="empty-icon">🔐</div>
         <div class="empty-title">开始使用</div>
         <div class="empty-text">点击 + 按钮添加账号</div>
-
     </div>
 </div>
 
@@ -828,64 +736,48 @@
 <div class="modal" id="addKeyModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="modal-title">输入账号详情</h3>
+            <h3 class="modal-title">添加账号</h3>
             <button class="modal-close" onclick="closeAddKeyModal()">×</button>
         </div>
         <div class="modal-body">
             <div class="add-methods">
                 <div class="method-btn active" id="manualMethod" onclick="selectMethod('manual')">
-
                     <span class="method-icon">⌨️</span>
                     <span class="method-label">输入设置密钥</span>
                 </div>
                 <div class="method-btn" id="scanMethod" onclick="selectMethod('scan')">
                     <span class="method-icon">📷</span>
-
                     <span class="method-label">扫描二维码</span>
                 </div>
             </div>
 
             <form id="keyForm" onsubmit="submitKeyForm(event)">
-                <div class="form-group">
+                <div class="form-group" id="keyNameGroup">
                     <label class="form-label">账号</label>
-
                     <input type="text" class="form-input" id="keyName" name="keyName" required placeholder="您的账号">
                 </div>
 
                 <div class="form-group" id="secretKeyGroup">
                     <label class="form-label">您的密钥</label>
-                    <input type="text" class="form-input"
-                           id="secretKey" name="secretKey" required placeholder="输入您的密钥">
+                    <input type="text" class="form-input" id="secretKey" name="secretKey" required placeholder="输入您的密钥">
                 </div>
 
-                <div id="scanArea" style="display: none;">
-                    <div class="camera-controls">
-                        <button type="button" class="camera-btn active" id="backCameraBtn" onclick="switchCamera('back')">后置摄像头</button>
-
-                        <button type="button" class="camera-btn" id="frontCameraBtn" onclick="switchCamera('front')">前置摄像头</button>
-                    </div>
-                    <div id="qr-reader">
-                        <div class="scan-overlay" id="scanOverlay" style="display: none;">
-
+                <div id="scanArea" style="display: none;" class="scan-area">
+                    <div class="video-container">
+                        <video id="video" autoplay muted playsinline></video>
+                        <div class="scan-overlay">
                             <div class="scan-box">
                                 <div class="scan-corner top-left"></div>
                                 <div class="scan-corner top-right"></div>
-
                                 <div class="scan-corner bottom-left"></div>
                                 <div class="scan-corner bottom-right"></div>
                                 <div class="scan-line"></div>
-
                                 <div class="scan-tip">请将二维码放入框内</div>
                             </div>
                         </div>
                     </div>
-
-                    <div id="qr-reader-results">
-                        <small>扫描结果：<span id="scan-result"></span></small>
-                    </div>
                     <button type="button" class="scan-btn" onclick="startScanning()" id="startScanBtn">开始扫描</button>
-                    <button type="button" class="scan-btn" onclick="stopScanning()"
-                            style="display:none;background: #ea4335;" id="stopScanBtn">停止扫描</button>
+                    <button type="button" class="scan-btn" onclick="stopScanning()" style="display:none;background: #ea4335;" id="stopScanBtn">停止扫描</button>
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitBtn">添加</button>
@@ -897,18 +789,15 @@
 <script data-csrf-token="${_csrf.token}" data-csrf-param="${_csrf.parameterName}"></script>
 
 <script>
-    // 全局变量
     let globalUpdateTimer = null;
     let currentMethod = 'manual';
     let csrfToken = '';
-    let html5QrcodeScanner = null;
     let otpKeysData = [];
-    let availableCameras = [];
-    let currentCameraType = 'back'; // 'back' 或 'front'
     let isScanning = false;
-    let scanProcessed = false; // 新增：防止重复处理扫描结果
+    let scanProcessed = false;
+    let codeReader = null;
+    let stream = null;
 
-    // 初始化
     document.addEventListener('DOMContentLoaded', function() {
         const csrfScript = document.querySelector('script[data-csrf-token]');
         if (csrfScript) {
@@ -917,7 +806,6 @@
         loadOTPKeys();
     });
 
-    // 通用的fetch请求函数，包含错误处理和CSRF头
     async function fetchWithCsrf(url, method, body) {
         const headers = {
             'Content-Type': 'application/json',
@@ -943,7 +831,6 @@
         }
     }
 
-    // 加载OTP密钥
     async function loadOTPKeys() {
         try {
             const response = await fetch('/api/otpKeys');
@@ -962,7 +849,6 @@
         }
     }
 
-    // 渲染OTP列表
     function renderOTPList() {
         const otpList = document.getElementById('otpList');
         const emptyState = document.getElementById('emptyState');
@@ -982,30 +868,25 @@
             const secretKey = key.secretKey || '';
 
             html_content += `
-                    <div class="otp-item" data-key="`+ keyName+`" data-secret="`+ secretKey+`">
-
-                    <div class="otp-info-and-code" onclick="copyOTPCode(this, '`+ secretKey+`')">
-                            <div class="otp-account-full">`+ issuer+`: `+ keyName+`</div>
-                            <div class="otp-code">
-
-                 <span class="otp-value">------</span>
-                            </div>
-                        </div>
-                        <div class="countdown-container">
-
-                       <svg class="countdown-circle" width="32" height="32">
-                                <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
-                                <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
-
-                          </svg>
-                            <div class="countdown-text">30</div>
-                        </div>
-
-   <div class="swipe-delete">
-                            🗑️
+                <div class="otp-item" data-key="`+ keyName+`" data-secret="`+ secretKey+`">
+                    <div class="otp-info-and-code" onclick="copyOTPCode(this, `+ secretKey+`'')">
+                        <div class="otp-account-full">`+ issuer+`: `+ keyName+`</div>
+                        <div class="otp-code">
+                            <span class="otp-value">------</span>
                         </div>
                     </div>
-                `;
+                    <div class="countdown-container">
+                        <svg class="countdown-circle" width="32" height="32">
+                            <circle class="countdown-bg" cx="16" cy="16" r="14"></circle>
+                            <circle class="countdown-progress" cx="16" cy="16" r="14"></circle>
+                        </svg>
+                        <div class="countdown-text">30</div>
+                    </div>
+                    <div class="swipe-delete">
+                        🗑️
+                    </div>
+                </div>
+            `;
         });
 
         otpList.innerHTML = html_content;
@@ -1013,7 +894,6 @@
         initializeCountdown();
     }
 
-    // 批量更新OTP代码
     async function updateOtpCodes() {
         const otpItems = document.querySelectorAll('.otp-item');
         if (otpItems.length === 0) return;
@@ -1034,7 +914,6 @@
                 const otpValue = item.querySelector('.otp-value');
                 if (otpValue && otpMap.has(secretKey)) {
                     const code = otpMap.get(secretKey);
-
                     otpValue.textContent = formatCode(code);
                 }
             });
@@ -1043,13 +922,11 @@
         }
     }
 
-    // 格式化验证码显示
     function formatCode(code) {
         if (!code || code.length !== 6) return code;
         return code.substring(0, 3) + ' ' + code.substring(3);
     }
 
-    // 倒计时
     function initializeCountdown() {
         const updateAllCircles = () => {
             const FULL_DASH_ARRAY = 2 * Math.PI * 14;
@@ -1060,19 +937,16 @@
                 const otpCode = container.closest('.otp-item').querySelector('.otp-code');
 
                 if (text && circle) {
-                    const
-                        progress = (timeLeft / 30) * FULL_DASH_ARRAY;
+                    const progress = (timeLeft / 30) * FULL_DASH_ARRAY;
                     circle.style.strokeDasharray = FULL_DASH_ARRAY;
                     circle.style.strokeDashoffset = FULL_DASH_ARRAY - progress;
                     text.textContent = timeLeft;
 
                     if (timeLeft <= 10) {
-
                         otpCode.style.color = '#dc3545';
                     } else {
                         otpCode.style.color = '#1a73e8';
                     }
-
                 }
             });
             if (timeLeft === 30) {
@@ -1088,7 +962,6 @@
         globalUpdateTimer = setInterval(updateAllCircles, 1000);
     }
 
-    // 复制OTP代码
     async function copyOTPCode(element, secretKey) {
         const otpValue = element.querySelector('.otp-value');
         const code = otpValue.textContent.replace(/\s/g, '');
@@ -1101,7 +974,6 @@
                 icon: 'success',
                 title: '验证码已复制',
                 showConfirmButton: false,
-
                 timer: 2000
             });
         } catch (error) {
@@ -1110,14 +982,12 @@
                 position: 'bottom',
                 icon: 'error',
                 title: '复制失败',
-                showConfirmButton:
-                    false,
+                showConfirmButton: false,
                 timer: 2000
             });
         }
     }
 
-    // 搜索功能
     function searchKeys() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const items = document.querySelectorAll('.otp-item');
@@ -1128,7 +998,6 @@
         });
     }
 
-    // 用户菜单
     function toggleUserMenu() {
         const dropdown = document.getElementById('userDropdown');
         dropdown.classList.toggle('show');
@@ -1148,38 +1017,30 @@
         }
     }
 
-    // 打开添加密钥模态框
     function openAddKeyModal() {
         document.getElementById('addKeyModal').classList.add('show');
         document.body.style.overflow = 'hidden';
     }
 
-    // 关闭添加密钥模态框
     function closeAddKeyModal() {
         document.getElementById('addKeyModal').classList.remove('show');
         document.body.style.overflow = 'auto';
         stopScanning();
         resetForm();
-        // 隐藏扫描结果
-        const resultsDiv = document.getElementById('qr-reader-results');
-        if (resultsDiv) {
-            resultsDiv.style.display = 'none';
-        }
     }
 
-    // 重置表单
     function resetForm() {
         document.getElementById('keyForm').reset();
         document.getElementById('secretKey').readOnly = false;
         selectMethod('manual');
-        scanProcessed = false; // 重置扫描处理状态
+        scanProcessed = false;
     }
 
-    // 选择添加方式
     function selectMethod(method) {
         currentMethod = method;
         const manualBtn = document.getElementById('manualMethod');
         const scanBtn = document.getElementById('scanMethod');
+        const keyNameGroup = document.getElementById('keyNameGroup'); // 添加这行
         const secretKeyGroup = document.getElementById('secretKeyGroup');
         const scanArea = document.getElementById('scanArea');
         const submitBtn = document.getElementById('submitBtn');
@@ -1187,17 +1048,18 @@
         if (method === 'scan') {
             manualBtn.classList.remove('active');
             scanBtn.classList.add('active');
+            keyNameGroup.style.display = 'none';
             secretKeyGroup.style.display = 'none';
             scanArea.style.display = 'block';
             submitBtn.style.display = 'none';
-            scanProcessed = false; // 重置扫描处理状态
-            // 自动启动扫描
+            scanProcessed = false;
             setTimeout(() => {
                 startScanning();
             }, 300);
         } else {
             manualBtn.classList.add('active');
             scanBtn.classList.remove('active');
+            keyNameGroup.style.display = 'block';
             secretKeyGroup.style.display = 'block';
             scanArea.style.display = 'none';
             submitBtn.style.display = 'block';
@@ -1205,193 +1067,98 @@
         }
     }
 
-    // 获取可用摄像头
-    async function getCameras() {
-        try {
-            const devices = await Html5Qrcode.getCameras();
-            availableCameras = devices;
-            console.log('可用摄像头:', devices);
-            return devices;
-        } catch (err) {
-            console.error('获取摄像头列表失败:', err);
-            return [];
-        }
-    }
-
-    // 切换摄像头
-    function switchCamera(type) {
-        currentCameraType = type;
-        // 更新按钮状态
-        document.getElementById('backCameraBtn').classList.toggle('active', type === 'back');
-        document.getElementById('frontCameraBtn').classList.toggle('active', type === 'front');
-        // 如果正在扫描，重新启动扫描
-        if (isScanning) {
-            stopScanning();
-            setTimeout(() => {
-                startScanning();
-            }, 500);
-        }
-    }
-
-    // 根据类型选择摄像头
-    function selectCameraByType(cameras, type) {
-        if (!cameras || cameras.length === 0) return null;
-        if (type === 'back') {
-            // 查找后置摄像头
-            const backCamera = cameras.find(camera => {
-                const label = camera.label.toLowerCase();
-                return label.includes('back') || label.includes('rear') ||
-                    label.includes('环境') || label.includes('后') ||
-                    !label.includes('front') && !label.includes('前');
-            });
-            return backCamera || cameras[0];
-        } else {
-            // 查找前置摄像头
-            const frontCamera = cameras.find(camera => {
-                const label = camera.label.toLowerCase();
-                return label.includes('front') || label.includes('前') || label.includes('user');
-            });
-            return frontCamera || cameras[cameras.length - 1];
-        }
-    }
-
-    // 开始扫描二维码 - 修复版本
     async function startScanning() {
         const startBtn = document.getElementById('startScanBtn');
         const stopBtn = document.getElementById('stopScanBtn');
-        const qrReaderDiv = document.getElementById('qr-reader');
+        const video = document.getElementById('video');
 
-        console.log('开始启动扫描器...');
+        console.log('Starting ZXing scanner...');
 
         if (isScanning) {
-            console.log('扫描已在进行中');
+            console.log('Scanner already running');
             return;
         }
 
-        if (!startBtn || !stopBtn || !qrReaderDiv) {
-            console.error('扫描器元素不存在');
-            Swal.fire({
-                icon: 'error',
-                title: '错误',
-                text: '扫描器容器或按钮不存在，请刷新页面。'
-            });
-            return;
-        }
-
-        // 更新按钮状态
         startBtn.style.display = 'none';
         startBtn.disabled = true;
         stopBtn.style.display = 'block';
         isScanning = true;
-        scanProcessed = false; // 重置处理状态
-
-        // 清除之前的内容
-        qrReaderDiv.innerHTML = '';
+        scanProcessed = false;
 
         try {
-            console.log('获取摄像头列表...');
-            const cameras = await getCameras();
-            console.log('可用摄像头:', cameras);
+            codeReader = new ZXing.BrowserMultiFormatReader();
 
-            if (!cameras || cameras.length === 0) {
-                throw new Error('未找到可用摄像头');
+            const videoInputDevices = await codeReader.listVideoInputDevices();
+            console.log('Available cameras:', videoInputDevices);
+
+            if (videoInputDevices.length === 0) {
+                throw new Error('No available cameras found');
             }
 
-            const selectedCamera = selectCameraByType(cameras, currentCameraType);
-            console.log('选择的摄像头:', selectedCamera);
-            if (!selectedCamera) {
-                throw new Error('未找到指定类型的摄像头');
+            let selectedDeviceId = videoInputDevices[0].deviceId;
+
+            const backCamera = videoInputDevices.find(device => {
+                const label = device.label.toLowerCase();
+                return label.includes('back') || label.includes('rear') ||
+                    label.includes('environment') ||
+                    (!label.includes('front') && !label.includes('user'));
+            });
+
+            if (backCamera) {
+                selectedDeviceId = backCamera.deviceId;
+                console.log('Using rear camera:', backCamera.label);
             }
 
-            // 创建扫描器实例
-            html5QrcodeScanner = new Html5Qrcode('qr-reader');
-
-            // 优化的扫描配置 - 修复版本
-            const config = {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0,
-                showTorchButtonIfSupported: true,
-                showZoomSliderIfSupported: false,
-                disableFlip: false,
-                videoConstraints: {
-                    width: { ideal: 640, max: 1280 },
-                    height: { ideal: 480, max: 720 },
-                    facingMode: currentCameraType === 'back' ? 'environment' : 'user'
-                },
-                // 添加更多扫描类型支持
-                supportedScanTypes: [
-                    Html5QrcodeScanType.SCAN_TYPE_CAMERA
-                ],
-                // 实验性功能，提高扫描准确性
-                experimentalFeatures: {
-                    useBarCodeDetectorIfSupported: true
-                },
-                // 格式支持
-                formatsToSupport: [
-                    Html5QrcodeSupportedFormats.QR_CODE,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.CODE_93,
-                    Html5QrcodeSupportedFormats.CODABAR
-                ]
+            // 开始扫描
+            const constraints = {
+                video: {
+                    deviceId: { exact: selectedDeviceId },
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
             };
 
-            console.log('启动扫描器，配置:', config);
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
+            video.srcObject = stream;
 
-            // 启动扫描器 - 修复版本
-            await html5QrcodeScanner.start(
-                selectedCamera.id,
-                config,
-                // 成功回调 - 修复版本
-                (decodedText, decodedResult) => {
-                    console.log('二维码扫描成功!');
-                    console.log('解码文本:', decodedText);
-                    console.log('解码结果:', decodedResult);
+            await new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play();
+                    resolve();
+                };
+            });
 
-                    // 防止重复处理
-                    if (scanProcessed) {
-                        console.log('扫描结果已处理，跳过');
+            const scan = async () => {
+                if (!isScanning || scanProcessed) return;
+
+                try {
+                    const result = await codeReader.decodeFromInputVideoDevice(undefined, video);
+                    if (result && !scanProcessed) {
+                        console.log('QR code scanned:', result.text);
+                        scanProcessed = true;
+                        handleQRCodeSuccess(result.text);
                         return;
                     }
-
-                    scanProcessed = true;
-
-                    // 检测到二维码，停止扫描动画
-                    stopScanAnimation();
-
-                    // 处理结果
-                    handleQRCodeSuccess(decodedText);
-                },
-                // 错误回调 - 修复版本
-                (errorMessage) => {
-                    // 扫描错误时不停止动画，继续扫描
-                    // 只记录非常见的错误
-                    if (!errorMessage.includes('NotFoundException') &&
-                        !errorMessage.includes('No MultiFormat Readers') &&
-                        !errorMessage.includes('No QR code found')) {
-                        console.warn('扫描错误:', errorMessage);
+                } catch (error) {
+                    if (!error.message.includes('NotFoundException')) {
+                        console.warn('Scanning error:', error.message);
                     }
                 }
-            );
 
-            console.log('扫描器启动成功，添加扫描动画覆盖层...');
-            // 摄像头成功启动后，再添加扫描动画覆盖层
-            addScanOverlay();
+                if (isScanning && !scanProcessed) {
+                    setTimeout(scan, 200);
+                }
+            };
+
+            scan();
 
         } catch (error) {
-            console.error('启动扫描器失败:', error);
-            let errorMessage = '启动扫描失败';
-            if (error.message.includes('Permission denied')) {
+            console.error('Failed to start scanner:', error);
+            let errorMessage = 'Failed to start scanning';
+            if (error.message.includes('Permission denied') || error.message.includes('NotAllowedError')) {
                 errorMessage = '摄像头权限被拒绝，请允许摄像头访问';
-            } else if (error.message.includes('找到')) {
+            } else if (error.message.includes('found')) {
                 errorMessage = error.message;
-            } else if (error.message.includes('NotAllowedError')) {
-                errorMessage = '摄像头访问被拒绝，请在浏览器设置中允许摄像头权限';
             } else if (error.message.includes('NotFoundError')) {
                 errorMessage = '未找到摄像头设备';
             } else if (error.message.includes('NotReadableError')) {
@@ -1399,64 +1166,57 @@
             }
 
             Swal.fire({
-                icon: 'error',
-                title: '启动失败',
+                icon: 'warn',
+                title: '摄像头已关闭',
                 text: errorMessage
             });
             resetScanButtons();
         }
     }
 
-    // 添加扫描覆盖层 - 确保动画持续运行
-    function addScanOverlay() {
-        const scanOverlay = document.getElementById('scanOverlay');
-        if (scanOverlay) {
-            scanOverlay.classList.add('active');
-            scanOverlay.style.display = 'block';
-        }
-    }
-
-    // 单独停止扫描动画（不停止扫描器）
-    function stopScanAnimation() {
-        console.log('停止扫描动画');
-        const scanOverlay = document.getElementById('scanOverlay');
-        if (scanOverlay) {
-            scanOverlay.classList.remove('active');
-            scanOverlay.style.display = 'none';
-        }
-    }
-
-    // 停止扫描器
     function stopScanning() {
-        console.log('停止扫描器...');
+        console.log('Stopping scanner...');
         if (!isScanning) {
-            console.log('扫描器未运行');
+            console.log('Scanner not running');
             return;
         }
 
-        // 先停止动画
-        stopScanAnimation();
+        isScanning = false;
+        scanProcessed = false;
 
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.stop().then(() => {
-                console.log('扫描器已停止');
-                html5QrcodeScanner.clear();
-                html5QrcodeScanner = null;
-                resetScanButtons();
-            }).catch((err) => {
-                console.error('停止扫描失败:', err);
-                html5QrcodeScanner = null;
-                resetScanButtons();
-            });
-        } else {
-            console.log('扫描器实例不存在，直接重置状态');
-            resetScanButtons();
+        if (codeReader) {
+            try {
+                codeReader.reset();
+            } catch (e) {
+                console.log('Error resetting code reader:', e);
+            }
+            codeReader = null;
         }
+
+        if (stream) {
+            stream.getTracks().forEach(track => {
+                track.stop();
+                console.log('Stopped track:', track.kind);
+            });
+            stream = null;
+        }
+
+        const video = document.getElementById('video');
+        if (video) {
+            video.srcObject = null;
+            video.pause();
+            // Force clear video display
+            video.style.display = 'none';
+            setTimeout(() => {
+                video.style.display = 'block';
+            }, 100);
+        }
+
+        resetScanButtons();
     }
 
-    // 重置扫描按钮状态
     function resetScanButtons() {
-        console.log('重置扫描按钮状态');
+        console.log('Resetting scan button state');
         const startBtn = document.getElementById('startScanBtn');
         const stopBtn = document.getElementById('stopScanBtn');
 
@@ -1468,30 +1228,19 @@
             stopBtn.style.display = 'none';
         }
 
-        // 确保动画覆盖层被移除
-        stopScanAnimation();
         isScanning = false;
         scanProcessed = false;
     }
 
-    // 处理扫描成功 - 修复版本
+    // 扫描函数
     async function handleQRCodeSuccess(decodedText) {
-        console.log('开始处理二维码扫描结果:', decodedText);
+        console.log('Processing QR code scan result:', decodedText);
 
-        // 立即停止扫描
         stopScanning();
 
-        const resultsDiv = document.getElementById('qr-reader-results');
-        if (resultsDiv) {
-            resultsDiv.style.display = 'block';
-            const resultText = decodedText.length > 50 ? decodedText.substring(0, 50) + '...' : decodedText;
-            document.getElementById('scan-result').textContent = resultText;
-        }
-
-        // 显示处理提示
         Swal.fire({
             title: '已识别二维码',
-            text: '正在处理，请稍候...',
+            text: '正在保存，请稍候...',
             icon: 'info',
             showConfirmButton: false,
             didOpen: () => {
@@ -1500,22 +1249,31 @@
         });
 
         try {
-            // 提交给后端处理，使用 fetchWithCsrf
-            const response = await fetchWithCsrf('/save-secret', 'POST', { qrContent: decodedText });
+            const formData = new FormData();
+            formData.append('qrContent', decodedText);
+
+            const csrfParam = document.querySelector('script[data-csrf-param]').getAttribute('data-csrf-param');
+            formData.append(csrfParam, csrfToken);
+
+            const response = await fetch('/save-secret', {
+                method: 'POST',
+                body: formData
+            });
+
             if (response.ok) {
-                Swal.fire({
+                /*Swal.fire({
                     icon: 'success',
                     title: '添加成功',
                     text: '账号已成功添加！'
-                });
+                });*/
                 closeAddKeyModal();
                 loadOTPKeys();
             } else {
                 const errorText = await response.text();
-                throw new Error(errorText || '服务器返回错误');
+                throw new Error(errorText || 'Server returned error');
             }
         } catch (error) {
-            console.error('处理二维码失败:', error);
+            console.error('Failed to process QR code:', error);
             Swal.fire({
                 icon: 'error',
                 title: '处理失败',
@@ -1524,7 +1282,6 @@
         }
     }
 
-    // 提交表单（仅用于手动输入）
     async function submitKeyForm(event) {
         event.preventDefault();
         const submitBtn = document.getElementById('submitBtn');
@@ -1538,12 +1295,10 @@
         formData.append('keyName', keyName);
         formData.append('secretKey', secretKey);
 
-        // 从 data 属性获取 CSRF 参数名，并将其和令牌一起添加到 FormData 中
         const csrfParam = document.querySelector('script[data-csrf-param]').getAttribute('data-csrf-param');
         formData.append(csrfParam, csrfToken);
 
         try {
-            // 使用标准的 fetch API，并传递 FormData 对象
             const response = await fetch('/save-secret', {
                 method: 'POST',
                 body: formData
@@ -1559,7 +1314,7 @@
                 loadOTPKeys();
             } else {
                 const errorText = await response.text();
-                throw new Error(errorText || '服务器返回错误');
+                throw new Error(errorText || 'Server returned error');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -1574,7 +1329,7 @@
         }
     }
 
-    // 删除密钥
+    // 删除 秘钥
     async function deleteKey(keyName) {
         Swal.fire({
             title: '确定要删除吗?',
@@ -1588,7 +1343,6 @@
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    // 使用 fetchWithCsrf
                     const response = await fetchWithCsrf('/delete-key', 'POST', { keyName: keyName });
                     if (response.ok) {
                         Swal.fire({
@@ -1599,7 +1353,7 @@
                         });
                         loadOTPKeys();
                     } else {
-                        throw new Error('删除失败');
+                        throw new Error('Delete failed');
                     }
                 } catch (error) {
                     console.error('Error:', error);
@@ -1613,26 +1367,22 @@
         });
     }
 
-    // 模态框背景点击关闭
     document.getElementById('addKeyModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeAddKeyModal();
         }
     });
 
-    // 滑动删除功能
     let touchStartX = 0;
     let touchStartY = 0;
     let currentSwipedItem = null;
     let isHorizontalSwipe = false;
-    const deleteBtnWidth = 80; // 删除按钮固定宽度
+    const deleteBtnWidth = 8;
 
-    // 使用事件委托，为所有 .otp-item 元素处理 touchstart 事件
     document.getElementById('otpList').addEventListener('touchstart', function(e) {
         const otpItem = e.target.closest('.otp-item');
         if (!otpItem) return;
 
-        // 如果之前有被滑动的项目，先将其复位
         if (currentSwipedItem && currentSwipedItem !== otpItem) {
             currentSwipedItem.classList.remove('swiped');
             currentSwipedItem.style.transform = 'translateX(0)';
@@ -1644,7 +1394,6 @@
         isHorizontalSwipe = false;
     }, { passive: true });
 
-    // 使用事件委托，为所有 .otp-item 元素处理 touchmove 事件
     document.getElementById('otpList').addEventListener('touchmove', function(e) {
         if (!currentSwipedItem) return;
 
@@ -1653,33 +1402,27 @@
         const diffX = touchStartX - currentX;
         const diffY = touchStartY - currentY;
 
-        // 判断是水平滑动还是垂直滑动
         if (!isHorizontalSwipe) {
             if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
                 isHorizontalSwipe = true;
-                // 阻止页面滚动
                 e.preventDefault();
             } else if (Math.abs(diffY) > 10) {
-                // 垂直滑动，不处理删除逻辑
                 currentSwipedItem = null;
                 return;
             }
         }
 
         if (isHorizontalSwipe) {
-            // 阻止页面滚动和默认行为
             e.preventDefault();
 
-            // 精确控制滑动距离：只能向左滑动，且最大不超过删除按钮宽度
             let transformX = 0;
-            if (diffX > 0) { // 只处理向左滑动
-                transformX = Math.min(diffX, deleteBtnWidth); // 限制最大滑动距离
+            if (diffX > 0) {
+                transformX = Math.min(diffX, deleteBtnWidth);
             }
 
             currentSwipedItem.style.transform = `translateX(-`+ transformX+`px)`;
 
-            // 根据滑动距离控制 'swiped' class
-            if (transformX > 10) {
+            if (transformX >= deleteBtnWidth * 0.3) {
                 currentSwipedItem.classList.add('swiped');
             } else {
                 currentSwipedItem.classList.remove('swiped');
@@ -1687,7 +1430,6 @@
         }
     }, { passive: false });
 
-    // 使用事件委托，为所有 .otp-item 元素处理 touchend 事件
     document.getElementById('otpList').addEventListener('touchend', function(e) {
         if (!currentSwipedItem || !isHorizontalSwipe) {
             currentSwipedItem = null;
@@ -1698,23 +1440,17 @@
         const touchendX = e.changedTouches[0].clientX;
         const diff = touchStartX - touchendX;
 
-        // 根据滑动距离决定最终状态
-        if (diff > deleteBtnWidth * 0.2) { // 滑动超过30%就显示删除按钮
-            // 精确定位到删除按钮宽度
+        if (diff >= deleteBtnWidth * 0.3) {
             currentSwipedItem.style.transform = `translateX(-`+ deleteBtnWidth+`px)`;
             currentSwipedItem.classList.add('swiped');
         } else {
-            // 滑动距离不够，复位
             currentSwipedItem.classList.remove('swiped');
             currentSwipedItem.style.transform = 'translateX(0)';
         }
 
-        // 重置状态
         isHorizontalSwipe = false;
-        // 保持 currentSwipedItem 引用，用于删除按钮点击
     }, { passive: true });
 
-    // 删除按钮点击事件
     document.getElementById('otpList').addEventListener('click', function(e) {
         const swipeDeleteBtn = e.target.closest('.swipe-delete');
         if (swipeDeleteBtn) {
@@ -1724,13 +1460,12 @@
             const otpItem = swipeDeleteBtn.closest('.otp-item');
             if (otpItem) {
                 const keyName = otpItem.getAttribute('data-key');
-                console.log('删除按钮被点击，keyName:', keyName);
+                console.log('Delete button clicked, keyName:', keyName);
                 deleteKey(keyName);
             }
         }
     });
 
-    // 点击其他地方时收起已展开的删除按钮
     document.addEventListener('click', function(e) {
         if (currentSwipedItem && !e.target.closest('.otp-item')) {
             currentSwipedItem.classList.remove('swiped');
@@ -1739,18 +1474,15 @@
         }
     });
 
-    // 添加过渡动画结束后的处理，确保最终位置精确
     document.getElementById('otpList').addEventListener('transitionend', function(e) {
         if (e.target.classList.contains('otp-item') && e.propertyName === 'transform') {
             const item = e.target;
             if (item.classList.contains('swiped')) {
-                // 确保精确定位到删除按钮宽度
                 item.style.transform = `translateX(-`+ deleteBtnWidth+`px)`;
             }
         }
     });
 
-    // 页面卸载时清理
     window.addEventListener('beforeunload', function() {
         if (globalUpdateTimer) {
             clearInterval(globalUpdateTimer);
