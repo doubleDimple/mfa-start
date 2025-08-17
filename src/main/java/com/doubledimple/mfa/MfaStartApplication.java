@@ -16,6 +16,7 @@ public class MfaStartApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MfaStartApplication.class, args);
+
         log.info("MFA-START START SUCCESS........");
     }
 }
