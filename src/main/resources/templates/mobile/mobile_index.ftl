@@ -249,7 +249,7 @@
         .otp-code {
             font-size: 24px;
             font-weight: 500;
-            color: var(--otp-code-color, #1a73e8);
+            color: #1a73e8;
             letter-spacing: 2px;
             font-family: 'Roboto Mono', monospace;
             cursor: pointer;
