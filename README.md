@@ -149,7 +149,7 @@ chmod +x mfa-start.sh
 ## ❓ 常见问题
 
 ### Q: 忘记密码怎么办？
-A: 可以通过 `./mfa-start.sh password` 查看当前密码，或使用 `./mfa-start.sh password "" 新密码` 重置密码。
+A: 可以通过 `./mfa-start.sh password` 查看当前密码，或使用 `./mfa-start.sh password "你的用户名" 新密码` 重置密码。
 
 ### Q: 如何修改默认端口？
 A: 编辑 `mfa-start.yml` 文件，修改 `server.port` 配置项，然后重启应用。
