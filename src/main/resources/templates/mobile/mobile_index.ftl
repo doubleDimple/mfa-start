@@ -1238,7 +1238,7 @@
 
         stopScanning();
 
-        Swal.fire({
+        /*Swal.fire({
             title: '已识别二维码',
             text: '正在保存，请稍候...',
             icon: 'info',
@@ -1246,7 +1246,7 @@
             didOpen: () => {
                 Swal.showLoading();
             }
-        });
+        });*/
 
         try {
             const formData = new FormData();
