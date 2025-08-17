@@ -1,32 +1,5 @@
 #!/bin/bash
 
-#1. 启动应用
-# ./mfa-start.sh start
-
-#2. 停止应用
-#./mfa-start.sh stop
-
-#3. 重启应用
-#./mfa-start.sh restart
-
-#4. 查看状态
-#./mfa-start.sh status
-
-#5. 更新应用
-#./mfa-start.sh update
-
-#6. 查看当前凭据
-#./mfa-start.sh password 或者 ./mfa-start.sh passwd
-
-#7. 修改用户名和密码
-# 同时修改用户名和密码
-#./mfa-start.sh password admin mypassword123
-# 只修改用户名（保持原密码）
-#./mfa-start.sh password newadmin
-# 只修改密码（保持原用户名）
-#./mfa-start.sh password "" newpassword456
-
-
 # 配置变量
 BASE_DIR="/root/mfa-start"
 JAR_PATH="$BASE_DIR/mfa-start-release.jar"
@@ -95,6 +68,8 @@ download_config_template() {
     fi
 }
 
+
+
 # 初始化配置文件（仅首次安装）
 init_config() {
     local username="mfa-start-user"
@@ -114,16 +89,21 @@ init_config() {
         echo "Password: $password"
         echo "========================================="
         echo "Please save these credentials!"
-        #echo "Password also saved to: $PASSWORD_FILE"
+        echo "Password also saved to: $PASSWORD_FILE"
         echo "========================================="
     else
         # 如果有密码文件，读取现有密码
         if [ -f "$PASSWORD_FILE" ]; then
             password=$(cat "$PASSWORD_FILE")
+            username=$(grep -A3 "security:" "$CONFIG_FILE" | grep "name:" | awk '{print $2}')
+            if [ -z "$username" ]; then
+                username="mfa-start-user"
+            fi
             echo "Using existing credentials for user: $username"
         else
             # 如果只有配置文件没有密码文件，从配置文件读取密码
             if [ -f "$CONFIG_FILE" ]; then
+                username=$(grep -A3 "security:" "$CONFIG_FILE" | grep "name:" | awk '{print $2}')
                 password=$(grep -A4 "security:" "$CONFIG_FILE" | grep "password:" | awk '{print $2}')
                 if [ -n "$password" ]; then
                     echo "$password" > "$PASSWORD_FILE"
@@ -139,9 +119,20 @@ init_config() {
 
     # 创建或更新配置文件
     if [ -f "$CONFIG_FILE.template" ]; then
-        # 使用模板并替换用户名密码
-        sed -e "s/{{USERNAME}}/$username/g" -e "s/{{PASSWORD}}/$password/g" "$CONFIG_FILE.template" > "$CONFIG_FILE"
+        # 读取模板内容并替换占位符
+        cp "$CONFIG_FILE.template" "$CONFIG_FILE.tmp"
+
+        # 替换用户名和密码占位符
+        sed -i "s/{{USERNAME}}/$username/g" "$CONFIG_FILE.tmp"
+        sed -i "s/{{PASSWORD}}/$password/g" "$CONFIG_FILE.tmp"
+
+        # 如果模板中没有占位符，直接修改name和password字段
+        sed -i "s/name:.*/name: $username/g" "$CONFIG_FILE.tmp"
+        sed -i "s/password:.*/password: $password/g" "$CONFIG_FILE.tmp"
+
+        mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
         rm -f "$CONFIG_FILE.template"
+        echo "Configuration file created from template with credentials"
     else
         # 创建默认配置文件
         cat > "$CONFIG_FILE" << EOF
@@ -187,13 +178,25 @@ update_config() {
     # 如果有新的配置模板，使用现有用户名密码更新
     if [ -f "$CONFIG_FILE.template" ]; then
         echo "Updating configuration with new template (preserving credentials)..."
-        sed -e "s/{{USERNAME}}/$existing_username/g" -e "s/{{PASSWORD}}/$existing_password/g" "$CONFIG_FILE.template" > "$CONFIG_FILE.new"
 
-        # 如果新配置文件创建成功，替换旧的
-        if [ -f "$CONFIG_FILE.new" ]; then
-            mv "$CONFIG_FILE.new" "$CONFIG_FILE"
+        # 创建临时文件
+        cp "$CONFIG_FILE.template" "$CONFIG_FILE.tmp"
+
+        # 替换占位符或直接修改字段
+        sed -i "s/{{USERNAME}}/$existing_username/g" "$CONFIG_FILE.tmp"
+        sed -i "s/{{PASSWORD}}/$existing_password/g" "$CONFIG_FILE.tmp"
+        sed -i "s/name:.*/name: $existing_username/g" "$CONFIG_FILE.tmp"
+        sed -i "s/password:.*/password: $existing_password/g" "$CONFIG_FILE.tmp"
+
+        # 替换配置文件
+        if [ -f "$CONFIG_FILE.tmp" ]; then
+            mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
             rm -f "$CONFIG_FILE.template"
             echo "Configuration updated with new template (credentials preserved)"
+
+            # 更新密码文件
+            echo "$existing_password" > "$PASSWORD_FILE"
+            chmod 600 "$PASSWORD_FILE"
         else
             echo "Failed to create new configuration, keeping existing one"
             rm -f "$CONFIG_FILE.template"
@@ -207,15 +210,29 @@ update_config() {
 ensure_files() {
     create_base_dir
 
+    # 先确保JAR文件存在
     if [ ! -f "$JAR_PATH" ]; then
         echo "JAR file not found, downloading..."
         download_jar || exit 1
     fi
 
+    # 再检查配置文件
     if [ ! -f "$CONFIG_FILE" ]; then
         echo "Configuration file not found, initializing..."
-        download_config_template  # 尝试下载模板，失败也没关系
+        # 尝试下载配置模板
+        download_config_template
+        # 初始化配置（会生成用户名密码并写入配置文件）
         init_config
+    else
+        # 如果配置文件存在但密码文件不存在，从配置文件提取密码
+        if [ ! -f "$PASSWORD_FILE" ]; then
+            password=$(grep -A4 "security:" "$CONFIG_FILE" | grep "password:" | awk '{print $2}')
+            if [ -n "$password" ]; then
+                echo "$password" > "$PASSWORD_FILE"
+                chmod 600 "$PASSWORD_FILE"
+                echo "Password file created from existing config"
+            fi
+        fi
     fi
 }
 
@@ -323,6 +340,10 @@ update() {
         download_config_template  # 尝试下载新模板
         update_config
 
+        # 清理备份文件（更新成功后）
+        rm -f "$JAR_PATH.backup."*
+        echo "Backup files cleaned up after successful update"
+
         # 如果之前在运行，则重新启动
         if [ "$was_running" = true ]; then
             echo "Restarting application with updated files..."
@@ -419,20 +440,50 @@ change_credentials() {
     local current_username=$(grep -A3 "security:" "$CONFIG_FILE" | grep "name:" | awk '{print $2}')
     local current_password=$(grep -A4 "security:" "$CONFIG_FILE" | grep "password:" | awk '{print $2}')
 
-    # 确定新的用户名和密码
-    local final_username="${new_username:-$current_username}"
-    local final_password="${new_password:-$current_password}"
+    # 调试信息
+    echo "Debug: Current username from config: '$current_username'"
+    echo "Debug: New username parameter: '$new_username'"
+    echo "Debug: New password parameter: '$new_password'"
 
-    # 如果没有提供密码且当前配置中也没有密码，则生成新密码
-    if [ -z "$final_password" ]; then
-        final_password=$(generate_password)
-        echo "No password provided, generated new password: $final_password"
+    # 确定新的用户名和密码
+    local final_username
+    local final_password
+
+    # 处理用户名
+    if [ "$new_username" = "" ]; then
+        # 空字符串表示保持当前用户名
+        final_username="$current_username"
+        echo "Keeping current username: $final_username"
+    elif [ -z "$new_username" ]; then
+        # 真正的空值（没有提供参数）
+        final_username="$current_username"
+    else
+        # 提供了新用户名
+        final_username="$new_username"
     fi
 
+    # 处理密码
+    if [ -z "$new_password" ]; then
+        # 没有提供密码参数，保持当前密码
+        final_password="$current_password"
+        echo "Keeping current password"
+    else
+        # 提供了新密码
+        final_password="$new_password"
+        echo "Setting new password"
+    fi
+
+    # 如果最终密码仍为空，生成新密码
+    if [ -z "$final_password" ]; then
+        final_password=$(generate_password)
+        echo "No password found, generated new password: $final_password"
+    fi
+
+    echo ""
     echo "Updating credentials..."
     echo "Old username: $current_username"
     echo "New username: $final_username"
-    echo "Password: [UPDATED]"
+    echo "Password will be updated"
 
     # 检查应用是否正在运行
     local was_running=false
@@ -442,23 +493,52 @@ change_credentials() {
         stop
     fi
 
-    # 更新配置文件中的用户名和密码
-    sed -i "s/name:.*/name: $final_username/" "$CONFIG_FILE"
-    sed -i "s/password:.*/password: $final_password/" "$CONFIG_FILE"
+    # 创建临时配置文件
+    cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
 
-    # 更新密码文件
-    echo "$final_password" > "$PASSWORD_FILE"
-    chmod 600 "$PASSWORD_FILE"
+    # 使用更精确的sed命令更新配置文件
+    # 先找到security部分，然后更新name和password
+    awk -v user="$final_username" -v pass="$final_password" '
+        /^spring:/ { spring=1 }
+        /^  security:/ && spring { security=1 }
+        /^    user:/ && security { user_section=1 }
+        /^      name:/ && user_section {
+            print "      name: " user
+            next
+        }
+        /^      password:/ && user_section {
+            print "      password: " pass
+            next
+        }
+        { print }
+    ' "$CONFIG_FILE.bak" > "$CONFIG_FILE"
 
-    echo "========================================="
-    echo "CREDENTIALS UPDATED SUCCESSFULLY"
-    echo "========================================="
-    echo "Username: $final_username"
-    echo "Password: $final_password"
-    echo "========================================="
-    echo "Credentials saved to configuration file"
-    echo "Password also saved to: $PASSWORD_FILE"
-    echo "========================================="
+    # 验证更新是否成功
+    local new_config_username=$(grep -A3 "security:" "$CONFIG_FILE" | grep "name:" | awk '{print $2}')
+    local new_config_password=$(grep -A4 "security:" "$CONFIG_FILE" | grep "password:" | awk '{print $2}')
+
+    if [ "$new_config_username" = "$final_username" ] && [ "$new_config_password" = "$final_password" ]; then
+        echo "Configuration file updated successfully"
+        rm -f "$CONFIG_FILE.bak"
+
+        # 更新密码文件
+        echo "$final_password" > "$PASSWORD_FILE"
+        chmod 600 "$PASSWORD_FILE"
+
+        echo "========================================="
+        echo "CREDENTIALS UPDATED SUCCESSFULLY"
+        echo "========================================="
+        echo "Username: $final_username"
+        echo "Password: $final_password"
+        echo "========================================="
+        echo "Credentials saved to configuration file"
+        echo "Password also saved to: $PASSWORD_FILE"
+        echo "========================================="
+    else
+        echo "Error: Failed to update configuration file"
+        mv "$CONFIG_FILE.bak" "$CONFIG_FILE"
+        exit 1
+    fi
 
     # 如果之前在运行，重新启动应用
     if [ "$was_running" = true ]; then
@@ -471,46 +551,42 @@ change_credentials() {
 
 # 显示帮助信息
 show_help() {
-    echo "========================================="
-    echo "MFA-START 应用管理脚本 / MFA-START Application Management Script"
-    echo "========================================="
+    echo "Usage: $0 {start|stop|restart|update|status|password|help}"
     echo ""
-    echo "用法 / Usage: $0 {start|stop|restart|update|status|password|help}"
+    echo "Commands:"
+    echo "  start                              - Start the application (auto-download if needed)"
+    echo "  stop                               - Stop the application"
+    echo "  restart                            - Restart the application"
+    echo "  update                             - Update JAR package and restart if running"
+    echo "  status                             - Show application status"
+    echo "  password                           - Show current username and password"
+    echo "  password <username> <password>     - Change both username and password"
+    echo "  password <username>                - Change only username (keep current password)"
+    echo "  password \"\" <password>             - Change only password (keep current username)"
+    echo "  help                               - Show this help message"
     echo ""
-    echo "命令说明 / Commands:"
-    echo "  start                              - 启动应用 (如需要会自动下载) / Start the application (auto-download if needed)"
-    echo "  stop                               - 停止应用 / Stop the application"
-    echo "  restart                            - 重启应用 / Restart the application"
-    echo "  update                             - 更新JAR包并重启 (如果正在运行) / Update JAR package and restart if running"
-    echo "  status                             - 显示应用状态 / Show application status"
-    echo "  password                           - 显示当前用户名和密码 / Show current username and password"
-    echo "  password <username> <password>     - 修改用户名和密码 / Change both username and password"
-    echo "  password <username>                - 仅修改用户名 (保持当前密码) / Change only username (keep current password)"
-    echo "  password \"\" <password>             - 仅修改密码 (保持当前用户名) / Change only password (keep current username)"
-    echo "  help                               - 显示此帮助信息 / Show this help message"
+    echo "Examples:"
+    echo "  $0 start                           - Start application"
+    echo "  $0 password                        - View credentials"
+    echo "  $0 password admin newpass123       - Set username to 'admin' and password to 'newpass123'"
+    echo "  $0 password newuser                - Change username to 'newuser', keep current password"
+    echo "  $0 password \"\" secretpass          - Keep current username, change password to 'secretpass'"
+    echo "  $0 update                          - Update to latest version"
     echo ""
-    echo "使用示例 / Examples:"
-    echo "  $0 start                           - 启动应用 / Start application"
-    echo "  $0 password                        - 查看凭据 / View credentials"
-    echo "  $0 password admin newpass123       - 设置用户名为'admin'，密码为'newpass123' / Set username to 'admin' and password to 'newpass123'"
-    echo "  $0 password newuser                - 将用户名改为'newuser'，保持当前密码 / Change username to 'newuser', keep current password"
-    echo "  $0 password \"\" secretpass          - 保持当前用户名，密码改为'secretpass' / Keep current username, change password to 'secretpass'"
-    echo "  $0 update                          - 更新到最新版本 / Update to latest version"
+    echo "First Run Features:"
+    echo "  - Create user 'mfa-start-user' with random password"
+    echo "  - Auto-download latest JAR and config files"
+    echo "  - Display generated login credentials"
     echo ""
-    echo "首次运行特性 / First Run Features:"
-    echo "  - 创建用户 'mfa-start-user' 并生成随机密码 / Create user 'mfa-start-user' with random password"
-    echo "  - 自动下载最新的JAR包和配置文件 / Auto-download latest JAR and config files"
-    echo "  - 显示生成的登录凭据 / Display generated login credentials"
+    echo "File Locations:"
+    echo "  JAR File:        $JAR_PATH"
+    echo "  Config File:     $CONFIG_FILE"
+    echo "  Password File:   $PASSWORD_FILE"
     echo ""
-    echo "文件位置 / File Locations:"
-    echo "  JAR文件 / JAR File:        $JAR_PATH"
-    echo "  配置文件 / Config File:    $CONFIG_FILE"
-    echo "  密码文件 / Password File:  $PASSWORD_FILE"
-    echo ""
-    echo "注意事项 / Notes:"
-    echo "  - 修改凭据时会自动重启应用 (如果正在运行) / Credential changes will restart the app (if running)"
-    echo "  - 更新功能会保持现有用户名和密码不变 / Update function preserves existing username and password"
-    echo "========================================="
+    echo "Notes:"
+    echo "  - Credential changes will restart the app (if running)"
+    echo "  - Update function preserves existing username and password"
+    echo "  - Backup files are automatically cleaned up after successful updates"
 }
 
 # 主命令处理
@@ -561,6 +637,5 @@ case "$1" in
         exit 1
         ;;
 esac
-
 
 exit 0
