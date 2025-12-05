@@ -7,11 +7,11 @@ ENV APP_HOME=/mfa-start
 # 在容器中创建一个目录来存放应用
 WORKDIR $APP_HOME
 
-# 将生成的 JAR 文件复制到容器中
-COPY target/mfa-start-release.jar.jar mfa-start-release.jar
+# 复制 jar 包到容器并命名为 mfa-start.jar
+COPY target/mfa-start-release.jar mfa-start.jar
 
-# 暴露应用运行的端口
-EXPOSE 23456
+# 暴露应用运行端口
+EXPOSE 9999
 
 # 启动 Spring Boot 应用
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-jar", "mfa-start.jar"]
