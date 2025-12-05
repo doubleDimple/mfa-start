@@ -65,7 +65,9 @@ pipeline {
 
         stage('Build Maven') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                withMaven(maven: 'Maven3') {
+                    sh 'mvn clean package -DskipTests'
+                }
             }
         }
 
