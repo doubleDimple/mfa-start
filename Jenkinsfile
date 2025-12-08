@@ -2,108 +2,98 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB = credentials('dockerhub-token')
+        APP_NAME = "mfa-start"
         IMAGE = "lovele/mfa-start"
+        GITHUB_REPO = "doubleDimple/mfa-start"
+
+        DOCKERHUB = credentials('dockerhub-token')
+        GITHUB = credentials('github-token')
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Version Bump') {
+        stage('Build Project') {
+            steps {
+                sh "mvn clean package -DskipTests"
+            }
+        }
+
+        stage('Generate Version') {
             steps {
                 script {
-                    // 读取当前版本号
-                    def version = readFile('version.txt').trim()
-                    echo "Current version: ${version}"
-
-                    // 拆分
-                    def parts = version.tokenize('.')
-                    def major = parts[0].toInteger()
-                    def minor = parts[1].toInteger()
-                    def patch = parts[2].toInteger()
-
-                    // patch递增
-                    patch++
-
-                    //进位规则 patch > 9 => 0, minor + 1
-                    if (patch > 9) {
-                        patch = 0
-                        minor++
-                    }
-
-                    //进位规则 minor > 9 => 0, major + 1
-                    if (minor > 9) {
-                        minor = 0
-                        major++
-                    }
-
-                    // 拼回新版本
-                    def newVersion = "${major}.${minor}.${patch}"
-                    echo "New version: ${newVersion}"
-
-                    // 写回文件
-                    writeFile file: 'version.txt', text: newVersion
-
-                    // 设置为环境变量用于 Docker tag
-                    env.TAG = newVersion
-
-                    // 提交回仓库（不报错）
                     sh """
-                        git config --global user.email "jenkins@local"
-                        git config --global user.name "Jenkins"
-                        git add version.txt
-                        git commit -m "Version bump to ${newVersion}" || true
-                        git push origin HEAD || true
+                    LATEST_TAG=\$(git describe --tags `git rev-list --tags --max-count=1`)
+                    VERSION=\${LATEST_TAG#"v"}
+
+                    MAJOR=\$(echo \$VERSION | cut -d. -f1)
+                    MINOR=\$(echo \$VERSION | cut -d. -f2)
+                    PATCH=\$(echo \$VERSION | cut -d. -f3)
+
+                    PATCH=\$((PATCH+1))
+
+                    if [ \$PATCH -gt 9 ]; then
+                      PATCH=0
+                      MINOR=\$((MINOR+1))
+                    fi
+
+                    NEW_TAG="v\$MAJOR.\$MINOR.\$PATCH"
+                    echo "\$NEW_TAG" > new_version.txt
+                    """
+
+                    env.VERSION = sh(script: "cat new_version.txt", returnStdout: true).trim()
+                    echo "🔢 New version: ${env.VERSION}"
+                }
+            }
+        }
+
+        stage('GitHub Release') {
+            steps {
+                sh """
+                gh auth login --with-token <<< ${GITHUB_PSW}
+                gh release create ${VERSION} target/${APP_NAME}-release.jar \
+                  --repo ${GITHUB_REPO} \
+                  --title "Release ${VERSION}" \
+                  --notes "Auto release by Jenkins"
+                """
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh """
+                docker build -t ${IMAGE}:${VERSION} .
+                docker tag ${IMAGE}:${VERSION} ${IMAGE}:latest
+                """
+            }
+        }
+
+        stage('Push DockerHub') {
+            steps {
+                sh """
+                echo ${DOCKERHUB_PSW} | docker login -u ${DOCKERHUB_USR} --password-stdin
+                docker push ${IMAGE}:${VERSION}
+                docker push ${IMAGE}:latest
+                """
+            }
+        }
+
+        stage('Deploy to K8s') {
+            steps {
+                withKubeConfig([credentialsId: 'k8s-token']) {
+                    sh """
+                    kubectl apply -f deploy.yaml
+                    kubectl apply -f service.yaml
+                    kubectl set image deployment/${APP_NAME} ${APP_NAME}=${IMAGE}:${VERSION}
+                    kubectl rollout status deployment/${APP_NAME}
                     """
                 }
             }
-        }
-
-        stage('Build Maven') {
-            steps {
-                withMaven(maven: 'Maven3') {
-                    sh 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build Docker Images') {
-            steps {
-                sh """
-                    docker build -t $IMAGE:$TAG .
-                    docker build -t $IMAGE:latest .
-                """
-            }
-        }
-
-        stage('Login DockerHub') {
-            steps {
-                sh """
-                    echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
-                """
-            }
-        }
-
-        stage('Push Docker Images') {
-            steps {
-                sh """
-                    docker push $IMAGE:$TAG
-                    docker push $IMAGE:latest
-                """
-            }
-        }
-    }
-
-    post {
-        success {
-            echo "Build success. Published version: ${env.TAG}"
-        }
-        failure {
-            echo "Build failed!"
         }
     }
 }

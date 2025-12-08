@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mfa-start
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mfa-start
+  template:
+    metadata:
+      labels:
+        app: mfa-start
+    spec:
+      containers:
+        - name: mfa-start
+          image: lovele/mfa-start:latest
+          ports:
+            - containerPort: 9999
+          imagePullPolicy: Always

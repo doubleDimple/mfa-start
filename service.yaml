@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfa-start
+spec:
+  type: NodePort
+  selector:
+    app: mfa-start
+  ports:
+    - port: 9999
+      nodePort: 30099
