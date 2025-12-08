@@ -19,7 +19,10 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                checkout scm
+                deleteDir()
+                git branch: 'master',
+                    url: 'https://github.com/doubleDimple/mfa-start.git',
+                    credentialsId: 'github-token'
             }
         }
 
