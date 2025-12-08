@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+            jdk 'JDK8'
+            maven 'Maven3'
+        }
+
     environment {
         APP_NAME = "mfa-start"
         IMAGE = "lovele/mfa-start"
