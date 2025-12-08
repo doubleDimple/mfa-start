@@ -1,5 +1,5 @@
 # 使用官方的 OpenJDK 运行时镜像作为基础镜像
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:8-jdk-jammy
 
 # 设置环境变量
 ENV APP_HOME=/mfa-start
