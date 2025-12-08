@@ -35,21 +35,32 @@ pipeline {
             steps {
                 script {
                     sh """
-                    LATEST_TAG=\$(git describe --tags `git rev-list --tags --max-count=1`)
-                    VERSION=\${LATEST_TAG#"v"}
+                    # 获取最新 tag，没有则从 2.2.0 开始
+                    LATEST_TAG=\$(git describe --tags --abbrev=0 2>/dev/null || echo "2.2.0")
 
-                    MAJOR=\$(echo \$VERSION | cut -d. -f1)
-                    MINOR=\$(echo \$VERSION | cut -d. -f2)
-                    PATCH=\$(echo \$VERSION | cut -d. -f3)
+                    echo "Latest tag: \$LATEST_TAG"
 
+                    # 去掉开头的 v 和 -
+                    CLEAN_TAG=\$(echo \$LATEST_TAG | sed 's/^v//; s/^-//')
+
+                    echo "Clean tag: \$CLEAN_TAG"
+
+                    # 拆解为主次补丁
+                    MAJOR=\$(echo \$CLEAN_TAG | cut -d. -f1)
+                    MINOR=\$(echo \$CLEAN_TAG | cut -d. -f2)
+                    PATCH=\$(echo \$CLEAN_TAG | cut -d. -f3)
+
+                    # 自增补丁
                     PATCH=\$((PATCH+1))
 
+                    # 到 9 自动进位
                     if [ \$PATCH -gt 9 ]; then
                       PATCH=0
                       MINOR=\$((MINOR+1))
                     fi
 
-                    NEW_TAG="v\$MAJOR.\$MINOR.\$PATCH"
+                    NEW_TAG="\$MAJOR.\$MINOR.\$PATCH"
+
                     echo "\$NEW_TAG" > new_version.txt
                     """
 
@@ -62,7 +73,7 @@ pipeline {
         stage('GitHub Release') {
             steps {
                 sh """
-                gh auth login --with-token <<< ${GITHUB_PSW}
+                echo "${GITHUB_PSW}" | gh auth login --with-token
                 gh release create ${VERSION} target/${APP_NAME}-release.jar \
                   --repo ${GITHUB_REPO} \
                   --title "Release ${VERSION}" \
