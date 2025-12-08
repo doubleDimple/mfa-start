@@ -35,8 +35,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                    # 获取最新 tag，没有则从 2.2.0 开始
-                    LATEST_TAG=\$(git describe --tags --abbrev=0 2>/dev/null || echo "2.2.0")
+                    # 获取最新 tag，没有则从 2.2.2 开始
+                    LATEST_TAG=\$(git describe --tags --abbrev=0 2>/dev/null || echo "2.2.2")
 
                     echo "Latest tag: \$LATEST_TAG"
 
