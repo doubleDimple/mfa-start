@@ -2,11 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mfa-start
+  labels:
+    app: mfa-start
 spec:
   replicas: 1
+
+  # ✅ 单副本必须显式指定滚动策略
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
   selector:
     matchLabels:
       app: mfa-start
+
   template:
     metadata:
       labels:
@@ -15,6 +26,32 @@ spec:
       containers:
         - name: mfa-start
           image: lovele/mfa-start:latest
-          ports:
-            - containerPort: 9999
           imagePullPolicy: Always
+
+          # ⚠️ 必须和你程序真实监听端口一致
+          ports:
+            - containerPort: 9856
+
+          # ✅ 关键：rollout 是否结束，全看这个
+          readinessProbe:
+            tcpSocket:
+              port: 9856
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          # ✅ 可选但强烈推荐（避免以后升级再卡）
+          livenessProbe:
+            tcpSocket:
+              port: 9856
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          # ✅ 给 Java 应用一个优雅退出时间
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]
