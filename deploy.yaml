@@ -9,10 +9,7 @@ spec:
 
   # ✅ 单副本必须显式指定滚动策略
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+    type: Recreate
 
   selector:
     matchLabels:
