@@ -27,12 +27,12 @@ spec:
 
           # ⚠️ 必须和你程序真实监听端口一致
           ports:
-            - containerPort: 9856
+            - containerPort: 9999
 
           # ✅ 关键：rollout 是否结束，全看这个
           readinessProbe:
             tcpSocket:
-              port: 9856
+              port: 9999
             initialDelaySeconds: 20
             periodSeconds: 5
             timeoutSeconds: 2
@@ -41,7 +41,7 @@ spec:
           # ✅ 可选但强烈推荐（避免以后升级再卡）
           livenessProbe:
             tcpSocket:
-              port: 9856
+              port: 9999
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 2
